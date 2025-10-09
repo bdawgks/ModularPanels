@@ -1,0 +1,54 @@
+{"Name": "Wilnau",
+"DrawingData": {
+	"Width": 360,
+	"BackgroundColor": "Honeydew",
+	"TrackStyles": [
+		{"ID": "Mainline", "Color": "Black", "Width": 10.0},
+		{"ID": "Yard", "Color": "Gold", "Width": 10.0}
+	]
+},
+"TrackData": {
+	"Nodes": [
+		{"ID": "10", "Pos": [10, 70]},
+		{"ID": "11", "Pos": [40, 70]},
+		{"ID": "12", "Pos": [50, 70]},
+		{"ID": "13", "Pos": [300, 70]},
+		{"ID": "14", "Pos": [310, 70]},
+		{"ID": "15", "Pos": [350, 70]},
+		{"ID": "20", "Pos": [90, 50]},
+		{"ID": "21", "Pos": [130, 50]},
+		{"ID": "22", "Pos": [260, 50]},
+		{"ID": "30", "Pos": [130, 30]},
+		{"ID": "31", "Pos": [140, 30]},
+		{"ID": "32", "Pos": [190, 30]},
+		{"ID": "40", "Pos": [90, 30]},
+		{"ID": "41", "Pos": [80, 30]},
+		{"ID": "42", "Pos": [50, 30]}
+	],
+	"Segments": [
+		{"ID": "11", "Style": "Mainline", "Nodes": ["10","11"]},
+		{"ID": "21", "Style": "Mainline", "Nodes": ["11","12"]},
+		{"ID": "1", "Style": "Mainline", "Nodes": ["12","13"]},
+		{"ID": "31", "Style": "Mainline", "Nodes": ["13","14"]},
+		{"ID": "41", "Style": "Mainline", "Nodes": ["14","15"]},
+		{"ID": "1-1", "Style": "Mainline", "Nodes": ["12","20"]},
+		{"ID": "12", "Style": "Mainline", "Nodes": ["20","21"]},
+		{"ID": "2", "Style": "Mainline", "Nodes": ["21","22"]},
+		{"ID": "2-1", "Style": "Mainline", "Nodes": ["20","30"]},
+		{"ID": "2-2", "Style": "Mainline", "Nodes": ["30","31"]},
+		{"ID": "3", "Style": "Yard", "Nodes": ["31","32"]},
+		{"ID": "3-1", "Style": "Mainline", "Nodes": ["21","40"]},
+		{"ID": "3-2", "Style": "Mainline", "Nodes": ["40","41"]},
+		{"ID": "4", "Style": "Yard", "Nodes": ["41","42"]},
+		{"ID": "4-1", "Style": "Mainline", "Nodes": ["22","13"]}
+	],
+	"Points": [
+		{"ID": "1", "PointsNode": "11", "RouteNormal": "12", "RouteReversed": "20"},
+		{"ID": "2", "PointsNode": "20", "RouteNormal": "21", "RouteReversed": "30"},
+		{"ID": "3", "PointsNode": "21", "RouteNormal": "20", "RouteReversed": "40"},
+		{"ID": "4", "PointsNode": "12", "RouteNormal": "11", "RouteReversed": "22"}
+	],
+	"Detectors": [
+		{"ID": "11", "SegID": "11"}
+	]
+}}
