@@ -17,13 +17,13 @@ namespace ModularPanels
             {
                 X = drawPanel1.Left + 200,
                 Y = drawPanel1.Top,
-                Width = 800,
+                Width = 2000,
                 Height = drawPanel1.Height + 200
             };
 
             drawing1.Canvas = rect;
             _drawings.Add(drawing1);
-            drawPanel1.Paint += DrawPanel1_Paint;
+            drawPanel1.Paint += OnPaint;
 
             string path = "C:\\Users\\Kyle\\source\\repos\\ModularPanels\\data\\modules\\wilnau.json";
             if (File.Exists(path))
@@ -37,6 +37,8 @@ namespace ModularPanels
                     {
                         Module module = moduleData.Initialize();
                         module.InitDrawing(drawing1);
+
+                        module.TrackDetectors["1-"].IsOccupied = true;
                     }
                 }
                 catch (Exception e)
@@ -45,9 +47,37 @@ namespace ModularPanels
                 }
             }
 
+            MouseWheel += OnMouseWheel;
+            SizeChanged += OnResizeEnd;
+
+            drawPanel1.SetMinWidth(2000); ;
+            drawPanel1.InitScrollbar(hScrollBar1, this, 20);
         }
 
-        private void DrawPanel1_Paint(object? sender, PaintEventArgs e)
+        private void OnResizeEnd(object? sender, EventArgs e)
+        {
+            UpdateDrawComponent();
+            drawPanel1.UpdateScrollbar();
+        }
+
+        private void OnRedraw(object? sender, EventArgs e)
+        {
+            UpdateDrawComponent();
+            drawPanel1.UpdateScrollbar();
+        }
+
+        private void UpdateDrawComponent()
+        {
+            drawPanel1.Invalidate();
+            drawPanel1.UpdateScrollbar();
+        }
+
+        private void OnMouseWheel(object? sender, MouseEventArgs e)
+        {
+            drawPanel1.ScrollView(e.Delta);
+        }
+
+        private void OnPaint(object? sender, PaintEventArgs e)
         {
             foreach (PanelLib.Drawing drawing in _drawings)
             {

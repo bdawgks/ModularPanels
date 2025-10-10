@@ -15,8 +15,9 @@ namespace PanelLib
         }
     }
 
-    public readonly struct TrackSegment(TrackStyle style, TrackNode n0, TrackNode n1)
+    public readonly struct TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)
     {
+        public readonly string id = id;
         public readonly TrackStyle style = style;
         public readonly TrackNode n0 = n0;
         public readonly TrackNode n1 = n1;
@@ -83,15 +84,14 @@ namespace PanelLib
     public class TrackDetector
     {
         readonly string _id;
-        readonly HashSet<TrackNode> _nodes = [];
-        readonly Color _color;
+        readonly HashSet<TrackSegment> _segments = [];
 
-        private bool _isOccupied;
+        DetectorStyle _style = new DetectorStyleRectangle();
+        bool _isOccupied;
 
-        public TrackDetector(string id, Color color)
+        public TrackDetector(string id)
         {
             _id = id;
-            _color = color;
         }
 
         public string ID
@@ -99,9 +99,10 @@ namespace PanelLib
             get => _id;
         }
 
-        public Color Color
+        public DetectorStyle Style
         {
-            get => _color;
+            get => _style;
+            set => _style = value;
         }
 
         public bool IsOccupied
@@ -110,18 +111,18 @@ namespace PanelLib
             set => _isOccupied = value;
         }
 
-        public bool AddNode(TrackNode node) 
+        public bool AddSegment(TrackSegment seg) 
         {
-            if (_nodes.Contains(node))
+            if (_segments.Contains(seg))
                 return false;
 
-            _nodes.Add(node);
+            _segments.Add(seg);
             return true;
         }
 
-        public List<TrackNode> GetNodes()
+        public List<TrackSegment> GetSegments()
         {
-            return [.. _nodes];
+            return [.. _segments];
         }
     }
 }

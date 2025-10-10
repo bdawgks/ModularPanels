@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.Versioning;
+using System.Windows.Forms.Design.Behavior;
 
 namespace PanelLib
 {
@@ -219,6 +220,77 @@ namespace PanelLib
         public PointsStyle() { }
     }
 
+    public abstract class DetectorStyle
+    {
+        public Color colorEmpty = Color.Gray;
+        public Color colorOccupied = Color.Orange;
+        public Color colorOutline = Color.Black;
+        public float outline = 2f;
+
+        public abstract void Draw(DrawingContext context, TrackDetector detector);
+    }
+
+    public class DetectorStyleRectangle : DetectorStyle
+    {
+        public int minEdgeMargin = 5;
+        public int segmentLength = 10;
+        public int segmentSpace = 5;
+
+        public override void Draw(DrawingContext context, TrackDetector detector)
+        {
+            Color fillColor = detector.IsOccupied ? colorOccupied : colorEmpty;
+            Brush fillBrush = new SolidBrush(fillColor);
+            Brush outlineBrush = new SolidBrush(colorOutline);
+            Pen outlinePen = new Pen(outlineBrush, outline);
+
+            foreach (TrackSegment seg in detector.GetSegments())
+            {
+                Vector2 pos0 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n0));
+                Vector2 pos1 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n1));
+                Vector2 segDir = Vector2.Normalize(pos1 - pos0);
+                float angle = Drawing.VectorAngle(segDir);
+
+                float width = seg.style.width;
+                float segLenF = segmentLength;
+                float segLenH = segLenF * 0.5f;
+                float segSpaceF = segmentSpace;
+
+                float trackSegLength = Vector2.Distance(pos0, pos1);
+                float totalLen = trackSegLength - 2f * minEdgeMargin;
+                int numSegs = Math.Max((int)Math.Floor((totalLen - segSpaceF) / (segLenF + segSpaceF)), 1);
+                float totalSegLen = segLenF * numSegs;
+                float totalSpace = (numSegs - 1) * segSpaceF;
+                float remainder = totalLen - totalSegLen - totalSpace;
+                float margin = minEdgeMargin + remainder * 0.5f;
+
+                for (int i = 0; i < numSegs; i++)
+                {
+                    float offset = margin + (i * segLenF) + segLenH + segSpaceF * i;
+                    Vector2 pos = pos0 + segDir * offset;
+                    context.graphics.TranslateTransform(pos.X, pos.Y);
+                    context.graphics.RotateTransform(angle);
+
+                    PointF corner = new(-segLenH, -width * 0.5f);
+                    RectangleF rect = new RectangleF(corner, new SizeF(segLenF, width));
+                    context.graphics.FillRectangle(fillBrush, rect);
+                    context.graphics.DrawRectangles(outlinePen, [rect]);
+
+                    context.graphics.ResetTransform();
+                }
+            }
+
+            fillBrush.Dispose();
+            outlineBrush.Dispose();
+            outlinePen.Dispose();
+        }
+    }
+
+    public struct DrawingContext
+    {
+        public Drawing drawing;
+        public Graphics graphics;
+    }
+
     public class Drawing()
     {
         int _gridSize = 5;
@@ -230,6 +302,7 @@ namespace PanelLib
         readonly List<TrackSegment> _segments = [];
         readonly List<TrackPoints> _points = [];
         readonly List<TrackNode> _nodes = [];
+        readonly List<TrackDetector> _detectors = [];
         readonly List<Signal> _signals = [];
 
         public int GridSize
@@ -271,6 +344,11 @@ namespace PanelLib
             _points.Add(points);
         }
 
+        public void AddDetector(TrackDetector detector)
+        {
+            _detectors.Add(detector);
+        }
+
         [SupportedOSPlatform("windows")]
         public void Draw(Graphics g)
         {
@@ -288,6 +366,10 @@ namespace PanelLib
             foreach (TrackNode n in _nodes)
             {
                 DrawNode(g, n);
+            }
+            foreach (TrackDetector d in _detectors)
+            {
+                DrawDetector(g, d);
             }
             foreach (Signal sig in _signals)
             {
@@ -451,6 +533,17 @@ namespace PanelLib
             textBrush.Dispose();
         }*/
 
+        private void DrawDetector(Graphics g, TrackDetector detector)
+        {
+            DrawingContext context = new()
+            {
+                drawing = this,
+                graphics = g
+            };
+
+            detector.Style.Draw(context, detector);
+        }
+
         [SupportedOSPlatform("windows")]
         private void DrawGrid(Graphics g)
         {
@@ -467,7 +560,7 @@ namespace PanelLib
             for (int i = 0; i < _canvas.Height; i++)
             {
                 Point p1 = new(0, i * _gridSize);
-                Point p2 = new((int)_canvas.Width, i * _gridSize);
+                Point p2 = new(_canvas.Width, i * _gridSize);
                 Transform(ref p1);
                 Transform(ref p2);
                 Pen gridPen = new(gridBrush);
@@ -484,7 +577,7 @@ namespace PanelLib
             for (int i = 0; i < _canvas.Width; i++)
             {
                 Point p1 = new(i * _gridSize, 0);
-                Point p2 = new(i * _gridSize, (int)_canvas.Height);
+                Point p2 = new(i * _gridSize, _canvas.Height);
                 Transform(ref p1);
                 Transform(ref p2);
                 Pen gridPen = new(gridBrush);
@@ -508,14 +601,34 @@ namespace PanelLib
             textFont.Dispose();
         }
 
-        private static Vector2 PointToVector(Point p)
+        public Point GetNodePointTransformed(TrackNode n)
+        {
+            Point p = n.GetPoint(_gridSize);
+            Transform(ref p);
+            return p;
+        }
+
+        public static Vector2 PointToVector(Point p)
         {
             return new Vector2(p.X, p.Y);
         }
-        private static Point VectorToPoint(Vector2 v)
+        public static Point VectorToPoint(Vector2 v)
         {
             return new Point((int)Math.Round(v.X), (int)Math.Round(v.Y));
         }
+        public static float VectorAngle(Vector2 from, Vector2 to)
+        {
+            return float.RadiansToDegrees(Vector2.Dot(from, to));
+        }
+        public static float VectorAngle(Vector2 v)
+        {
+            Vector2 up = new(0f, 1f);
+            float angle = VectorAngle(v, up);
+            if (v.X < 0f)
+                angle = -angle;
+            return angle;
+        }
+
         private void Transform(ref Point p)
         {
             p.X += _canvas.X;
