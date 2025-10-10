@@ -29,6 +29,31 @@ namespace ModularPanels
         }
     }
 
+    public struct JSON_Module_PointsStyle
+    {
+        public string ID { get; set; }
+        public string ColorInactive { get; set; }
+        public string ColorLock { get; set; }
+        public float LockLength { get; set; }
+        public float LockWidth { get; set; }
+        public float LockSpace { get; set; }
+        public int Length { get; set; }
+
+        public readonly PanelLib.PointsStyle Load()
+        {
+            PanelLib.PointsStyle style = new()
+            {
+                colorInactive = Color.FromName(ColorInactive),
+                colorLock = Color.FromName(ColorLock),
+                lockLength = LockLength,
+                lockWidth = LockWidth,
+                lockSpace = LockSpace,
+                length = Length
+            };
+            return style;
+        }
+    }
+
     public struct JSON_DetectorStyle_Rectangle
     {
         public int MinEdgeMargin { get; set; }
@@ -103,6 +128,7 @@ namespace ModularPanels
         public string PointsNode { get; set; }
         public string RouteNormal { get; set; }
         public string RouteReversed { get; set; }
+        public string Style { get; set; }
         public bool? UseBaseColor { get; set; }
     }
 
@@ -118,6 +144,7 @@ namespace ModularPanels
         public int Width { get; set; }
         public string BackgroundColor { get; set; }
         public List<JSON_Module_TrackStyle> TrackStyles { get; set; }
+        public List<JSON_Module_PointsStyle> PointsStyles { get; set; }
         public List<JSON_Module_DetectorStyle> DetectorStyles { get; set; }
 
         public readonly Dictionary<string, PanelLib.TrackStyle> GetTrackStyles()
@@ -127,6 +154,19 @@ namespace ModularPanels
             {
                 if (styles.ContainsKey(styleData.ID))
                     throw new Exception("Duplicate track style ID: " + styleData.ID);
+
+                styles.Add(styleData.ID, styleData.Load());
+            }
+            return styles;
+        }
+
+        public readonly Dictionary<string, PanelLib.PointsStyle> GetPointsStyles()
+        {
+            Dictionary<string, PanelLib.PointsStyle> styles = [];
+            foreach (JSON_Module_PointsStyle styleData in PointsStyles)
+            {
+                if (styles.ContainsKey(styleData.ID))
+                    throw new Exception("Duplicate points style ID: " + styleData.ID);
 
                 styles.Add(styleData.ID, styleData.Load());
             }

@@ -47,6 +47,7 @@ namespace PanelLib
         public PointsStyle Style
         {
             get => _style;
+            set => _style = value;
         }
 
         public bool ShowMoving

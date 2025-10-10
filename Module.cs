@@ -61,6 +61,8 @@ namespace ModularPanels
                 PanelLib.TrackSegment segment = new(segmentData.ID, trackStyle, node0, node1);
                 module.TrackSegments.Add(segment.id, segment);
             }
+
+            var pointsStyles = DrawingData.GetPointsStyles();
             foreach (JSON_Module_Point pointData in TrackData.Points)
             {
                 GetNode(module, pointData.PointsNode, out PanelLib.TrackNode? nodeBase);
@@ -72,7 +74,11 @@ namespace ModularPanels
 
                 bool useBaseColor = pointData.UseBaseColor != null ? pointData.UseBaseColor.Value : false;
 
+                if (!pointsStyles.TryGetValue(pointData.Style, out var pointsStyle))
+                    throw new Exception("Invalid points style: " + pointData.Style);
+
                 PanelLib.TrackPoints points = new(pointData.ID, nodeBase, nodeNormal, nodeReversed, useBaseColor);
+                points.Style = pointsStyle;
                 module.TrackPoints.Add(points.id, points);
             }
 

@@ -6,6 +6,15 @@
 		{"ID": "Mainline", "Color": "Black", "Width": 10.0},
 		{"ID": "Yard", "Color": "Gold", "Width": 10.0}
 	],
+	"PointsStyles": [
+		{"ID": "Main",
+		"ColorInactive": "LightGray",
+		"ColorLock": "Blue",
+		"LockLength": 20,
+		"LockWidth": 4,
+		"LockSpace": 3,
+		"Length": 50}
+	],
 	"DetectorStyles": [
 		{"ID": "Main", 
 		"ColorEmpty": "Gray", 
@@ -56,10 +65,10 @@
 		{"ID": "4-1", "Style": "Mainline", "Nodes": ["22","13"]}
 	],
 	"Points": [
-		{"ID": "1", "PointsNode": "11", "RouteNormal": "12", "RouteReversed": "20"},
-		{"ID": "2", "PointsNode": "20", "RouteNormal": "21", "RouteReversed": "30"},
-		{"ID": "3", "PointsNode": "21", "RouteNormal": "20", "RouteReversed": "40"},
-		{"ID": "4", "PointsNode": "12", "RouteNormal": "11", "RouteReversed": "22"}
+		{"ID": "1", "PointsNode": "12", "RouteNormal": "13", "RouteReversed": "20", "Style": "Main"},
+		{"ID": "2", "PointsNode": "20", "RouteNormal": "21", "RouteReversed": "30", "Style": "Main"},
+		{"ID": "3", "PointsNode": "21", "RouteNormal": "20", "RouteReversed": "40", "Style": "Main"},
+		{"ID": "4", "PointsNode": "13", "RouteNormal": "12", "RouteReversed": "22", "Style": "Main"}
 	],
 	"Detectors": [
 		{"ID": "11", "Segments": ["11"], "Style": "Main"},
