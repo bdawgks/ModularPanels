@@ -1,33 +1,8 @@
 {"Name": "Wilnau",
 "DrawingData": {
-	"Width": 2000,
-	"BackgroundColor": "Honeydew",
-	"TrackStyles": [
-		{"ID": "Mainline", "Color": "Black", "Width": 10.0},
-		{"ID": "Yard", "Color": "Gold", "Width": 10.0}
-	],
-	"PointsStyles": [
-		{"ID": "Main",
-		"ColorInactive": "LightGray",
-		"ColorLock": "Blue",
-		"LockLength": 20,
-		"LockWidth": 4,
-		"LockSpace": 3,
-		"Length": 50}
-	],
-	"DetectorStyles": [
-		{"ID": "Main", 
-		"ColorEmpty": "Gray", 
-		"ColorOccupied": "Orange",
-		"ColorOutline": "Black",
-		"OutlineSize": 2.0,
-		"Style": "Rectangle",
-		"Rectangle": {
-			"MinEdgeMargin": 10,
-			"SegmentLength": 20,
-			"SegmentSpace": 30
-		}}
-	]
+	"Width": 400,
+	"Height": 100,
+	"BackgroundColor": "DominoBG"
 },
 "TrackData": {
 	"Nodes": [

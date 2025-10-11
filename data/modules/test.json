@@ -1,0 +1,15 @@
+{"Name": "Test",
+"DrawingData": {
+	"Width": 200,
+	"Height": 100,
+	"BackgroundColor": "Honeydew"
+},
+"TrackData": {
+	"Nodes": [
+		{"ID": "A", "Pos": [10, 70]},
+		{"ID": "B", "Pos": [190, 70]}
+	],
+	"Segments": [
+		{"ID": "M", "Style": "Mainline", "Nodes": ["A","B"]}
+	]
+}}

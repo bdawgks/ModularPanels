@@ -1,11 +1,89 @@
-﻿using System.Drawing;
+﻿using ModularPanels;
+using System.Drawing;
 using System.Numerics;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Windows.Forms.Design.Behavior;
 
 namespace PanelLib
 {
+    public class BankSingleton<T>
+    {
+        static BankSingleton<T>? _instance;
+
+        readonly Dictionary<string, T> _items = [];
+
+        public static G Instance<G> () where G : BankSingleton<T>, new()
+        {
+            _instance ??= new G();
+            return (G)_instance;
+        }
+
+        public bool HasItem(string name)
+        {
+            return _items.ContainsKey(name);
+        }
+
+        public void AddItem(string name, T item)
+        {
+            _items.Add(name, item);
+        }
+
+        public bool TryGetItem(string name, out T? item)
+        {
+            return _items.TryGetValue(name, out item);
+        }
+    }
+
+    public class CustomColorBank: BankSingleton<Color>
+    {
+        public static CustomColorBank Instance
+        {
+            get => Instance<CustomColorBank>();
+        }
+
+        public bool HasColor(string name)
+        {
+            return HasItem(name);
+        }
+
+        public void AddColor(string name, Color color)
+        {
+            AddItem(name, color);
+        }
+
+        public bool TryGetColor(string name, out Color color)
+        {
+            return TryGetItem(name, out color);
+        }
+    }
+
+    public static class StyleBank
+    {
+        public static BankSingleton<TrackStyle> TrackStyles
+        {
+            get
+            {
+                return BankSingleton<TrackStyle>.Instance<BankSingleton<TrackStyle>>();
+            }
+        }
+        public static BankSingleton<PointsStyle> PointsStyles
+        {
+            get
+            {
+                return BankSingleton<PointsStyle>.Instance<BankSingleton<PointsStyle>>();
+            }
+        }
+        public static BankSingleton<DetectorStyle> DetectorStyles
+        {
+            get
+            {
+                return BankSingleton<DetectorStyle>.Instance<BankSingleton<DetectorStyle>>();
+            }
+        }
+    }
+
     public enum ShapeMirror
     {
         None,
@@ -291,11 +369,20 @@ namespace PanelLib
         public Graphics graphics;
     }
 
+    public struct DrawingBorder
+    {
+        public Color color;
+        public float width = 2f;
+
+        public DrawingBorder() {}
+    }
+
     public class Drawing()
     {
         int _gridSize = 5;
         Rectangle _canvas;
         Color? _background;
+        DrawingBorder? _border;
 
         GridStyle? _gridStyle;
 
@@ -321,6 +408,12 @@ namespace PanelLib
         {
             get => _background;
             set => _background = value;
+        }
+
+        public DrawingBorder? Border
+        {
+            get => _border;
+            set => _border = value;
         }
 
         public GridStyle? GridStyle
@@ -380,6 +473,8 @@ namespace PanelLib
             {
                 DrawText(g, label);
             }*/
+
+            DrawBorder(g);
         }
 
         private void DrawBackground(Graphics g)
@@ -390,6 +485,18 @@ namespace PanelLib
             Brush bgBrush = new SolidBrush(_background.Value);
             g.FillRectangle(bgBrush, _canvas);
             bgBrush.Dispose();
+        }
+
+        private void DrawBorder(Graphics g)
+        {
+            if (_border == null)
+                return;
+
+            Brush borderBrush = new SolidBrush(_border.Value.color);
+            Pen borderPen = new(borderBrush, _border.Value.width);
+            g.DrawRectangle(borderPen, _canvas);
+            borderBrush.Dispose();
+            borderPen.Dispose();
         }
 
         [SupportedOSPlatform("windows")]

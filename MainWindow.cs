@@ -1,3 +1,4 @@
+using PanelLib;
 using PanelLib.JSONData;
 using System.IO;
 using System.Text.Json;
@@ -6,39 +7,44 @@ namespace ModularPanels
 {
     public partial class MainWindow : Form
     {
-        readonly List<PanelLib.Drawing> _drawings = [];
+        List<PanelLib.Drawing> _drawings = [];
 
         public MainWindow()
         {
             InitializeComponent();
 
-            PanelLib.Drawing drawing1 = new();
-            Rectangle rect = new()
-            {
-                X = drawPanel1.Left + 200,
-                Y = drawPanel1.Top,
-                Width = 2000,
-                Height = drawPanel1.Height + 200
-            };
-
-            drawing1.Canvas = rect;
-            _drawings.Add(drawing1);
             drawPanel1.Paint += OnPaint;
 
-            string path = "C:\\Users\\Kyle\\source\\repos\\ModularPanels\\data\\modules\\wilnau.json";
+            MouseWheel += OnMouseWheel;
+            SizeChanged += OnResizeEnd;
+            drawPanel1.InitScrollbar(hScrollBar1, this, 20);
+
+            LoadLibFiles();
+            LoadLayout();
+        }
+
+        private void LoadLibFiles()
+        {
+            string dataPath = Application.StartupPath + "data";
+            JSONLib.LoadStyleFiles(dataPath + "\\styles\\");
+        }
+
+        private void LoadLayout()
+        {
+
+            string path = "C:\\Users\\Kyle\\source\\repos\\ModularPanels\\data\\layouts\\testlayout.json";
             if (File.Exists(path))
             {
                 try
                 {
                     string json = File.ReadAllText(path);
-                    JSON_Module? moduleData = JsonSerializer.Deserialize<JSON_Module>(json);
+                    JSON_Layout? layoutData = JsonSerializer.Deserialize<JSON_Layout>(json);
 
-                    if (moduleData != null)
+                    if (layoutData != null)
                     {
-                        Module module = moduleData.Initialize();
-                        module.InitDrawing(drawing1);
-
-                        module.TrackDetectors["1-"].IsOccupied = true;
+                        Layout layout = layoutData.Value.Initialize();
+                        _drawings = layout.GetDrawings();
+                        drawPanel1.Width = layout.Width;
                     }
                 }
                 catch (Exception e)
@@ -47,11 +53,7 @@ namespace ModularPanels
                 }
             }
 
-            MouseWheel += OnMouseWheel;
-            SizeChanged += OnResizeEnd;
-
-            drawPanel1.SetMinWidth(2000); ;
-            drawPanel1.InitScrollbar(hScrollBar1, this, 20);
+            drawPanel1.SetMinWidth(drawPanel1.Width);
         }
 
         private void OnResizeEnd(object? sender, EventArgs e)
