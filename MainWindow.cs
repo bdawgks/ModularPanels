@@ -1,3 +1,4 @@
+using ModularPanels.ButtonLib;
 using PanelLib;
 using PanelLib.JSONData;
 using System.IO;
@@ -8,7 +9,8 @@ namespace ModularPanels
     public partial class MainWindow : Form
     {
         List<PanelLib.Drawing> _drawings = [];
-        PanelLib.SignalSpace? _signalSpace;
+
+        RotarySwitch _switch1;
 
         public MainWindow()
         {
@@ -22,13 +24,35 @@ namespace ModularPanels
 
             LoadLibFiles();
             LoadLayout();
+
+            TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue("STB_DwarfSwitch", out RotarySwitchTemplate rst1);
+            _switch1 = new(new Point(200, 100), rst1);
+            InteractionSpace iSpace = new(drawPanel1);
+            iSpace.AddControl(_switch1);
         }
 
-        private void LoadLibFiles()
+        private static void LoadLibFiles()
         {
             string dataPath = Application.StartupPath + "data";
             JSONLib.LoadStyleFiles(dataPath + "\\styles\\");
             JSONLib.LoadSignalFiles(ModularPanels.Layout.SignalSpace, dataPath + "\\signals\\");
+            LoadControlTemplates();
+        }
+
+        private static void LoadControlTemplates()
+        {
+            string dir = Application.StartupPath + "data\\controls\\";
+            if (!Directory.Exists(dir))
+                return;
+
+            string[] allFiles = Directory.GetFiles(dir);
+            foreach (string file in allFiles)
+            {
+                if (Path.GetExtension(file) != ".json")
+                    continue;
+
+                ButtonLib.JSON_Control_Templates.LoadTemplateFile(file);
+            }
         }
 
         private void LoadLayout()
@@ -87,6 +111,8 @@ namespace ModularPanels
             {
                 drawing.Draw(e.Graphics);
             }
+
+            _switch1.Draw(e.Graphics);
         }
     }
 }

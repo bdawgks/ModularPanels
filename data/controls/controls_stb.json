@@ -1,0 +1,16 @@
+{"RotarySwitches": [
+	{"Name": "STB_DwarfSwitch",
+	"Size": 20.0,
+	"PrimaryColor": "DimGray",
+	"SecondaryColor": "WhiteSmoke",
+	"CenterPos": 1,
+	"Positions": [
+		{"Angle": -30.0, "Size": 10.0, "Latching": false,
+			"Lamp": {"Size": 6, "ColorOn": "Red", "ColorOff": "Maroon", "Border": 1.5}
+		},
+		{"Angle": 0.0, "Size": 0.0, "Latching": true},
+		{"Angle": 30.0, "Size": 10.0, "Latching": false,
+			"Lamp": {"Size": 6, "ColorOn": "FloralWhite", "ColorOff": "Silver", "Border": 1.5}
+		}
+	]}
+]}
