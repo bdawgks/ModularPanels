@@ -2,8 +2,8 @@
 	{"Name": "DominoBG", "R": 173, "G": 222, "B": 186}
 ],	
 "TrackStyles": [
-	{"ID": "Mainline", "Color": "Black", "Width": 10.0},
-	{"ID": "Yard", "Color": "Gold", "Width": 10.0}
+	{"ID": "Mainline", "Color": "Black", "Width": 12.0},
+	{"ID": "Yard", "Color": "Gold", "Width": 12.0}
 ],
 "PointsStyles": [
 	{"ID": "Main",
@@ -24,6 +24,11 @@
 	"Rectangle": {
 		"MinEdgeMargin": 10,
 		"SegmentLength": 20,
-		"SegmentSpace": 30
+		"SegmentSpace": 30,
+		"Width": 8
 	}}
+],
+"TextStyles":[
+	{"ID": "Title", "Font": "Impact", "Size": 50, "Color": "Black"},
+	{"ID": "Signal", "Font": "Calibri", "Size": 15, "Color": "Black"}
 ]}

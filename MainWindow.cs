@@ -8,6 +8,7 @@ namespace ModularPanels
     public partial class MainWindow : Form
     {
         List<PanelLib.Drawing> _drawings = [];
+        PanelLib.SignalSpace? _signalSpace;
 
         public MainWindow()
         {
@@ -27,6 +28,7 @@ namespace ModularPanels
         {
             string dataPath = Application.StartupPath + "data";
             JSONLib.LoadStyleFiles(dataPath + "\\styles\\");
+            JSONLib.LoadSignalFiles(ModularPanels.Layout.SignalSpace, dataPath + "\\signals\\");
         }
 
         private void LoadLayout()

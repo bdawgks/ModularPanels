@@ -8,6 +8,8 @@ namespace PanelLib
         public readonly int x = x;
         public readonly int y = y;
         public TrackStyle style = new();
+        public bool squareEnd = false;
+        public float segDir = 0f;
 
         public Point GetPoint(int gridSize = 1)
         {

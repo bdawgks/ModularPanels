@@ -82,6 +82,13 @@ namespace PanelLib
                 return BankSingleton<DetectorStyle>.Instance<BankSingleton<DetectorStyle>>();
             }
         }
+        public static BankSingleton<TextStyle> TextStyles
+        {
+            get
+            {
+                return BankSingleton<TextStyle>.Instance<BankSingleton<TextStyle>>();
+            }
+        }
     }
 
     public enum ShapeMirror
@@ -272,7 +279,8 @@ namespace PanelLib
 
     public struct GridStyle
     {
-        public Color gridColor = Color.LightGray;
+        public Color majorColor = Color.LightGray;
+        public Color minorColor = Color.LightGray;
         public Color textColor = Color.Gray;
         public string textFont = "Calibri";
         public float textSize = 15f;
@@ -313,13 +321,14 @@ namespace PanelLib
         public int minEdgeMargin = 5;
         public int segmentLength = 10;
         public int segmentSpace = 5;
+        public int width = 5;
 
         public override void Draw(DrawingContext context, TrackDetector detector)
         {
             Color fillColor = detector.IsOccupied ? colorOccupied : colorEmpty;
             Brush fillBrush = new SolidBrush(fillColor);
             Brush outlineBrush = new SolidBrush(colorOutline);
-            Pen outlinePen = new Pen(outlineBrush, outline);
+            Pen outlinePen = new(outlineBrush, outline);
 
             foreach (TrackSegment seg in detector.GetSegments())
             {
@@ -328,7 +337,6 @@ namespace PanelLib
                 Vector2 segDir = Vector2.Normalize(pos1 - pos0);
                 float angle = Drawing.VectorAngle(segDir);
 
-                float width = seg.style.width;
                 float segLenF = segmentLength;
                 float segLenH = segLenF * 0.5f;
                 float segSpaceF = segmentSpace;
@@ -349,7 +357,7 @@ namespace PanelLib
                     context.graphics.RotateTransform(angle);
 
                     PointF corner = new(-segLenH, -width * 0.5f);
-                    RectangleF rect = new RectangleF(corner, new SizeF(segLenF, width));
+                    RectangleF rect = new(corner, new SizeF(segLenF, width));
                     context.graphics.FillRectangle(fillBrush, rect);
                     context.graphics.DrawRectangles(outlinePen, [rect]);
 
@@ -360,6 +368,57 @@ namespace PanelLib
             fillBrush.Dispose();
             outlineBrush.Dispose();
             outlinePen.Dispose();
+        }
+    }
+
+    public struct TextStyle
+    {
+        public string font = "Calibri";
+        public Color color = Color.Black;
+        public int size = 30;
+        public bool bold = false;
+
+        public TextStyle() { }
+    }
+
+    public class PanelText
+    {
+        readonly string _id;
+        readonly int _x;
+        readonly int _y;
+        readonly float _angle = 0f;
+
+        string _text = "";
+        TextStyle _style;
+
+        public string Text
+        {
+            get => _text; 
+            set => _text = value;
+        }
+
+        public float Angle
+        {
+            get => _angle;
+        }
+
+        public TextStyle Style
+        {
+            get => _style;
+            set => _style = value;
+        }
+
+        public PanelText(string id, int x, int y, float angle)
+        {
+            _id = id;
+            _x = x;
+            _y = y;
+            _angle = angle;
+        }
+
+        public Point GetPoint(int gridSize)
+        {
+            return new(_x * gridSize, _y * gridSize);
         }
     }
 
@@ -391,6 +450,7 @@ namespace PanelLib
         readonly List<TrackNode> _nodes = [];
         readonly List<TrackDetector> _detectors = [];
         readonly List<Signal> _signals = [];
+        readonly List<PanelText> _texts = [];
 
         public int GridSize
         {
@@ -442,6 +502,16 @@ namespace PanelLib
             _detectors.Add(detector);
         }
 
+        public void AddSignal(Signal signal)
+        {
+            _signals.Add(signal);
+        }
+
+        public void AddText(PanelText text)
+        {
+            _texts.Add(text);
+        }
+
         [SupportedOSPlatform("windows")]
         public void Draw(Graphics g)
         {
@@ -468,11 +538,10 @@ namespace PanelLib
             {
                 DrawSignal(g, sig);
             }
-            /*
-            foreach (TextLabel label in _labels)
+            foreach (PanelText t in _texts)
             {
-                DrawText(g, label);
-            }*/
+                DrawText(g, t);
+            }
 
             DrawBorder(g);
         }
@@ -513,6 +582,12 @@ namespace PanelLib
             segment.n0.style = segment.style;
             segment.n1.style = segment.style;
 
+            Vector2 v0 = PointToVector(p1);
+            Vector2 v1 = PointToVector(p2);
+            float angle = VectorAngle(v1 - v0);
+            segment.n0.segDir = angle;
+            segment.n1.segDir = angle;
+
             trackBrush.Dispose();
             trackPen.Dispose();
         }
@@ -526,7 +601,17 @@ namespace PanelLib
             Brush b = new SolidBrush(node.style.color);
             PointF tl = new(p.X - node.style.width * 0.5f, p.Y - node.style.width * 0.5f);
             RectangleF rect = new(tl.X, tl.Y, node.style.width, node.style.width);
-            g.FillEllipse(b, rect);
+            if (node.squareEnd)
+            {
+                g.TranslateTransform(p.X, p.Y);
+                rect.X -= p.X;
+                rect.Y -= p.Y;
+                g.RotateTransform(node.segDir);
+                g.FillRectangle(b, rect);
+                g.ResetTransform();
+            }
+            else
+                g.FillEllipse(b, rect);
 
             b.Dispose();
         }
@@ -596,49 +681,50 @@ namespace PanelLib
 
         private void DrawSignal(Graphics g, Signal sig)
         {
-            if (sig.Type is SignalTypeDraw sType)
+            foreach (SignalShape sshape in sig.Type.Shapes)
             {
-                foreach (SignalShape sshape in sType.Shapes)
+                if (sshape.Shape == null)
+                    continue;
+
+                SignalHead? head = sig.GetHead(sshape.HeadID);
+                if (head != null)
                 {
-                    if (sshape.Shape == null)
+                    if (!sshape.VisibleWithAspect(head.Aspect))
                         continue;
-
-                    SignalHead? head = sig.GetHead(sshape.HeadID);
-                    if (head != null)
-                    {
-                        if (!sshape.VisibleWithAspect(head.Aspect))
-                            continue;
-                    }
-
-                    Point pos = new(sig.Pos.X * _gridSize, sig.Pos.Y * _gridSize);
-                    Transform(ref pos);
-                    sshape.DrawShape(g, pos, sig.Angle, sig.Scale);
                 }
+
+                Point pos = new(sig.Pos.X * _gridSize, sig.Pos.Y * _gridSize);
+                Transform(ref pos);
+                sshape.DrawShape(g, pos, sig.Angle, sig.Scale);
             }
         }
 
-        /*
-        private void DrawText(Graphics g, TextLabel label)
+        private void DrawText(Graphics g, PanelText text)
         {
             FontStyle style = FontStyle.Regular;
-            if (label.bold)
+            if (text.Style.bold)
                 style = FontStyle.Bold;
-            Font font = new("Times New Roman", FontSize * label.scale, style);
+            Font font = new("Times New Roman", text.Style.size, style);
+
+            Point p = text.GetPoint(_gridSize);
+            Transform(ref p);
+
+            g.TranslateTransform(p.X, p.Y);
+            g.RotateTransform(text.Angle);
 
             StringFormat format = new();
-            SizeF stringSize = g.MeasureString(label.text, font, 300 * _gridSize, format);
-            PointF corner = new(label.pos.X * _gridSize, label.pos.Y * _gridSize);
-            corner.X -= stringSize.Width / 2;
-            corner.Y -= stringSize.Height / 2;
+            SizeF stringSize = g.MeasureString(text.Text, font, 300 * _gridSize, format);
+            PointF corner = new(-stringSize.Width / 2, -stringSize.Height / 2);
             RectangleF rect = new(corner, stringSize);
 
-            Brush textBrush = new SolidBrush(label.color);
-            g.DrawString(label.text, font, textBrush, rect);
+            Brush textBrush = new SolidBrush(text.Style.color);
+            g.DrawString(text.Text, font, textBrush, rect);
+            g.ResetTransform();
 
             format.Dispose();
             font.Dispose();
             textBrush.Dispose();
-        }*/
+        }
 
         private void DrawDetector(Graphics g, TrackDetector detector)
         {
@@ -660,39 +746,43 @@ namespace PanelLib
             List<Point> textPoints = [];
             List<string> textStrings = [];
 
-            Brush gridBrush = new SolidBrush(_gridStyle.Value.gridColor);
+            Brush gridMajorBrush = new SolidBrush(_gridStyle.Value.majorColor);
+            Brush gridMinorBrush = new SolidBrush(_gridStyle.Value.minorColor);
             Brush textBrush = new SolidBrush(_gridStyle.Value.textColor);
             Font textFont = new(_gridStyle.Value.textFont, _gridStyle.Value.textSize);
 
-            for (int i = 0; i < _canvas.Height; i++)
+            int numH = _canvas.Height / _gridSize;
+            int numV = _canvas.Width / _gridSize;
+
+            for (int i = 0; i < numH; i++)
             {
                 Point p1 = new(0, i * _gridSize);
                 Point p2 = new(_canvas.Width, i * _gridSize);
                 Transform(ref p1);
                 Transform(ref p2);
-                Pen gridPen = new(gridBrush);
+                Pen gridPen = new(gridMinorBrush);
                 if (i > 0 && i % 10 == 0)
                 {
                     textPoints.Add(p1);
                     textStrings.Add(i.ToString());
-                    gridPen = new(textBrush);
+                    gridPen = new(gridMajorBrush);
                 }
                 g.DrawLine(gridPen, p1, p2);
                 gridPen.Dispose();
             }
 
-            for (int i = 0; i < _canvas.Width; i++)
+            for (int i = 0; i < numV; i++)
             {
                 Point p1 = new(i * _gridSize, 0);
                 Point p2 = new(i * _gridSize, _canvas.Height);
                 Transform(ref p1);
                 Transform(ref p2);
-                Pen gridPen = new(gridBrush);
+                Pen gridPen = new(gridMinorBrush);
                 if (i > 0 && i % 10 == 0)
                 {
                     textPoints.Add(p1);
                     textStrings.Add(i.ToString());
-                    gridPen = new(textBrush);
+                    gridPen = new(gridMajorBrush);
                 }
                 g.DrawLine(gridPen, p1, p2);
                 gridPen.Dispose();
@@ -703,7 +793,8 @@ namespace PanelLib
                 g.DrawString(textStrings[i], textFont, textBrush, textPoints[i]);
             }
 
-            gridBrush.Dispose();
+            gridMajorBrush.Dispose();
+            gridMinorBrush.Dispose();
             textBrush.Dispose();
             textFont.Dispose();
         }

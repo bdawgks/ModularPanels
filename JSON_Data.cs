@@ -118,6 +118,7 @@ namespace ModularPanels
         public int MinEdgeMargin { get; set; }
         public int SegmentLength { get; set; }
         public int SegmentSpace { get; set; }
+        public int Width { get; set; }
     }
 
     public struct JSON_DetectorStyle
@@ -141,16 +142,14 @@ namespace ModularPanels
                 {
                     minEdgeMargin = Rectangle.Value.MinEdgeMargin,
                     segmentLength = Rectangle.Value.SegmentLength,
-                    segmentSpace = Rectangle.Value.SegmentSpace
+                    segmentSpace = Rectangle.Value.SegmentSpace,
+                    width = Rectangle.Value.Width
                 };
 
                 style = rectStyle;
             }
 
-            if (style == null)
-            {
-                style = new PanelLib.DetectorStyleRectangle();
-            }
+            style ??= new PanelLib.DetectorStyleRectangle();
 
             style.outline = OutlineSize;
             style.colorEmpty = ColorEmpty;
@@ -161,17 +160,46 @@ namespace ModularPanels
         }
     }
 
+    public struct JSON_TextStyle
+    {
+        public string ID { get; set; }
+        public string Font { get; set; }
+        public int Size { get; set; }
+        public ColorJS Color { get; set; }
+        public readonly PanelLib.TextStyle Load()
+        {
+
+            PanelLib.TextStyle style = new()
+            {
+                font = Font,
+                size = Size,
+                color = Color
+            };
+
+            return style;
+        }
+    }
+
     public struct JSON_Module_Node
     {
         public string ID { get; set; }
         public int[] Pos { get; set; }
+        public bool? Square { get; set; }
 
         public readonly PanelLib.TrackNode? Load()
         {
             if (Pos.Length != 2)
                 return null;
 
-            PanelLib.TrackNode node = new(ID, Pos[0], Pos[1]);
+            bool squareEnd = false;
+            if (Square != null)
+                squareEnd = Square.Value;
+
+            PanelLib.TrackNode node = new(ID, Pos[0], Pos[1])
+            {
+                squareEnd = squareEnd
+            };
+
             return node;
         }
     }
@@ -200,11 +228,40 @@ namespace ModularPanels
         public string[] Segments { get; set; }
     }
 
+    public struct JSON_Text
+    {
+        public string Text { get; set; }
+        public string Style { get; set; }
+        public int[] Pos { get; set; }
+        public float? Angle { get; set; }
+
+        public readonly PanelLib.PanelText Load()
+        {
+            if (Pos.Length != 2)
+                throw new Exception("Invalid position for text " + Text);
+
+            float angle = 0f;
+            if (Angle != null)
+                angle = Angle.Value;
+
+            if (!PanelLib.StyleBank.TextStyles.TryGetItem(Style, out TextStyle style))
+                style = new();
+
+            PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
+            {
+                Text = Text,
+                Style = style
+            };
+            return text;
+        }
+    }
+
     public struct JSON_Module_DrawingData
     {
         public int Width { get; set; }
         public int Height { get; set; }
         public ColorJS BackgroundColor { get; set; }
+        public List<JSON_Text> Texts { get; set; }
         public List<JSON_TrackStyle> TrackStyles { get; set; }
         public List<JSON_PointsStyle> PointsStyles { get; set; }
         public List<JSON_DetectorStyle> DetectorStyles { get; set; }
@@ -224,6 +281,43 @@ namespace ModularPanels
         public List<JSON_TrackStyle>? TrackStyles { get; set; }
         public List<JSON_PointsStyle>? PointsStyles { get; set; }
         public List<JSON_DetectorStyle>? DetectorStyles { get; set; }
+        public List<JSON_TextStyle>? TextStyles { get; set; }
+    }
+
+    public struct JSON_Module_Signal
+    {
+        public string ID { get; set; }
+        public string Type { get; set; }
+        public int[] Pos { get; set; }
+        public float? Angle { get; set; }
+        public float? Scale { get; set; }
+    }
+
+    public struct JSON_Module_SignalData
+    {
+        public List<JSON_Module_Signal> Signals { get; set; }
+
+        public readonly void InitSignals(Module mod, SignalSpace space)
+        {
+            if (Signals == null)
+                return;
+
+            foreach (var signal in Signals)
+            {
+                Signal? sig = space.CreateSignal(signal.ID, signal.Type);
+                if (sig == null)
+                    continue;
+
+                sig.SetPos(signal.Pos);
+                if (signal.Angle != null)
+                    sig.SetAngle(signal.Angle.Value);
+                if (signal.Scale != null)
+                    sig.SetScale(signal.Scale.Value);
+
+                mod.Signals.Add(sig.Name, sig);
+                sig.InitSignal();
+            }
+        }
     }
 
     public static class JSONLib
@@ -270,6 +364,20 @@ namespace ModularPanels
             }
         }
 
+        public static void LoadTextStyles(List<JSON_TextStyle>? list)
+        {
+            if (list == null)
+                return;
+
+            foreach (JSON_TextStyle styleData in list)
+            {
+                if (PanelLib.StyleBank.TextStyles.HasItem(styleData.ID))
+                    throw new Exception("Duplicate text style ID: " + styleData.ID);
+
+                PanelLib.StyleBank.TextStyles.AddItem(styleData.ID, styleData.Load());
+            }
+        }
+
         public static void LoadStyleFiles(string dir)
         {
             if (!Directory.Exists(dir))
@@ -296,7 +404,23 @@ namespace ModularPanels
                     LoadTrackStyles(styleData.TrackStyles);
                     LoadPointsStyles(styleData.PointsStyles);
                     LoadDetectorStyles(styleData.DetectorStyles);
+                    LoadTextStyles(styleData.TextStyles);
                 }
+            }
+        }
+
+        public static void LoadSignalFiles(PanelLib.SignalSpace sigSpace, string dir)
+        {
+            if (!Directory.Exists(dir))
+                return;
+
+            string[] allFiles = Directory.GetFiles(dir);
+            foreach (string file in allFiles)
+            {
+                if (Path.GetExtension(file) != ".json")
+                    continue;
+
+                PanelLib.JSONData.JSONLoader.LoadSignalLibrary(sigSpace, file);
             }
         }
     }

@@ -17,6 +17,7 @@ namespace ModularPanels
         public List<JSON_CustomColor>? Colors { get; set; }
         public JSON_Module_DrawingData DrawingData { get;set;}
         public JSON_Module_TrackData TrackData { get;set;}
+        public JSON_Module_SignalData SignalData { get;set;}
 
         private static void GetNode(Module m, string id, out PanelLib.TrackNode? node)
         {
@@ -47,6 +48,14 @@ namespace ModularPanels
             {
                 BackgroundColor = DrawingData.BackgroundColor
             };
+
+            if (DrawingData.Texts != null)
+            {
+                foreach (var t in DrawingData.Texts)
+                {
+                    module.Texts.Add(t.Load());
+                }
+            }
 
             if (TrackData.Nodes != null && TrackData.Segments != null)
             {
@@ -126,6 +135,8 @@ namespace ModularPanels
                 }
             }
 
+            SignalData.InitSignals(module, Layout.SignalSpace);
+
             return module;
         }
     }
@@ -136,19 +147,21 @@ namespace ModularPanels
         readonly int _width;
         readonly int _height;
 
-        PanelLib.Drawing? _drawing;
         Color? _backgroundColor;
 
-        readonly Dictionary<string, TrackSegment> _trackSegments = [];
-        readonly Dictionary<string, TrackNode> _trackNodes = [];
-        readonly Dictionary<string, TrackPoints> _trackPoints = [];
-        readonly Dictionary<string, TrackDetector> _trackDetectors = [];
-        readonly Dictionary<string, Signal> _signals = [];
+        readonly Dictionary<string, PanelLib.TrackSegment> _trackSegments = [];
+        readonly Dictionary<string, PanelLib.TrackNode> _trackNodes = [];
+        readonly Dictionary<string, PanelLib.TrackPoints> _trackPoints = [];
+        readonly Dictionary<string, PanelLib.TrackDetector> _trackDetectors = [];
+        readonly Dictionary<string, PanelLib.Signal> _signals = [];
+        readonly List<PanelLib.PanelText> _texts = [];
 
-        public Dictionary<string, TrackSegment> TrackSegments { get { return _trackSegments; } }
-        public Dictionary<string, TrackNode> TrackNodes { get { return _trackNodes; } } 
-        public Dictionary<string, TrackPoints> TrackPoints { get { return _trackPoints; } }
-        public Dictionary<string, TrackDetector> TrackDetectors { get { return _trackDetectors; } }
+        public Dictionary<string, PanelLib.TrackSegment> TrackSegments { get { return _trackSegments; } }
+        public Dictionary<string, PanelLib.TrackNode> TrackNodes { get { return _trackNodes; } } 
+        public Dictionary<string, PanelLib.TrackPoints> TrackPoints { get { return _trackPoints; } }
+        public Dictionary<string, PanelLib.TrackDetector> TrackDetectors { get { return _trackDetectors; } }
+        public Dictionary<string, PanelLib.Signal> Signals { get { return _signals; } }
+        public List<PanelLib.PanelText> Texts { get { return _texts; } }
 
         public Module(string name, int width, int height)
         {
@@ -175,7 +188,6 @@ namespace ModularPanels
 
         public void InitDrawing(Drawing drawing)
         {
-            _drawing = drawing;
             drawing.Background = BackgroundColor;
             drawing.Border = new()
             {
@@ -183,25 +195,46 @@ namespace ModularPanels
                 width = 2f
             };
 
-            foreach (TrackNode n in _trackNodes.Values)
+            //drawing.GridStyle = new PanelLib.GridStyle()
+            //{
+            //    majorColor = Color.Black,
+            //    minorColor = Color.WhiteSmoke,
+            //    textColor = Color.Black
+            //};
+
+            //drawing.GridStyle = new PanelLib.GridStyle()
+            //{
+            //    majorColor = Color.DarkGreen,
+            //    minorColor = Color.Empty,
+            //    textColor = Color.Empty
+            //};
+            foreach (PanelLib.TrackNode n in _trackNodes.Values)
             {
                 drawing.AddNode(n);
             }
-            foreach (TrackSegment s in _trackSegments.Values)
+            foreach (PanelLib.TrackSegment s in _trackSegments.Values)
             {
                 drawing.AddSegment(s);
             }
-            foreach (TrackPoints p in _trackPoints.Values)
+            foreach (PanelLib.TrackPoints p in _trackPoints.Values)
             {
                 drawing.AddPoints(p);
             }
-            foreach (TrackDetector d in _trackDetectors.Values)
+            foreach (PanelLib.TrackDetector d in _trackDetectors.Values)
             {
                 drawing.AddDetector(d);
             }
+            foreach (PanelLib.Signal s in _signals.Values)
+            {
+                drawing.AddSignal(s);
+            }
+            foreach (PanelLib.PanelText t in _texts)
+            {
+                drawing.AddText(t);
+            }
         }
 
-        public static bool LoadModule(string name, out Module? module)
+        public static bool LoadModule(string name, Layout layout, out Module? module)
         {
             module = null;
             string path = Application.StartupPath + "data\\modules\\" + name + ".json";

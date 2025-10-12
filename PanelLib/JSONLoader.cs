@@ -166,7 +166,7 @@ namespace PanelLib
 
                         SignalType type = new(sig.Name, ruleset);
 
-                        if (sig.Shapes != null && type is SignalTypeDraw typeDraw)
+                        if (sig.Shapes != null)
                         {
                             foreach (SignalShape shape in sig.Shapes)
                             {
@@ -175,7 +175,7 @@ namespace PanelLib
                                 {
                                     _ = Enum.TryParse(shape.Mirror, out mirror);
                                 }
-                                typeDraw.AddShape(shape.Type, shape.Aspect, shape.Offset, shape.Angle, shape.Head, mirror);
+                                type.AddShape(shape.Type, shape.Aspect, shape.Offset, shape.Angle, shape.Head, mirror);
                             }
                         }
 

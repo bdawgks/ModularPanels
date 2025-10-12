@@ -1,4 +1,5 @@
 ﻿
+using PanelLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,11 @@ namespace ModularPanels
 
         public readonly Layout Initialize()
         {
-            Layout layout = new(Name);
+            Layout layout = new(Name, Layout.SignalSpace);
 
             foreach (string m in Modules)
             {
-                if (Module.LoadModule(m, out Module? mod))
+                if (Module.LoadModule(m, layout, out Module? mod))
                 {
                     layout.AddModule(mod!);
                 }
@@ -33,15 +34,27 @@ namespace ModularPanels
         readonly string _name;
         readonly List<Module> _modules = [];
 
+        static PanelLib.SignalSpace? _sigSpace;
+
         int _width = 0;
         public int Width
         {
             get => _width;
         }
 
-        public Layout(string name)
+        public static PanelLib.SignalSpace SignalSpace
+        {
+            get
+            {
+                _sigSpace ??= new();
+                return _sigSpace;
+            }
+        }
+
+        public Layout(string name, SignalSpace sigSpace)
         {
             _name = name;
+            _sigSpace = sigSpace;
         }
 
         public void AddModule(Module module)

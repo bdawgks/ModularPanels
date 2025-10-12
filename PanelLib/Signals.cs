@@ -56,13 +56,39 @@ namespace PanelLib
             _shape.DrawShape(g, origin, oTransformed, originAngle + _angle, scale, _mirror);
         }
     }
-    public class SignalTypeDraw : SignalType
+
+    public class SignalType
     {
+        readonly string _name;
+        readonly SignalRuleset? _ruleset;
+        string? _startIndication = null;
+        protected readonly HashSet<string> _headNames = [];
         readonly List<SignalShape> _shapes = new();
 
+        public SignalRuleset? Ruleset { get { return _ruleset; } }
         public List<SignalShape> Shapes { get { return _shapes; } }
 
-        public SignalTypeDraw(string name, SignalRuleset? ruleset) : base(name, ruleset) { }
+        public string? StartIndication
+        {
+            get { return _startIndication; }
+            set { _startIndication = value; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        public SignalType(string name, SignalRuleset? ruleset)
+        {
+            _name = name;
+            _ruleset = ruleset;
+        }
+
+        public List<string> GetHeadNames()
+        {
+            return [.. _headNames];
+        }
 
         public void AddShape(string id, string[] aspect, int[] offset, float angle, string? headId = null, ShapeMirror mirror = ShapeMirror.None)
         {
@@ -87,38 +113,6 @@ namespace PanelLib
             {
                 _shapes[i].InitShape(bank);
             }
-        }
-    }
-
-    public class SignalType
-    {
-        readonly string _name;
-        readonly SignalRuleset? _ruleset;
-        string? _startIndication = null;
-        protected readonly HashSet<string> _headNames = [];
-
-        public SignalRuleset? Ruleset { get { return _ruleset; } }
-
-        public string? StartIndication
-        {
-            get { return _startIndication; }
-            set { _startIndication = value; }
-        }
-
-        public string Name
-        {
-            get { return _name; }
-        }
-
-        public SignalType(string name, SignalRuleset? ruleset)
-        {
-            _name = name;
-            _ruleset = ruleset;
-        }
-
-        public List<string> GetHeadNames()
-        {
-            return [.. _headNames];
         }
     }
 
@@ -152,8 +146,7 @@ namespace PanelLib
         {
             foreach (SignalType t in _types.Values)
             {
-                if (t is SignalTypeDraw tDraw)
-                    tDraw.LoadShapes(_shapeBank);
+                t.LoadShapes(_shapeBank);
             }
         }
 
