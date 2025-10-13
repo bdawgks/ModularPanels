@@ -545,10 +545,12 @@ namespace PanelLib
 
     public class SignalSpace
     {
-        private Dictionary<string, Signal> _signalMap = new();
-        private SignalBank _bank = new();
+        private readonly Dictionary<string, Signal> _signalMap = [];
+        private readonly SignalBank _bank = new();
 
         public SignalSpace() { }
+
+        public Dictionary<string, Signal> SignalMap { get { return _signalMap; } }
 
         public SignalBank Bank
         {

@@ -65,6 +65,8 @@ namespace ModularPanels.ButtonLib
         readonly IndicatorLamp? _lamp;
         string? _text;
 
+        Circuit? _activatedCircuit;
+
         public float Angle { get => _angle; }
         public float Size { get => _size; }
         public bool Latching { get => _latching; }
@@ -120,19 +122,35 @@ namespace ModularPanels.ButtonLib
 
         public void EnterPostion()
         {
-            if (_lamp != null)
-                _lamp.LampOn = true;
+            _activatedCircuit?.SetActive(true);
         }
 
         public void LeavePosition()
         {
-            if (_lamp != null)
-                _lamp.LampOn = false;
+            _activatedCircuit?.SetActive(false);
+        }
+
+        public void SetActivatedCircuit(Circuit circuit)
+        {
+            _activatedCircuit = circuit;
+        }
+
+        public void SetLampActivationCircuit(Circuit circuit)
+        {
+            if (_lamp == null)
+                return;
+
+            circuit.ActivationEvents += (sender, e) =>
+            {
+                _lamp.LampOn = e.Active;
+            };
         }
     }
 
     public class RotarySwitch : IControl
     {
+        readonly InteractionSpace _iSpace;
+
         readonly RotarySwitchTemplate _template;
 
         readonly float _size;
@@ -155,8 +173,9 @@ namespace ModularPanels.ButtonLib
         public float Angle { get => _angle; }
         public int CenterPos { get => _centerPos; }
 
-        public RotarySwitch(Point pos, RotarySwitchTemplate template)
+        public RotarySwitch(InteractionSpace iSpace, Point pos, RotarySwitchTemplate template)
         {
+            _iSpace = iSpace;
             _template = template;
             _pos = pos;
             _size = template.Size;
@@ -168,6 +187,8 @@ namespace ModularPanels.ButtonLib
             {
                 _positions[i] = new(this, i, template.Positions[i]);
             }
+
+            _iSpace.AddControl(this);
         }
 
         public IClickable[] GetClickables()
@@ -215,6 +236,22 @@ namespace ModularPanels.ButtonLib
             secondaryBrush.Dispose();
             lineBrush.Dispose();
             linePen.Dispose();
+        }
+
+        public void SetActivatedCircuit(int posIndex, string circuitName)
+        {
+            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
+                return;
+
+            _positions[posIndex].SetActivatedCircuit(circuit!);
+        }
+
+        public void SetLampActivationCircuit(int posIndex, string circuitName)
+        {
+            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
+                return;
+
+            _positions[posIndex].SetLampActivationCircuit(circuit!);
         }
 
         public void SetPosition(int idx)

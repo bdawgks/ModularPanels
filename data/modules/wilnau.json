@@ -95,4 +95,43 @@
 		{"ID": "E'", "Type": "CH_TL_Dw", "Pos": [85, 25], "Angle": 90},
 		{"ID": "F'", "Type": "CH_TL_Dw", "Pos": [135, 35], "Angle": -90}
 	]
+},
+"Controls": {
+	"RotarySwitches": [
+		{"ID": "A'", "Pos": [50,50], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_A'_stop"},
+			{"Pos": 2, "Circuit": "sw_A'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "A'_stop"},
+			{"Pos": 2, "Circuit": "A'_clear"}
+		]}
+	]
+},
+"RelayCircuits": {
+	"SimpleCircuits": [
+		{"ID": "sw_A'_stop", "Desc": "Switch for A' dwarf to STOP"},
+		{"ID": "sw_A'_clear", "Desc": "Switch for A' dwarf to CLEAR"}
+	],
+	"LogicCircuits": [
+		{"ID": "A'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_A'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_A'_stop"}
+		], "Desc": "A' dwarf signal to CLEAR"},
+		{"ID": "A'_stop", 
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_A'_stop"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "A'_clear"}
+		], "Desc": "A' dwarf signal to STOP"}
+	],
+	"SignalCircuits": [
+		{"SigID": "A'", "Circuit": "A'_clear", "Indication": "Clear"},
+		{"SigID": "A'", "Circuit": "A'_stop", "Indication": "Stop"}
+	]
 }}

@@ -1,4 +1,5 @@
-﻿using PanelLib;
+﻿using ModularPanels.ButtonLib;
+using PanelLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -318,6 +319,61 @@ namespace ModularPanels
                 sig.InitSignal();
             }
         }
+    }
+
+    public struct JSON_Module_SwitchCircuit
+    {
+        public int Pos { get; set; }
+        public string Circuit { get; set; }
+    }
+
+    public struct JSON_Module_ControlRotarySwitch
+    {
+        public string ID { get; set; }
+        public int[] Pos { get; set; }
+        public string Template { get; set; }
+        public List<JSON_Module_SwitchCircuit> SwitchCircuits { get; set; }
+        public List<JSON_Module_SwitchCircuit> LampCircuits { get; set; }
+    }
+
+    public struct JSON_Module_Controls
+    {
+        public List<JSON_Module_ControlRotarySwitch> RotarySwitches { get; set; }
+    }
+
+    public struct JSON_Module_SimpleCircuit
+    {
+        public string ID { get; set; }
+        public string Desc { get; set; }
+    }
+
+    public struct JSON_Module_LogicOperator
+    {
+        public string Op { get; set; }
+        public string Circuit { get; set; }
+    }
+
+    public struct JSON_Module_LogicCircuit
+    {
+        public string ID { get; set; }
+        public List<JSON_Module_LogicOperator> Condition { get; set; }
+        public List<JSON_Module_LogicOperator> ConditionOn { get; set; }
+        public List<JSON_Module_LogicOperator> ConditionOff { get; set; }
+        public string Desc { get; set; }
+    }
+
+    public struct JSON_Module_SignalCircuit
+    {
+        public string SigID { get; set; }
+        public string Circuit { get; set; }
+        public string Indication { get; set; }
+    }
+
+    public struct JSON_Module_RelayCircuits
+    {
+        public List<JSON_Module_SimpleCircuit> SimpleCircuits { get; set; }
+        public List<JSON_Module_LogicCircuit> LogicCircuits { get; set; }
+        public List<JSON_Module_SignalCircuit> SignalCircuits { get; set; }
     }
 
     public static class JSONLib

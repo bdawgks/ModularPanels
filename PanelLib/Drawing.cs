@@ -827,7 +827,7 @@ namespace PanelLib
             return angle;
         }
 
-        private void Transform(ref Point p)
+        public void Transform(ref Point p)
         {
             p.X += _canvas.X;
             p.Y += _canvas.Y;

@@ -7,7 +7,7 @@ namespace ModularPanels.ButtonLib
         public string Name { get; }
     }
 
-    public class TemplateBank<T> where T : ITemplate
+    public class TemplateBank<T> where T : notnull, ITemplate
     {
         readonly Dictionary<string, T> _templates = [];
 

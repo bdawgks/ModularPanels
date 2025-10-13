@@ -8,12 +8,15 @@ namespace ModularPanels
 {
     public partial class MainWindow : Form
     {
-        List<PanelLib.Drawing> _drawings = [];
+        public InteractionSpace ISpace;
 
-        RotarySwitch _switch1;
+        public static MainWindow? Instance;
+
+        List<PanelLib.Drawing> _drawings = [];
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
 
             drawPanel1.Paint += OnPaint;
@@ -22,13 +25,10 @@ namespace ModularPanels
             SizeChanged += OnResizeEnd;
             drawPanel1.InitScrollbar(hScrollBar1, this, 20);
 
+            ISpace = new(drawPanel1);
+
             LoadLibFiles();
             LoadLayout();
-
-            TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue("STB_DwarfSwitch", out RotarySwitchTemplate rst1);
-            _switch1 = new(new Point(200, 100), rst1);
-            InteractionSpace iSpace = new(drawPanel1);
-            iSpace.AddControl(_switch1);
         }
 
         private static void LoadLibFiles()
@@ -111,8 +111,6 @@ namespace ModularPanels
             {
                 drawing.Draw(e.Graphics);
             }
-
-            _switch1.Draw(e.Graphics);
         }
     }
 }

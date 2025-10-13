@@ -1,4 +1,5 @@
-﻿using PanelLib;
+﻿using ModularPanels.ButtonLib;
+using PanelLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace ModularPanels
         public JSON_Module_DrawingData DrawingData { get;set;}
         public JSON_Module_TrackData TrackData { get;set;}
         public JSON_Module_SignalData SignalData { get;set;}
+        public JSON_Module_Controls? Controls { get;set;}
+        public JSON_Module_RelayCircuits? RelayCircuits { get;set;}
 
         private static void GetNode(Module m, string id, out PanelLib.TrackNode? node)
         {
@@ -137,6 +140,12 @@ namespace ModularPanels
 
             SignalData.InitSignals(module, Layout.SignalSpace);
 
+            if (Controls != null)
+                module.AddControls(Controls.Value);
+
+            if (RelayCircuits != null)
+                MainWindow.Instance!.ISpace.InitCircuits(RelayCircuits.Value);
+
             return module;
         }
     }
@@ -147,7 +156,10 @@ namespace ModularPanels
         readonly int _width;
         readonly int _height;
 
+        PanelLib.Drawing? _drawing;
         Color? _backgroundColor;
+
+        JSON_Module_Controls? _controlsData;
 
         readonly Dictionary<string, PanelLib.TrackSegment> _trackSegments = [];
         readonly Dictionary<string, PanelLib.TrackNode> _trackNodes = [];
@@ -188,6 +200,7 @@ namespace ModularPanels
 
         public void InitDrawing(Drawing drawing)
         {
+            _drawing = drawing;
             drawing.Background = BackgroundColor;
             drawing.Border = new()
             {
@@ -232,6 +245,46 @@ namespace ModularPanels
             {
                 drawing.AddText(t);
             }
+            InitControls();
+        }
+
+        public void AddControls(JSON_Module_Controls controlsData)
+        {
+            _controlsData = controlsData;
+        }
+
+        public void InitControls()
+        {
+            if (_drawing == null || _controlsData == null)
+                return;
+
+            if (_controlsData.Value.RotarySwitches != null)
+            {
+                foreach (var rsData in _controlsData.Value.RotarySwitches)
+                {
+                    Point pos = new(rsData.Pos[0], rsData.Pos[1]);
+                    _drawing.Transform(ref pos);
+
+                    if (TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue(rsData.Template, out RotarySwitchTemplate? template))
+                    {
+                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, pos, template);
+                        if (rsData.SwitchCircuits != null)
+                        {
+                            foreach (var scData in rsData.SwitchCircuits)
+                            {
+                                rs.SetActivatedCircuit(scData.Pos, scData.Circuit);
+                            }
+                        }
+                        if (rsData.LampCircuits != null)
+                        {
+                            foreach (var scData in rsData.LampCircuits)
+                            {
+                                rs.SetLampActivationCircuit(scData.Pos, scData.Circuit);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static bool LoadModule(string name, Layout layout, out Module? module)
@@ -243,7 +296,6 @@ namespace ModularPanels
                 return false;
             try
             {
-
                 string json = File.ReadAllText(path);
                 JSON_Module? moduleData = JsonSerializer.Deserialize<JSON_Module>(json);
                 if (moduleData == null)

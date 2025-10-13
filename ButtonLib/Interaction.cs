@@ -90,6 +90,8 @@ namespace ModularPanels.ButtonLib
     {
         readonly DrawPanel _panel;
         readonly List<IClickable> _clickables = [];
+        readonly List<IControl> _allControls = [];
+        readonly Dictionary<string, Circuit> _circuits = [];
 
         IClickable? _lastClicked;
 
@@ -99,6 +101,7 @@ namespace ModularPanels.ButtonLib
 
             _panel.MouseDown += OnMouseDown;
             _panel.MouseUp += OnMouseUp;
+            _panel.Paint += OnPaint;
         }
 
         private void OnMouseDown(object? sender, MouseEventArgs e)
@@ -124,9 +127,130 @@ namespace ModularPanels.ButtonLib
             }
         }
 
+        private void OnPaint(object? sender, PaintEventArgs e)
+        {
+            foreach (var c in _allControls)
+            {
+                c.Draw(e.Graphics);
+            }
+        }
+
         public void AddControl(IControl control)
         {
+            _allControls.Add(control);
             _clickables.AddRange(control.GetClickables());
+        }
+
+        public bool TryGetCircuit(string circuitName, out Circuit? circuit)
+        {
+            return _circuits.TryGetValue(circuitName, out circuit);
+        }
+
+        private void AddCircuit(Circuit circuit)
+        {
+            _circuits.Add(circuit.Name, circuit);
+        }
+
+        private CircuitCondition? CreateCircuitOperator(string id, string op)
+        {
+            if (!_circuits.TryGetValue(id, out Circuit? circuit))
+                return null;
+
+            CircuitCondition? condition = null;
+            switch (op)
+            {
+                case "EQ": condition = new CircuitEq(circuit); break;
+                case "NOT": condition = new CircuitNot(circuit); break;
+                case "AND": condition = new CircuitAnd(circuit); break;
+                case "ANDNOT": condition = new CircuitAndNot(circuit); break;
+                case "NAND": condition = new CircuitNand(circuit); break;
+                case "OR": condition = new CircuitOr(circuit); break;
+                case "NOR": condition = new CircuitNor(circuit); break;
+            }
+
+            return condition;            
+        }
+
+        public void InitCircuits(JSON_Module_RelayCircuits circuitData)
+        {
+            if (circuitData.SimpleCircuits != null)
+            {
+                foreach (var sc in circuitData.SimpleCircuits)
+                {
+                    SimpleCircuit circuit = new(sc.ID);
+                    AddCircuit(circuit);
+                }
+            }
+            if (circuitData.LogicCircuits != null)
+            {
+                foreach (var lc in circuitData.LogicCircuits)
+                {
+                    LogicCircuit circuit = new(lc.ID);
+                    AddCircuit(circuit);
+                }
+
+                foreach (var lc in circuitData.LogicCircuits)
+                {
+                    Circuit circuit = _circuits[lc.ID];
+                    if (circuit is LogicCircuit logicCircuit)
+                    {
+                        if (lc.Condition != null)
+                        {
+                            foreach (var condData in lc.Condition)
+                            {
+                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
+                                if (cond == null)
+                                    continue;
+
+                                logicCircuit.AddOnCondition(cond);
+                                logicCircuit.AddOffCondition(cond);
+                            }
+                        }
+                        if (lc.ConditionOn != null)
+                        {
+                            foreach (var condData in lc.ConditionOn)
+                            {
+                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
+                                if (cond == null)
+                                    continue;
+
+                                logicCircuit.AddOnCondition(cond);
+                            }
+                        }
+                        if (lc.ConditionOff != null)
+                        {
+                            foreach (var condData in lc.ConditionOff)
+                            {
+                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
+                                if (cond == null)
+                                    continue;
+
+                                logicCircuit.AddOffCondition(cond);
+                            }
+                        }
+                    }
+                }
+            }
+            if (circuitData.SignalCircuits != null)
+            {
+                foreach (var sc in circuitData.SignalCircuits)
+                {
+                    if (!ModularPanels.Layout.SignalSpace.SignalMap.TryGetValue(sc.SigID, out PanelLib.Signal? sig))
+                        continue;
+
+                    if (!_circuits.TryGetValue(sc.Circuit, out Circuit? circuit))
+                        continue;
+
+                    PanelLib.SignalHead? sigHead = sig.GetDefaultHead();
+                    if (sigHead == null)
+                        continue;
+
+                    circuit.ActivationEvents += (sender, e) =>
+                    {
+                        sigHead.SetIndication(sc.Indication);
+                    };
+                }
+            }
         }
     }
 }
