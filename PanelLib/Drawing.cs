@@ -1,97 +1,17 @@
 ﻿using ModularPanels;
+using ModularPanels.DrawLib;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms.Design.Behavior;
 
 namespace PanelLib
 {
-    public class BankSingleton<T>
-    {
-        static BankSingleton<T>? _instance;
-
-        readonly Dictionary<string, T> _items = [];
-
-        public static G Instance<G> () where G : BankSingleton<T>, new()
-        {
-            _instance ??= new G();
-            return (G)_instance;
-        }
-
-        public bool HasItem(string name)
-        {
-            return _items.ContainsKey(name);
-        }
-
-        public void AddItem(string name, T item)
-        {
-            _items.Add(name, item);
-        }
-
-        public bool TryGetItem(string name, out T? item)
-        {
-            return _items.TryGetValue(name, out item);
-        }
-    }
-
-    public class CustomColorBank: BankSingleton<Color>
-    {
-        public static CustomColorBank Instance
-        {
-            get => Instance<CustomColorBank>();
-        }
-
-        public bool HasColor(string name)
-        {
-            return HasItem(name);
-        }
-
-        public void AddColor(string name, Color color)
-        {
-            AddItem(name, color);
-        }
-
-        public bool TryGetColor(string name, out Color color)
-        {
-            return TryGetItem(name, out color);
-        }
-    }
-
-    public static class StyleBank
-    {
-        public static BankSingleton<TrackStyle> TrackStyles
-        {
-            get
-            {
-                return BankSingleton<TrackStyle>.Instance<BankSingleton<TrackStyle>>();
-            }
-        }
-        public static BankSingleton<PointsStyle> PointsStyles
-        {
-            get
-            {
-                return BankSingleton<PointsStyle>.Instance<BankSingleton<PointsStyle>>();
-            }
-        }
-        public static BankSingleton<DetectorStyle> DetectorStyles
-        {
-            get
-            {
-                return BankSingleton<DetectorStyle>.Instance<BankSingleton<DetectorStyle>>();
-            }
-        }
-        public static BankSingleton<TextStyle> TextStyles
-        {
-            get
-            {
-                return BankSingleton<TextStyle>.Instance<BankSingleton<TextStyle>>();
-            }
-        }
-    }
-
     public enum ShapeMirror
     {
         None,
@@ -452,6 +372,7 @@ namespace PanelLib
         readonly List<TrackDetector> _detectors = [];
         readonly List<Signal> _signals = [];
         readonly List<PanelText> _texts = [];
+        readonly List<IDrawable> _drawables = [];
 
         public int GridSize
         {
@@ -512,6 +433,17 @@ namespace PanelLib
         {
             _texts.Add(text);
         }
+        public void AddDrawable(IDrawable drawable)
+        {
+            _drawables.Add(drawable);
+        }
+        public void AddTransformable(IDrawTransformable transformable)
+        {
+            foreach (var t in transformable.GetTransforms())
+            {
+                t.SetDrawing(this);
+            }
+        }
 
         [SupportedOSPlatform("windows")]
         public void Draw(Graphics g)
@@ -542,6 +474,16 @@ namespace PanelLib
             foreach (PanelText t in _texts)
             {
                 DrawText(g, t);
+            }
+
+            DrawingContext context = new()
+            {
+                graphics = g,
+                drawing = this
+            };
+            foreach (IDrawable d in _drawables)
+            {
+                d.Draw(context);
             }
 
             DrawBorder(g);
@@ -837,6 +779,34 @@ namespace PanelLib
         {
             p.X += _canvas.X;
             p.Y += _canvas.Y;
+        }
+
+        /// <summary>
+        /// Transforms a drawing position (relative to module) to absolute position for drawing.
+        /// </summary>
+        /// <param name="pos">Drawing position.</param>
+        /// <returns>Point representing absolute position on draw panel</returns>
+        public Point Transform(DrawingPos pos)
+        {
+            Point p = new(pos.x, pos.y);
+            p.X += _canvas.X;
+            p.Y += _canvas.Y;
+            return p;
+        }
+
+        /// <summary>
+        /// Inverse transforms a point to drawing position relative to the drawing origin.
+        /// </summary>
+        /// <param name="p">Point (absolute pos) to transform.</param>
+        /// <returns>DrawPos relative to drawing</returns>
+        public DrawingPos InverseTransform(Point p)
+        {
+            DrawingPos pos = new()
+            {
+                x = p.X - _canvas.X,
+                y = p.Y - _canvas.Y
+            };
+            return pos;
         }
     }
 }

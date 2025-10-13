@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModularPanels.DrawLib;
+using PanelLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +16,9 @@ namespace ModularPanels.ButtonLib
         public readonly float border = template.Border;
     }
 
-    public class IndicatorLamp
+    public class IndicatorLamp : DrawTransform
     {
-        readonly Point _pos;
+        readonly DrawLib.DrawingPos _pos;
         readonly IndicatorLampTemplate _template;
 
         bool _lampOn;
@@ -27,19 +29,21 @@ namespace ModularPanels.ButtonLib
             set => _lampOn = value;
         }
 
-        public IndicatorLamp(Point pos, IndicatorLampTemplate template)
+        public IndicatorLamp(DrawLib.DrawingPos pos, IndicatorLampTemplate template)
         {
             _pos = pos;
             _template = template;
         }
 
-        public void Draw(Graphics g)
+        public void Draw(DrawingContext context)
         {
             Color color = _lampOn ? _template.colorOn : _template.colorOff;
             Brush brush = new SolidBrush(color);
             Pen pen = new(Color.Black, _template.border);
 
-            g.TranslateTransform(_pos.X, _pos.Y);
+            Graphics g = context.graphics;
+            Point point = context.drawing.Transform(_pos);
+            g.TranslateTransform(point.X, point.Y);
             Rectangle rect = new(-_template.size, -_template.size, _template.size * 2, _template.size * 2);
             g.FillEllipse(brush, rect);
             g.DrawEllipse(pen, rect);

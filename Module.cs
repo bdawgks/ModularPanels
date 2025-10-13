@@ -83,7 +83,7 @@ namespace ModularPanels
                     if (node0 == null || node1 == null)
                         continue;
 
-                    if (!PanelLib.StyleBank.TrackStyles.TryGetItem(segmentData.Style, out var trackStyle))
+                    if (!DrawLib.StyleBank.TrackStyles.TryGetItem(segmentData.Style, out var trackStyle))
                         trackStyle = new();
 
                     PanelLib.TrackSegment segment = new(segmentData.ID, trackStyle, node0, node1);
@@ -105,7 +105,7 @@ namespace ModularPanels
 
                     bool useBaseColor = pointData.UseBaseColor != null ? pointData.UseBaseColor.Value : false;
 
-                    if (!PanelLib.StyleBank.PointsStyles.TryGetItem(pointData.Style, out var pointsStyle))
+                    if (!DrawLib.StyleBank.PointsStyles.TryGetItem(pointData.Style, out var pointsStyle))
                         throw new Exception("Invalid points style: " + pointData.Style);
 
                     PanelLib.TrackPoints points = new(pointData.ID, nodeBase, nodeNormal, nodeReversed, useBaseColor);
@@ -121,7 +121,7 @@ namespace ModularPanels
                 {
                     PanelLib.TrackDetector detector = new(detectorData.ID);
 
-                    if (!PanelLib.StyleBank.DetectorStyles.TryGetItem(detectorData.Style, out var detectorStyle))
+                    if (!DrawLib.StyleBank.DetectorStyles.TryGetItem(detectorData.Style, out var detectorStyle))
                         throw new Exception("Invalid detector style: " + detectorData.Style);
 
                     if (detectorStyle != null)
@@ -167,6 +167,7 @@ namespace ModularPanels
         readonly Dictionary<string, PanelLib.TrackDetector> _trackDetectors = [];
         readonly Dictionary<string, PanelLib.Signal> _signals = [];
         readonly List<PanelLib.PanelText> _texts = [];
+        readonly List<IControl> _allControls = [];
 
         public Dictionary<string, PanelLib.TrackSegment> TrackSegments { get { return _trackSegments; } }
         public Dictionary<string, PanelLib.TrackNode> TrackNodes { get { return _trackNodes; } } 
@@ -246,6 +247,11 @@ namespace ModularPanels
                 drawing.AddText(t);
             }
             InitControls();
+            foreach (IControl c in _allControls)
+            {
+                drawing.AddDrawable(c);
+                drawing.AddTransformable(c);
+            }
         }
 
         public void AddControls(JSON_Module_Controls controlsData)
@@ -262,12 +268,9 @@ namespace ModularPanels
             {
                 foreach (var rsData in _controlsData.Value.RotarySwitches)
                 {
-                    Point pos = new(rsData.Pos[0] * _drawing.GridSize, rsData.Pos[1] * _drawing.GridSize);
-                    _drawing.Transform(ref pos);
-
                     if (TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue(rsData.Template, out RotarySwitchTemplate? template))
                     {
-                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, pos, template, _drawing);
+                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, rsData.Pos, template);
                         if (rsData.SwitchCircuits != null)
                         {
                             foreach (var scData in rsData.SwitchCircuits)
@@ -293,6 +296,7 @@ namespace ModularPanels
                         {
                             rs.SetInterlockingCircuit(rsData.InterlockCircuit);
                         }
+                        _allControls.Add(rs);
                     }
                 }
             }

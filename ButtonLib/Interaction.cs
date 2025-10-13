@@ -1,4 +1,5 @@
-﻿using PanelLib;
+﻿using ModularPanels.DrawLib;
+using PanelLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,9 @@ namespace ModularPanels.ButtonLib
         public void MouseUp(Point p);
     }
 
-    public class CircularVolume(Point center, float radius) : IClickable
+    public class CircularVolume(DrawLib.DrawingPos center, float radius) : DrawTransform, IClickable
     {
-        readonly Point _center = center;
+        readonly DrawLib.DrawingPos _center = center;
         readonly float _radius = radius;
 
         Func<Point, bool>? _canClickFunc;
@@ -52,7 +53,7 @@ namespace ModularPanels.ButtonLib
         public event EventHandler<ClickEventArgs>? MouseDownEvents;
         public event EventHandler<ClickEventArgs>? MouseUpEvents;
 
-        public Point Center { get { return _center; } }
+        public DrawLib.DrawingPos Center { get { return _center; } }
         public float Radius { get { return _radius; } }
         public Func<Point, bool> CanClickFunc
         {
@@ -62,8 +63,9 @@ namespace ModularPanels.ButtonLib
 
         public bool PointInVolume(Point p)
         {
-            Vector2 vP = Drawing.PointToVector(p);
-            Vector2 vC = Drawing.PointToVector(_center);
+            DrawingPos pos = InverseTransform(p);
+            Vector2 vP = pos.ToVector2();
+            Vector2 vC = _center.ToVector2();
             return Vector2.Distance(vP, vC) <= _radius;
         }
 
@@ -101,7 +103,6 @@ namespace ModularPanels.ButtonLib
 
             _panel.MouseDown += OnMouseDown;
             _panel.MouseUp += OnMouseUp;
-            _panel.Paint += OnPaint;
         }
 
         private void OnMouseDown(object? sender, MouseEventArgs e)
@@ -124,14 +125,6 @@ namespace ModularPanels.ButtonLib
                 _lastClicked.MouseUp(e.Location);
                 _lastClicked = null;
                 _panel.Invalidate();
-            }
-        }
-
-        private void OnPaint(object? sender, PaintEventArgs e)
-        {
-            foreach (var c in _allControls)
-            {
-                c.Draw(e.Graphics);
             }
         }
 

@@ -1,5 +1,6 @@
-﻿using PanelLib;
-using System.Drawing;
+﻿using ModularPanels.DrawLib;
+using PanelLib;
+using System.Collections.Generic;
 using System.Numerics;
 using static ModularPanels.ButtonLib.RotarySwitchTemplate;
 
@@ -30,7 +31,7 @@ namespace ModularPanels.ButtonLib
 
                 if (template.TextStyle != null)
                 {
-                    if (!PanelLib.StyleBank.TextStyles.TryGetItem(template.TextStyle, out textStyle))
+                    if (!DrawLib.StyleBank.TextStyles.TryGetItem(template.TextStyle, out textStyle))
                         textStyle = new();
                 }
             }
@@ -65,7 +66,7 @@ namespace ModularPanels.ButtonLib
         }
     }
 
-    public class RotarySwitchPosition
+    public class RotarySwitchPosition : IDrawTransformable
     {
         readonly int _index;
         readonly RotarySwitch _switch;
@@ -93,13 +94,13 @@ namespace ModularPanels.ButtonLib
             _size = template.size;
             _latching = template.latching;
 
-            Vector2 pSwitch = Drawing.PointToVector(_switch.Pos);
+            Vector2 pSwitch = _switch.Pos.ToVector2();
             float totalAngle = (_switch.Angle + _angle) * MathF.PI / 180;
             float totalOffset = _switch.Size + _size;
             Vector2 posDir = new(MathF.Sin(totalAngle), -MathF.Cos(totalAngle));
             Vector2 pos = pSwitch + posDir * totalOffset;
 
-            _clickVolume = new(Drawing.VectorToPoint(pos), _size);
+            _clickVolume = new(DrawingPos.FromVector2(pos), _size);
             _clickVolume.MouseDownEvents += MouseDown;
             _clickVolume.MouseUpEvents += MouseUp;
 
@@ -123,12 +124,14 @@ namespace ModularPanels.ButtonLib
                 _switch.ReturnToCenter(_index);
         }
 
-        public void Draw(Graphics g)
+        public void Draw(DrawingContext context)
         {
-            _lamp?.Draw(g);
+            _lamp?.Draw(context);
 
             if (_text != string.Empty)
-                _switch.Drawing.DrawText(g, _text, _clickVolume.Center, _textStyle);
+            {
+                context.drawing.DrawText(context.graphics, _text, context.drawing.Transform(_clickVolume.Center), _textStyle);
+            }
 
             /*
             g.TranslateTransform(_clickVolume.Center.X, _clickVolume.Center.Y);
@@ -137,6 +140,15 @@ namespace ModularPanels.ButtonLib
             g.DrawEllipse(p, rect);
             g.ResetTransform();
             p.Dispose();*/
+        }
+
+        public List<DrawTransform> GetTransforms()
+        {
+            List<DrawTransform> transforms = [];
+            transforms.Add(_clickVolume);
+            if (_lamp != null)
+                transforms.Add(_lamp);
+            return transforms;
         }
 
         public void EnterPostion()
@@ -171,15 +183,14 @@ namespace ModularPanels.ButtonLib
         }
     }
 
-    public class RotarySwitch : IControl
+    public class RotarySwitch : DrawTransform, IControl, IDrawTransformable
     {
         readonly InteractionSpace _iSpace;
-        readonly PanelLib.Drawing _drawing;
 
         readonly RotarySwitchTemplate _template;
 
         readonly float _size;
-        readonly Point _pos;
+        readonly DrawingPos _pos;
         readonly float _angle = 0f;
         readonly int _centerPos = 0;
 
@@ -190,32 +201,26 @@ namespace ModularPanels.ButtonLib
         Circuit? _interlockCircuit;
         bool _locked = false;
 
-        public PanelLib.Drawing Drawing
-        {
-            get => _drawing;
-        }
-
         public RotarySwitchPosition[] Positions
         {
             get => _positions;
         }
 
         public float Size { get => _size; }
-        public Point Pos { get => _pos; }
+        public DrawingPos Pos { get => _pos; }
         public float Angle { get => _angle; }
         public int CenterPos { get => _centerPos; }
 
-        public RotarySwitch(InteractionSpace iSpace, Point pos, RotarySwitchTemplate template, PanelLib.Drawing drawing)
+        public RotarySwitch(InteractionSpace iSpace, GridPos pos, RotarySwitchTemplate template)
         {
             _iSpace = iSpace;
-            _drawing = drawing;
 
             _template = template;
-            _pos = pos;
+            _pos = Grid.Instance.TransformPos(pos);
             _size = template.Size;
             _centerPos = template.CenterPos;
             _curPos = _centerPos;
-            _switchVolume = new(pos, _size);
+            _switchVolume = new(_pos, _size);
             _positions = new RotarySwitchPosition[template.Positions.Length];
             for (int i = 0; i < _positions.Length; i++)
             {
@@ -223,6 +228,17 @@ namespace ModularPanels.ButtonLib
             }
 
             _iSpace.AddControl(this);
+        }
+
+        public List<DrawTransform> GetTransforms()
+        {
+            List<DrawTransform> transforms = [];
+            transforms.Add(this);
+            foreach (var pos in _positions)
+            {
+                transforms.AddRange(pos.GetTransforms());
+            }
+            return transforms;
         }
 
         public IClickable[] GetClickables()
@@ -236,10 +252,13 @@ namespace ModularPanels.ButtonLib
             return array;
         }
 
-        public void Draw(Graphics g)
+        public void Draw(DrawingContext context)
         {
+            Graphics g = context.graphics;
+            Point point = context.drawing.Transform(_pos);
+
             float curPosAngle = _angle + _positions[_curPos].Angle;
-            g.TranslateTransform(_pos.X, _pos.Y);
+            g.TranslateTransform(point.X, point.Y);
             g.RotateTransform(curPosAngle);
             RectangleF rect = new(-_size, -_size, _size * 2f, _size * 2f);
 
@@ -263,7 +282,7 @@ namespace ModularPanels.ButtonLib
 
             foreach (RotarySwitchPosition pos in _positions)
             {
-                pos.Draw(g);
+                pos.Draw(context);
             }
 
             primaryBrush.Dispose();

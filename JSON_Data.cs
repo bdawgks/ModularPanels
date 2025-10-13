@@ -1,54 +1,12 @@
-﻿using ModularPanels.ButtonLib;
-using PanelLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using PanelLib;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using ModularPanels.DrawLib;
 
 namespace ModularPanels
 {
     public interface IJSONInitializer<T>
     {
         public T Initialize();
-    }
-
-    [JsonConverter(typeof(ColorJsonConverter))]
-    public readonly struct ColorJS(string colorStr)
-    {
-        readonly string _colorStr = colorStr;
-
-        Color ToColor()
-        {
-            if (PanelLib.CustomColorBank.Instance.TryGetColor(_colorStr, out var customColor))
-                return customColor;
-
-            return Color.FromName(_colorStr);
-        }
-
-        public static implicit operator Color(ColorJS colorJS) => colorJS.ToColor();
-    }
-
-    public class ColorJsonConverter : JsonConverter<ColorJS>
-    {
-        public override ColorJS Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            string? colorString = reader.GetString();
-            if (colorString != null)
-            {
-                return new(colorString);
-            }
-
-            return new("");
-        }
-
-        public override void Write(Utf8JsonWriter writer, ColorJS value, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public struct JSON_CustomColor
@@ -65,10 +23,10 @@ namespace ModularPanels
 
         public readonly void AddToBank()
         {
-            if (PanelLib.CustomColorBank.Instance.HasColor(Name))
+            if (DrawLib.CustomColorBank.Instance.HasColor(Name))
                 throw new Exception("Color with given name was already defined: " + Name);
 
-            PanelLib.CustomColorBank.Instance.AddColor(Name, GetColor());
+            DrawLib.CustomColorBank.Instance.AddColor(Name, GetColor());
         }
     }
 
@@ -245,7 +203,7 @@ namespace ModularPanels
             if (Angle != null)
                 angle = Angle.Value;
 
-            if (!PanelLib.StyleBank.TextStyles.TryGetItem(Style, out TextStyle style))
+            if (!DrawLib.StyleBank.TextStyles.TryGetItem(Style, out TextStyle style))
                 style = new();
 
             PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
@@ -336,7 +294,7 @@ namespace ModularPanels
     public struct JSON_Module_ControlRotarySwitch
     {
         public string ID { get; set; }
-        public int[] Pos { get; set; }
+        public GridPos Pos { get; set; }
         public string Template { get; set; }
         public List<JSON_Module_SwitchCircuit> SwitchCircuits { get; set; }
         public List<JSON_Module_SwitchCircuit> LampCircuits { get; set; }
@@ -394,10 +352,10 @@ namespace ModularPanels
 
             foreach (JSON_TrackStyle styleData in list)
             {
-                if (PanelLib.StyleBank.TrackStyles.HasItem(styleData.ID))
+                if (DrawLib.StyleBank.TrackStyles.HasItem(styleData.ID))
                     throw new Exception("Duplicate track style ID: " + styleData.ID);
 
-                PanelLib.StyleBank.TrackStyles.AddItem(styleData.ID, styleData.Load());
+                DrawLib.StyleBank.TrackStyles.AddItem(styleData.ID, styleData.Load());
             }
         }
 
@@ -408,10 +366,10 @@ namespace ModularPanels
 
             foreach (JSON_PointsStyle styleData in list)
             {
-                if (PanelLib.StyleBank.PointsStyles.HasItem(styleData.ID))
+                if (DrawLib.StyleBank.PointsStyles.HasItem(styleData.ID))
                     throw new Exception("Duplicate points style ID: " + styleData.ID);
 
-                PanelLib.StyleBank.PointsStyles.AddItem(styleData.ID, styleData.Load());
+                DrawLib.StyleBank.PointsStyles.AddItem(styleData.ID, styleData.Load());
             }
         }
 
@@ -422,10 +380,10 @@ namespace ModularPanels
 
             foreach (JSON_DetectorStyle styleData in list)
             {
-                if (PanelLib.StyleBank.DetectorStyles.HasItem(styleData.ID))
+                if (DrawLib.StyleBank.DetectorStyles.HasItem(styleData.ID))
                     throw new Exception("Duplicate track style ID: " + styleData.ID);
 
-                PanelLib.StyleBank.DetectorStyles.AddItem(styleData.ID, styleData.Load());
+                DrawLib.StyleBank.DetectorStyles.AddItem(styleData.ID, styleData.Load());
             }
         }
 
@@ -436,10 +394,10 @@ namespace ModularPanels
 
             foreach (JSON_TextStyle styleData in list)
             {
-                if (PanelLib.StyleBank.TextStyles.HasItem(styleData.ID))
+                if (DrawLib.StyleBank.TextStyles.HasItem(styleData.ID))
                     throw new Exception("Duplicate text style ID: " + styleData.ID);
 
-                PanelLib.StyleBank.TextStyles.AddItem(styleData.ID, styleData.Load());
+                DrawLib.StyleBank.TextStyles.AddItem(styleData.ID, styleData.Load());
             }
         }
 

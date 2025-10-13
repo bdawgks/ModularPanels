@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModularPanels.DrawLib;
+using PanelLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.ButtonLib
 {
-    public interface IControl
+    public interface IControl : DrawLib.IDrawable, IDrawTransformable
     {
         public IClickable[] GetClickables();
-
-        public void Draw(Graphics g);
     }
 }
