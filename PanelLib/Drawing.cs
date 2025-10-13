@@ -1,5 +1,6 @@
 ﻿using ModularPanels;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -699,31 +700,36 @@ namespace PanelLib
             }
         }
 
-        private void DrawText(Graphics g, PanelText text)
+        public void DrawText(Graphics g, string text, Point pos, TextStyle style, float angle = 0f)
         {
-            FontStyle style = FontStyle.Regular;
-            if (text.Style.bold)
-                style = FontStyle.Bold;
-            Font font = new("Times New Roman", text.Style.size, style);
+            FontStyle fontStyle = FontStyle.Regular;
+            if (style.bold)
+                fontStyle = FontStyle.Bold;
+            Font font = new("Times New Roman", style.size, fontStyle);
 
-            Point p = text.GetPoint(_gridSize);
-            Transform(ref p);
-
-            g.TranslateTransform(p.X, p.Y);
-            g.RotateTransform(text.Angle);
+            g.TranslateTransform(pos.X, pos.Y);
+            g.RotateTransform(angle);
 
             StringFormat format = new();
-            SizeF stringSize = g.MeasureString(text.Text, font, 300 * _gridSize, format);
+            SizeF stringSize = g.MeasureString(text, font, 300 * _gridSize, format);
             PointF corner = new(-stringSize.Width / 2, -stringSize.Height / 2);
             RectangleF rect = new(corner, stringSize);
 
-            Brush textBrush = new SolidBrush(text.Style.color);
-            g.DrawString(text.Text, font, textBrush, rect);
+            Brush textBrush = new SolidBrush(style.color);
+            g.DrawString(text, font, textBrush, rect);
             g.ResetTransform();
 
             format.Dispose();
             font.Dispose();
             textBrush.Dispose();
+        }
+
+        private void DrawText(Graphics g, PanelText text)
+        {
+            Point p = text.GetPoint(_gridSize);
+            Transform(ref p);
+
+            DrawText(g, text.Text, p, text.Style, text.Angle);
         }
 
         private void DrawDetector(Graphics g, TrackDetector detector)

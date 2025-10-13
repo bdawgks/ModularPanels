@@ -12,5 +12,35 @@
 		{"Angle": 30.0, "Size": 10.0, "Latching": false,
 			"Lamp": {"Size": 6, "ColorOn": "FloralWhite", "ColorOff": "Silver", "Border": 1.5}
 		}
+	]},
+	{"Name": "STB_PointsSwitch_2P",
+	"Size": 30.0,
+	"PrimaryColor": "Silver",
+	"SecondaryColor": "DimGray",
+	"CenterPos": 0,
+	"Positions": [
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"}
+	]},
+	{"Name": "STB_PointsSwitch_2PM",
+	"Size": 30.0,
+	"PrimaryColor": "Silver",
+	"SecondaryColor": "DimGray",
+	"CenterPos": 1,
+	"Positions": [
+		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"}
+	]},
+	{"Name": "STB_PointsSwitch_3PM",
+	"Size": 30.0,
+	"PrimaryColor": "Silver",
+	"SecondaryColor": "DimGray",
+	"CenterPos": 1,
+	"Positions": [
+		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"},
+		{"Angle": 90.0, "Size": 10.0, "TextStyle": "Signal"}
 	]}
 ]}

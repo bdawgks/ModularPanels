@@ -262,12 +262,12 @@ namespace ModularPanels
             {
                 foreach (var rsData in _controlsData.Value.RotarySwitches)
                 {
-                    Point pos = new(rsData.Pos[0], rsData.Pos[1]);
+                    Point pos = new(rsData.Pos[0] * _drawing.GridSize, rsData.Pos[1] * _drawing.GridSize);
                     _drawing.Transform(ref pos);
 
                     if (TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue(rsData.Template, out RotarySwitchTemplate? template))
                     {
-                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, pos, template);
+                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, pos, template, _drawing);
                         if (rsData.SwitchCircuits != null)
                         {
                             foreach (var scData in rsData.SwitchCircuits)
@@ -281,6 +281,17 @@ namespace ModularPanels
                             {
                                 rs.SetLampActivationCircuit(scData.Pos, scData.Circuit);
                             }
+                        }
+                        if (rsData.TextLabels != null)
+                        {
+                            foreach (var tlData in rsData.TextLabels)
+                            {
+                                rs.SetTextLabel(tlData.Pos, tlData.Text);
+                            }
+                        }
+                        if (rsData.InterlockCircuit != null)
+                        {
+                            rs.SetInterlockingCircuit(rsData.InterlockCircuit);
                         }
                     }
                 }

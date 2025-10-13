@@ -88,6 +88,8 @@ namespace ModularPanels
                 drawings.Add(drawing);
             }
 
+            MainWindow.Instance.ISpace!.UpdateCircuits();
+
             return drawings;
         }
     }

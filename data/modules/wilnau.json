@@ -1,7 +1,7 @@
 {"Name": "Wilnau",
 "DrawingData": {
 	"Width": 350,
-	"Height": 100,
+	"Height": 120,
 	"BackgroundColor": "DominoBG",
 	"Texts": [
 		{"Text": "Wilnau", "Style": "Title", "Pos": [185,10]},
@@ -98,7 +98,7 @@
 },
 "Controls": {
 	"RotarySwitches": [
-		{"ID": "A'", "Pos": [50,50], "Template": "STB_DwarfSwitch",
+		{"ID": "A'", "Pos": [10,20], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_A'_stop"},
 			{"Pos": 2, "Circuit": "sw_A'_clear"}
@@ -106,13 +106,63 @@
 		"LampCircuits": [
 			{"Pos": 0, "Circuit": "A'_stop"},
 			{"Pos": 2, "Circuit": "A'_clear"}
+		]},
+		{"ID": "P1", "Pos": [50,100], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_P1_R"},
+			{"Pos": 1, "Circuit": "sw_P1_1"},
+			{"Pos": 2, "Circuit": "sw_P1_2"},
+			{"Pos": 3, "Circuit": "sw_P1_3"}
+		],
+		"TextLabels": [
+			{"Pos": 0, "Text": "R"},
+			{"Pos": 1, "Text": "1"},
+			{"Pos": 2, "Text": "2"},
+			{"Pos": 3, "Text": "3"}
+		]},
+		{"ID": "P3", "Pos": [140,100], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_P3_1"},
+			{"Pos": 1, "Circuit": "sw_P1_4"}
+		],
+		"TextLabels": [
+			{"Pos": 0, "Text": "1"},
+			{"Pos": 1, "Text": "4"}
+		]},
+		{"ID": "P4", "Pos": [250,100], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_P4_R"},
+			{"Pos": 1, "Circuit": "sw_P4_1"},
+			{"Pos": 2, "Circuit": "sw_P4_2"}
+		],
+		"TextLabels": [
+			{"Pos": 0, "Text": "R"},
+			{"Pos": 1, "Text": "1"},
+			{"Pos": 2, "Text": "2"}
 		]}
 	]
 },
 "RelayCircuits": {
 	"SimpleCircuits": [
 		{"ID": "sw_A'_stop", "Desc": "Switch for A' dwarf to STOP"},
-		{"ID": "sw_A'_clear", "Desc": "Switch for A' dwarf to CLEAR"}
+		{"ID": "sw_A'_clear", "Desc": "Switch for A' dwarf to CLEAR"},
+		{"ID": "sw_P1_R", "Desc": "Switch for points 1, 2 & 3 to REMOTE"},
+		{"ID": "sw_P1_1", "Desc": "Switch for points route Track 1 through"},
+		{"ID": "sw_P1_2", "Desc": "Switch for points route Track 1 to Track 2"},
+		{"ID": "sw_P1_3", "Desc": "Switch for points route Track 1 to Track 3"},
+		{"ID": "sw_P3_1", "Desc": "Switch for points route Track 2 to Track 1"},
+		{"ID": "sw_P3_4", "Desc": "Switch for points route Track 2 to Track 4"},
+		{"ID": "sw_P4_R", "Desc": "Switch for points 4 to REMOTE"},
+		{"ID": "sw_P4_1", "Desc": "Switch for points route Track 1 through"},
+		{"ID": "sw_P4_2", "Desc": "Switch for points route Track 1 to Track 2"},
+		{"ID": "points_1_N", "Desc": "Points 1 in Normal"},
+		{"ID": "points_1_R", "Desc": "Points 1 in Reverse"},
+		{"ID": "points_2_N", "Desc": "Points 1 in Normal"},
+		{"ID": "points_2_R", "Desc": "Points 1 in Reverse"},
+		{"ID": "points_3_N", "Desc": "Points 1 in Normal", "Active": true},
+		{"ID": "points_3_R", "Desc": "Points 1 in Reverse"},
+		{"ID": "points_4_N", "Desc": "Points 1 in Normal"},
+		{"ID": "points_4_R", "Desc": "Points 1 in Reverse"}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_clear",
@@ -124,11 +174,20 @@
 		], "Desc": "A' dwarf signal to CLEAR"},
 		{"ID": "A'_stop", 
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_A'_stop"}
+			{"Op": "NOT", "Circuit": "A'_clear"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "A'_clear"}
-		], "Desc": "A' dwarf signal to STOP"}
+		], "Desc": "A' dwarf signal to STOP"},
+		{"ID": "P1_lock", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "points_3_N"},
+			{"Op": "OR", "Circuit": "A'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "points_3_N"},
+			{"Op": "AND", "Circuit": "A'_stop"}
+		], "Desc": "Switch P1 interlocking"}
 	],
 	"SignalCircuits": [
 		{"SigID": "A'", "Circuit": "A'_clear", "Indication": "Clear"},

@@ -327,6 +327,12 @@ namespace ModularPanels
         public string Circuit { get; set; }
     }
 
+    public struct JSON_Module_SwitchTextLabels
+    {
+        public int Pos { get; set; }
+        public string Text { get; set; }
+    }
+
     public struct JSON_Module_ControlRotarySwitch
     {
         public string ID { get; set; }
@@ -334,6 +340,8 @@ namespace ModularPanels
         public string Template { get; set; }
         public List<JSON_Module_SwitchCircuit> SwitchCircuits { get; set; }
         public List<JSON_Module_SwitchCircuit> LampCircuits { get; set; }
+        public List<JSON_Module_SwitchTextLabels> TextLabels { get; set; }
+        public string? InterlockCircuit { get; set; }
     }
 
     public struct JSON_Module_Controls
@@ -345,6 +353,7 @@ namespace ModularPanels
     {
         public string ID { get; set; }
         public string Desc { get; set; }
+        public bool Active { get; set; }
     }
 
     public struct JSON_Module_LogicOperator

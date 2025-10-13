@@ -19,8 +19,12 @@ namespace ModularPanels.ButtonLib
     {
         public float Angle { get; set; }
         public float Size { get; set; }
-        public bool Latching { get; set; }
+        public bool Latching { get; set; } = true;
         public JSON_Control_Lamp? Lamp { get; set; }
+        public string? Text { get; set; }
+        public string? TextStyle { get; set; }
+
+        public JSON_Control_RotarySwitchPosition() { }
     }
 
     public struct JSON_Control_RotarySwitch

@@ -171,6 +171,15 @@ namespace ModularPanels.ButtonLib
             return condition;            
         }
 
+        public void UpdateCircuits()
+        {
+            foreach (Circuit c in _circuits.Values)
+            {
+                if (c is LogicCircuit lc)
+                    lc.Reevaluate();
+            }
+        }
+
         public void InitCircuits(JSON_Module_RelayCircuits circuitData)
         {
             if (circuitData.SimpleCircuits != null)
@@ -178,6 +187,8 @@ namespace ModularPanels.ButtonLib
                 foreach (var sc in circuitData.SimpleCircuits)
                 {
                     SimpleCircuit circuit = new(sc.ID);
+                    if (sc.Active)
+                        circuit.SetActive(true);
                     AddCircuit(circuit);
                 }
             }

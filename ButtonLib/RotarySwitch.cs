@@ -14,6 +14,9 @@ namespace ModularPanels.ButtonLib
             public readonly bool latching;
             public readonly IndicatorLampTemplate? lamp;
 
+            public readonly string text = string.Empty;
+            public readonly PanelLib.TextStyle textStyle = new();
+
             public PositionTemplate(JSON_Control_RotarySwitchPosition template)
             {
                 angle = template.Angle;
@@ -21,6 +24,15 @@ namespace ModularPanels.ButtonLib
                 latching = template.Latching;
                 if (template.Lamp != null)
                     lamp = new(template.Lamp.Value);
+
+                if (template.Text != null)
+                    text = template.Text;
+
+                if (template.TextStyle != null)
+                {
+                    if (!PanelLib.StyleBank.TextStyles.TryGetItem(template.TextStyle, out textStyle))
+                        textStyle = new();
+                }
             }
         }
 
@@ -63,7 +75,8 @@ namespace ModularPanels.ButtonLib
         readonly CircularVolume _clickVolume;
 
         readonly IndicatorLamp? _lamp;
-        string? _text;
+        readonly PanelLib.TextStyle _textStyle;
+        string _text;
 
         Circuit? _activatedCircuit;
 
@@ -92,8 +105,11 @@ namespace ModularPanels.ButtonLib
 
             if (template.lamp != null)
             {
-                _lamp = new(Drawing.VectorToPoint(pos), template.lamp.Value);
+                _lamp = new(_clickVolume.Center, template.lamp.Value);
             }
+
+            _text = template.text;
+            _textStyle = template.textStyle;
         }
 
         private void MouseDown(object? sender, ClickEventArgs e)
@@ -110,6 +126,9 @@ namespace ModularPanels.ButtonLib
         public void Draw(Graphics g)
         {
             _lamp?.Draw(g);
+
+            if (_text != string.Empty)
+                _switch.Drawing.DrawText(g, _text, _clickVolume.Center, _textStyle);
 
             /*
             g.TranslateTransform(_clickVolume.Center.X, _clickVolume.Center.Y);
@@ -145,11 +164,17 @@ namespace ModularPanels.ButtonLib
                 _lamp.LampOn = e.Active;
             };
         }
+
+        public void SetText(string text)
+        {
+            _text = text;
+        }
     }
 
     public class RotarySwitch : IControl
     {
         readonly InteractionSpace _iSpace;
+        readonly PanelLib.Drawing _drawing;
 
         readonly RotarySwitchTemplate _template;
 
@@ -162,6 +187,13 @@ namespace ModularPanels.ButtonLib
         readonly RotarySwitchPosition[] _positions = [];
 
         int _curPos = 0;
+        Circuit? _interlockCircuit;
+        bool _locked = false;
+
+        public PanelLib.Drawing Drawing
+        {
+            get => _drawing;
+        }
 
         public RotarySwitchPosition[] Positions
         {
@@ -173,9 +205,11 @@ namespace ModularPanels.ButtonLib
         public float Angle { get => _angle; }
         public int CenterPos { get => _centerPos; }
 
-        public RotarySwitch(InteractionSpace iSpace, Point pos, RotarySwitchTemplate template)
+        public RotarySwitch(InteractionSpace iSpace, Point pos, RotarySwitchTemplate template, PanelLib.Drawing drawing)
         {
             _iSpace = iSpace;
+            _drawing = drawing;
+
             _template = template;
             _pos = pos;
             _size = template.Size;
@@ -238,24 +272,43 @@ namespace ModularPanels.ButtonLib
             linePen.Dispose();
         }
 
-        public void SetActivatedCircuit(int posIndex, string circuitName)
+        public void SetInterlockingCircuit(string circuitName)
         {
-            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
-                return;
+            _iSpace.TryGetCircuit(circuitName, out _interlockCircuit);
 
-            _positions[posIndex].SetActivatedCircuit(circuit!);
+            if (_interlockCircuit != null)
+                _interlockCircuit.ActivationEvents += (sender, e) =>
+                {
+                    _locked = e.Active;
+                };
         }
 
-        public void SetLampActivationCircuit(int posIndex, string circuitName)
+        public void SetActivatedCircuit(int posIdx, string circuitName)
         {
             if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
                 return;
 
-            _positions[posIndex].SetLampActivationCircuit(circuit!);
+            _positions[posIdx].SetActivatedCircuit(circuit!);
+        }
+
+        public void SetLampActivationCircuit(int posIdx, string circuitName)
+        {
+            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
+                return;
+
+            _positions[posIdx].SetLampActivationCircuit(circuit!);
+        }
+
+        public void SetTextLabel(int posIdx, string text)
+        {
+            _positions[posIdx].SetText(text);
         }
 
         public void SetPosition(int idx)
         {
+            if (_locked)
+                return;
+
             int startPos = _curPos;
             _curPos = idx;
             UpdatePosition(startPos);
