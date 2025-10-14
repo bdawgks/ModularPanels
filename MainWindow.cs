@@ -8,11 +8,11 @@ namespace ModularPanels
 {
     public partial class MainWindow : Form
     {
-        public InteractionSpace ISpace;
-
         public static MainWindow? Instance;
 
         List<PanelLib.Drawing> _drawings = [];
+
+        public DrawPanel DrawPanel { get => drawPanel1; }
 
         public MainWindow()
         {
@@ -24,8 +24,6 @@ namespace ModularPanels
             MouseWheel += OnMouseWheel;
             SizeChanged += OnResizeEnd;
             drawPanel1.InitScrollbar(hScrollBar1, this, 20);
-
-            ISpace = new(drawPanel1);
 
             LoadLibFiles();
             LoadLayout();

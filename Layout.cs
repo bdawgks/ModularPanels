@@ -1,4 +1,5 @@
 ﻿
+using ModularPanels.CircuitLib;
 using PanelLib;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,11 @@ namespace ModularPanels
                 drawings.Add(drawing);
             }
 
-            MainWindow.Instance.ISpace!.UpdateCircuits();
+            foreach (Module m in _modules)
+            {
+                CircuitComponent? circuits = m.Components.GetComponent<CircuitComponent>();
+                circuits?.UpdateCircuits();
+            }
 
             return drawings;
         }

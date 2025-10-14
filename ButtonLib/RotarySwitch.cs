@@ -1,8 +1,8 @@
 ﻿using ModularPanels.DrawLib;
 using PanelLib;
-using System.Collections.Generic;
 using System.Numerics;
 using static ModularPanels.ButtonLib.RotarySwitchTemplate;
+using ModularPanels.CircuitLib;
 
 namespace ModularPanels.ButtonLib
 {
@@ -185,7 +185,7 @@ namespace ModularPanels.ButtonLib
 
     public class RotarySwitch : DrawTransform, IControl, IDrawTransformable
     {
-        readonly InteractionSpace _iSpace;
+        readonly InteractionComponent _parent;
 
         readonly RotarySwitchTemplate _template;
 
@@ -211,9 +211,9 @@ namespace ModularPanels.ButtonLib
         public float Angle { get => _angle; }
         public int CenterPos { get => _centerPos; }
 
-        public RotarySwitch(InteractionSpace iSpace, GridPos pos, RotarySwitchTemplate template)
+        public RotarySwitch(InteractionComponent parent, GridPos pos, RotarySwitchTemplate template)
         {
-            _iSpace = iSpace;
+            _parent = parent;
 
             _template = template;
             _pos = Grid.Instance.TransformPos(pos);
@@ -227,7 +227,7 @@ namespace ModularPanels.ButtonLib
                 _positions[i] = new(this, i, template.Positions[i]);
             }
 
-            _iSpace.AddControl(this);
+            _parent.AddControl(this);
         }
 
         public List<DrawTransform> GetTransforms()
@@ -293,7 +293,11 @@ namespace ModularPanels.ButtonLib
 
         public void SetInterlockingCircuit(string circuitName)
         {
-            _iSpace.TryGetCircuit(circuitName, out _interlockCircuit);
+            CircuitComponent? circuits = _parent.Parent.GetComponent<CircuitComponent>();
+            if (circuits == null)
+                return;
+
+            circuits.TryGetCircuit(circuitName, out _interlockCircuit);
 
             if (_interlockCircuit != null)
                 _interlockCircuit.ActivationEvents += (sender, e) =>
@@ -304,7 +308,11 @@ namespace ModularPanels.ButtonLib
 
         public void SetActivatedCircuit(int posIdx, string circuitName)
         {
-            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
+            CircuitComponent? circuits = _parent.Parent.GetComponent<CircuitComponent>();
+            if (circuits == null)
+                return;
+
+            if (!circuits.TryGetCircuit(circuitName, out Circuit? circuit))
                 return;
 
             _positions[posIdx].SetActivatedCircuit(circuit!);
@@ -312,7 +320,11 @@ namespace ModularPanels.ButtonLib
 
         public void SetLampActivationCircuit(int posIdx, string circuitName)
         {
-            if (!_iSpace.TryGetCircuit(circuitName, out Circuit? circuit))
+            CircuitComponent? circuits = _parent.Parent.GetComponent<CircuitComponent>();
+            if (circuits == null)
+                return;
+
+            if (!circuits.TryGetCircuit(circuitName, out Circuit? circuit))
                 return;
 
             _positions[posIdx].SetLampActivationCircuit(circuit!);

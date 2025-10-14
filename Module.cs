@@ -1,4 +1,6 @@
 ﻿using ModularPanels.ButtonLib;
+using ModularPanels.CircuitLib;
+using ModularPanels.Components;
 using PanelLib;
 using System;
 using System.Collections.Generic;
@@ -144,17 +146,20 @@ namespace ModularPanels
                 module.AddControls(Controls.Value);
 
             if (RelayCircuits != null)
-                MainWindow.Instance!.ISpace.InitCircuits(RelayCircuits.Value);
+            {
+                module.GetCircuitComponent().InitCircuits(RelayCircuits.Value);
+            }
 
             return module;
         }
     }
 
-    public class Module
+    public class Module: IParent
     {
         readonly string _name;
         readonly int _width;
         readonly int _height;
+        readonly ComponentContainer _components = new();
 
         PanelLib.Drawing? _drawing;
         Color? _backgroundColor;
@@ -182,6 +187,8 @@ namespace ModularPanels
             _width = width;
             _height = height;
         }
+
+        public ComponentContainer Components { get { return _components; } }
 
         public int Width
         {
@@ -259,6 +266,30 @@ namespace ModularPanels
             _controlsData = controlsData;
         }
 
+        private InteractionComponent GetInteractionComponent()
+        {
+            InteractionComponent? component = _components.GetComponent<InteractionComponent>();
+            if (component == null)
+            {
+                component = new(this, MainWindow.Instance!.DrawPanel);
+                _components.AddComponent(component);
+            }
+
+            return component;
+        }
+
+        public CircuitComponent GetCircuitComponent()
+        {
+            CircuitComponent? component = _components.GetComponent<CircuitComponent>();
+            if (component == null)
+            {
+                component = new(this);
+                _components.AddComponent(component);
+            }
+
+            return component;
+        }
+
         public void InitControls()
         {
             if (_drawing == null || _controlsData == null)
@@ -270,7 +301,7 @@ namespace ModularPanels
                 {
                     if (TemplateBank<RotarySwitchTemplate>.Instance.TryGetValue(rsData.Template, out RotarySwitchTemplate? template))
                     {
-                        RotarySwitch rs = new(MainWindow.Instance!.ISpace, rsData.Pos, template);
+                        RotarySwitch rs = new(GetInteractionComponent(), rsData.Pos, template);
                         if (rsData.SwitchCircuits != null)
                         {
                             foreach (var scData in rsData.SwitchCircuits)
