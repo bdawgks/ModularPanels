@@ -1,10 +1,5 @@
 ﻿using ModularPanels.DrawLib;
-using PanelLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ModularPanels.PanelLib;
 
 namespace ModularPanels.ButtonLib
 {

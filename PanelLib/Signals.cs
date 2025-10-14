@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Numerics;
 
-namespace PanelLib
+namespace ModularPanels.PanelLib
 {
     public class SignalShape
     {

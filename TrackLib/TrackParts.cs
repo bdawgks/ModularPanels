@@ -1,11 +1,7 @@
 ﻿using ModularPanels.DrawLib;
-using PanelLib;
-using System.Drawing;
-using System.Text.Json.Serialization;
 
 namespace ModularPanels.TrackLib
 {
-    [JsonConverter(typeof(TrackNodeJsonConverter))]
     public class TrackNode(string id, GridPos pos)
     {
         public readonly string id = id;
@@ -15,7 +11,7 @@ namespace ModularPanels.TrackLib
         public float segDir = 0f;
     }
 
-    public readonly struct TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)
+    public class TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)
     {
         public readonly string id = id;
         public readonly TrackStyle style = style;
@@ -38,7 +34,7 @@ namespace ModularPanels.TrackLib
         public readonly TrackNode routeReversed = routeReversed;
         public readonly bool useBaseColor = useBaseColor;
 
-        private PointsStyle _style;
+        private PointsStyle _style = new();
 
         private bool _showMoving = false;
         private PointsState _state = PointsState.Normal;

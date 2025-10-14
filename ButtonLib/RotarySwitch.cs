@@ -1,8 +1,9 @@
 ﻿using ModularPanels.DrawLib;
-using PanelLib;
+using ModularPanels.PanelLib;
 using System.Numerics;
 using static ModularPanels.ButtonLib.RotarySwitchTemplate;
 using ModularPanels.CircuitLib;
+using ModularPanels.JsonLib;
 
 namespace ModularPanels.ButtonLib
 {
@@ -31,8 +32,10 @@ namespace ModularPanels.ButtonLib
 
                 if (template.TextStyle != null)
                 {
-                    if (!DrawLib.StyleBank.TextStyles.TryGetItem(template.TextStyle, out textStyle))
-                        textStyle = new();
+                    StringId<TextStyle> styleId = new(template.TextStyle);
+                    GlobalBank.Instance.AssignId(ref styleId);
+                    if (!styleId.IsNull)
+                        textStyle = styleId.Get()!;
                 }
             }
         }

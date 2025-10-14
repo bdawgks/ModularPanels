@@ -1,16 +1,11 @@
 ﻿using ModularPanels.ButtonLib;
 using ModularPanels.CircuitLib;
 using ModularPanels.Components;
+using ModularPanels.JsonLib;
 using ModularPanels.TrackLib;
-using PanelLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using ModularPanels.PanelLib;
+using ModularPanels.DrawLib;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace ModularPanels
 {
@@ -18,18 +13,12 @@ namespace ModularPanels
     public class JSON_Module : IJSONInitializer<Module>
     {
         public string? Name { get; set; }
-        public List<JSON_CustomColor>? Colors { get; set; }
+        public List<CustomColorLoader>? Colors { get; set; }
         public JSON_Module_DrawingData DrawingData { get;set;}
-        public JSON_Module_TrackData TrackData { get;set;}
+        public TrackDataLoader? TrackData { get;set;}
         public JSON_Module_SignalData SignalData { get;set;}
         public JSON_Module_Controls? Controls { get;set;}
         public JSON_Module_RelayCircuits? RelayCircuits { get;set;}
-
-        private static void GetNode(Module m, string id, out TrackNode? node)
-        {
-            if (!m.TrackNodes.TryGetValue(id, out node))
-                throw new Exception("Could not find node with ID: " + id);
-        }
 
         public Module Initialize()
         {
@@ -38,9 +27,9 @@ namespace ModularPanels
 
             if (Colors != null)
             {
-                foreach (JSON_CustomColor color in Colors)
+                foreach (CustomColorLoader colorData in Colors)
                 {
-                    color.AddToBank();
+                    colorData.Load(GlobalBank.Instance);
                 }
             }
 
@@ -63,78 +52,13 @@ namespace ModularPanels
                 }
             }
 
-            if (TrackData.Nodes != null && TrackData.Segments != null)
+            JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
+            JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
+            JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
+
+            if (TrackData != null)
             {
-                JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
-                foreach (TrackNode node in TrackData.Nodes)
-                {
-                    module.TrackNodes.Add(node.id, node);
-                }
-
-                foreach (JSON_Module_Segment segmentData in TrackData.Segments)
-                {
-                    if (segmentData.Nodes.Length != 2)
-                        throw new Exception("Invalid number of nodes in segment: " + segmentData.Nodes.ToString());
-
-                    GetNode(module, segmentData.Nodes[0], out TrackNode? node0);
-                    GetNode(module, segmentData.Nodes[1], out TrackNode? node1);
-
-                    if (node0 == null || node1 == null)
-                        continue;
-
-                    if (!DrawLib.StyleBank.TrackStyles.TryGetItem(segmentData.Style, out var trackStyle))
-                        trackStyle = new();
-
-                    TrackSegment segment = new(segmentData.ID, trackStyle, node0, node1);
-                    module.TrackSegments.Add(segment.id, segment);
-                }
-            }
-
-            if (TrackData.Points != null)
-            {
-                JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
-                foreach (JSON_Module_Point pointData in TrackData.Points)
-                {
-                    GetNode(module, pointData.PointsNode, out TrackNode? nodeBase);
-                    GetNode(module, pointData.RouteNormal, out TrackNode? nodeNormal);
-                    GetNode(module, pointData.RouteReversed, out TrackNode? nodeReversed);
-
-                    if (nodeBase == null || nodeNormal == null || nodeReversed == null)
-                        continue;
-
-                    bool useBaseColor = pointData.UseBaseColor != null ? pointData.UseBaseColor.Value : false;
-
-                    if (!DrawLib.StyleBank.PointsStyles.TryGetItem(pointData.Style, out var pointsStyle))
-                        throw new Exception("Invalid points style: " + pointData.Style);
-
-                    TrackPoints points = new(pointData.ID, nodeBase, nodeNormal, nodeReversed, useBaseColor);
-                    points.Style = pointsStyle;
-                    module.TrackPoints.Add(points.id, points);
-                }
-            }
-
-            if (TrackData.Detectors != null)
-            {
-                JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
-                foreach (JSON_Module_Detector detectorData in TrackData.Detectors)
-                {
-                    TrackDetector detector = new(detectorData.ID);
-
-                    if (!DrawLib.StyleBank.DetectorStyles.TryGetItem(detectorData.Style, out var detectorStyle))
-                        throw new Exception("Invalid detector style: " + detectorData.Style);
-
-                    if (detectorStyle != null)
-                        detector.Style = detectorStyle;
-
-                    foreach (string segId in detectorData.Segments)
-                    {
-                        if (!module.TrackSegments.TryGetValue(segId, out TrackSegment seg))
-                            throw new Exception("Invalid segment ID: " + segId);
-
-                        detector.AddSegment(seg);
-                    }
-                    module.TrackDetectors.Add(detector.ID, detector);
-                }
+                TrackData.Load(module.ObjectBank);
             }
 
             SignalData.InitSignals(module, Layout.SignalSpace);
@@ -163,18 +87,21 @@ namespace ModularPanels
 
         JSON_Module_Controls? _controlsData;
 
-        readonly Dictionary<string, TrackSegment> _trackSegments = [];
-        readonly Dictionary<string, TrackNode> _trackNodes = [];
-        readonly Dictionary<string, TrackPoints> _trackPoints = [];
-        readonly Dictionary<string, TrackDetector> _trackDetectors = [];
+        readonly ObjectBank _objBank = new();
+
+        //readonly Dictionary<string, TrackSegment> _trackSegments = [];
+        //readonly Dictionary<string, TrackNode> _trackNodes = [];
+        //readonly Dictionary<string, TrackPoints> _trackPoints = [];
+        //readonly Dictionary<string, TrackDetector> _trackDetectors = [];
         readonly Dictionary<string, PanelLib.Signal> _signals = [];
         readonly List<PanelLib.PanelText> _texts = [];
         readonly List<IControl> _allControls = [];
 
-        public Dictionary<string, TrackSegment> TrackSegments { get { return _trackSegments; } }
-        public Dictionary<string, TrackNode> TrackNodes { get { return _trackNodes; } } 
-        public Dictionary<string, TrackPoints> TrackPoints { get { return _trackPoints; } }
-        public Dictionary<string, TrackDetector> TrackDetectors { get { return _trackDetectors; } }
+        public ObjectBank ObjectBank { get { return _objBank; } }
+        public Dictionary<string, TrackSegment> TrackSegments { get { return _objBank.GetObjects<TrackSegment>(); } }
+        public Dictionary<string, TrackNode> TrackNodes { get { return _objBank.GetObjects<TrackNode>(); } } 
+        public Dictionary<string, TrackPoints> TrackPoints { get { return _objBank.GetObjects<TrackPoints>(); } }
+        public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
         public Dictionary<string, PanelLib.Signal> Signals { get { return _signals; } }
         public List<PanelLib.PanelText> Texts { get { return _texts; } }
 
@@ -226,19 +153,19 @@ namespace ModularPanels
             //    minorColor = Color.Empty,
             //    textColor = Color.Empty
             //};
-            foreach (TrackNode n in _trackNodes.Values)
+            foreach (TrackNode n in TrackNodes.Values)
             {
                 drawing.AddNode(n);
             }
-            foreach (TrackSegment s in _trackSegments.Values)
+            foreach (TrackSegment s in TrackSegments.Values)
             {
                 drawing.AddSegment(s);
             }
-            foreach (TrackPoints p in _trackPoints.Values)
+            foreach (TrackPoints p in TrackPoints.Values)
             {
                 drawing.AddPoints(p);
             }
-            foreach (TrackDetector d in _trackDetectors.Values)
+            foreach (TrackDetector d in TrackDetectors.Values)
             {
                 drawing.AddDetector(d);
             }

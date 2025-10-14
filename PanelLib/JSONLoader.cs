@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Text.Json;
 
-namespace PanelLib
+namespace ModularPanels.PanelLib
 {
     namespace JSONData
     {

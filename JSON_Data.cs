@@ -1,143 +1,15 @@
-﻿using PanelLib;
-using System.Text.Json;
-using ModularPanels.DrawLib;
+﻿using ModularPanels.DrawLib;
+using ModularPanels.JsonLib;
+using ModularPanels.PanelLib;
 using ModularPanels.TrackLib;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace ModularPanels
 {
     public interface IJSONInitializer<T>
     {
         public T Initialize();
-    }
-
-    public struct JSON_CustomColor
-    {
-        public string Name { get; set; }
-        public int R { get; set; }
-        public int G { get; set; }
-        public int B { get; set; }
-
-        public readonly Color GetColor()
-        {
-            return Color.FromArgb(R, G, B);
-        }
-
-        public readonly void AddToBank()
-        {
-            if (DrawLib.CustomColorBank.Instance.HasColor(Name))
-                throw new Exception("Color with given name was already defined: " + Name);
-
-            DrawLib.CustomColorBank.Instance.AddColor(Name, GetColor());
-        }
-    }
-
-    public struct JSON_TrackStyle
-    {
-        public string ID { get; set; }
-        public ColorJS Color { get; set; }
-        public float Width { get; set; }
-
-        public readonly PanelLib.TrackStyle Load()
-        {
-            PanelLib.TrackStyle style = new()
-            {
-                color = Color,
-                width = Width
-            };
-            return style;
-        }
-    }
-
-    public struct JSON_PointsStyle
-    {
-        public string ID { get; set; }
-        public ColorJS ColorInactive { get; set; }
-        public ColorJS ColorLock { get; set; }
-        public float LockLength { get; set; }
-        public float LockWidth { get; set; }
-        public float LockSpace { get; set; }
-        public int Length { get; set; }
-
-        public readonly PanelLib.PointsStyle Load()
-        {
-            PanelLib.PointsStyle style = new()
-            {
-                colorInactive = ColorInactive,
-                colorLock = ColorLock,
-                lockLength = LockLength,
-                lockWidth = LockWidth,
-                lockSpace = LockSpace,
-                length = Length
-            };
-            return style;
-        }
-    }
-
-    public struct JSON_DetectorStyle_Rectangle
-    {
-        public int MinEdgeMargin { get; set; }
-        public int SegmentLength { get; set; }
-        public int SegmentSpace { get; set; }
-        public int Width { get; set; }
-    }
-
-    public struct JSON_DetectorStyle
-    {
-        public string ID { get; set; }
-        public ColorJS ColorEmpty { get; set; }
-        public ColorJS ColorOccupied { get; set; }
-        public ColorJS ColorOutline { get; set; }
-        public float OutlineSize { get; set; }
-        public string Style { get; set; }
-        public JSON_DetectorStyle_Rectangle? Rectangle { get; set; }
-
-        public readonly PanelLib.DetectorStyle Load()
-        {
-
-            PanelLib.DetectorStyle? style = null;
-
-            if (Style == "Rectangle" && Rectangle != null)
-            {
-                PanelLib.DetectorStyleRectangle rectStyle = new()
-                {
-                    minEdgeMargin = Rectangle.Value.MinEdgeMargin,
-                    segmentLength = Rectangle.Value.SegmentLength,
-                    segmentSpace = Rectangle.Value.SegmentSpace,
-                    width = Rectangle.Value.Width
-                };
-
-                style = rectStyle;
-            }
-
-            style ??= new PanelLib.DetectorStyleRectangle();
-
-            style.outline = OutlineSize;
-            style.colorEmpty = ColorEmpty;
-            style.colorOccupied = ColorOccupied;
-            style.colorOutline = ColorOutline;
-
-            return style;
-        }
-    }
-
-    public struct JSON_TextStyle
-    {
-        public string ID { get; set; }
-        public string Font { get; set; }
-        public int Size { get; set; }
-        public ColorJS Color { get; set; }
-        public readonly PanelLib.TextStyle Load()
-        {
-
-            PanelLib.TextStyle style = new()
-            {
-                font = Font,
-                size = Size,
-                color = Color
-            };
-
-            return style;
-        }
     }
 
     public struct JSON_Module_Segment
@@ -180,14 +52,19 @@ namespace ModularPanels
             if (Angle != null)
                 angle = Angle.Value;
 
-            if (!DrawLib.StyleBank.TextStyles.TryGetItem(Style, out TextStyle style))
+            StringId<TextStyle> id = new(Style);
+            GlobalBank.Instance.AssignId(ref id);
+            TextStyle style;
+            if (id.IsNull)
                 style = new();
+            else
+                style = id.Get()!;
 
-            PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
-            {
-                Text = Text,
-                Style = style
-            };
+                PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
+                {
+                    Text = Text,
+                    Style = style
+                };
             return text;
         }
     }
@@ -198,26 +75,18 @@ namespace ModularPanels
         public int Height { get; set; }
         public ColorJS BackgroundColor { get; set; }
         public List<JSON_Text> Texts { get; set; }
-        public List<JSON_TrackStyle> TrackStyles { get; set; }
-        public List<JSON_PointsStyle> PointsStyles { get; set; }
-        public List<JSON_DetectorStyle> DetectorStyles { get; set; }
-    }
-
-    public struct JSON_Module_TrackData
-    {
-        public List<TrackNode> Nodes { get; set; }
-        public List<JSON_Module_Segment> Segments { get; set; }
-        public List<JSON_Module_Point> Points { get; set; }
-        public List<JSON_Module_Detector> Detectors { get; set; }
+        public List<TrackStyleLoader> TrackStyles { get; set; }
+        public List<PointsStyleLoader> PointsStyles { get; set; }
+        public List<DetectorStyleLoader> DetectorStyles { get; set; }
     }
 
     public class JSON_StyleData
     {
-        public List<JSON_CustomColor>? Colors { get; set; }
-        public List<JSON_TrackStyle>? TrackStyles { get; set; }
-        public List<JSON_PointsStyle>? PointsStyles { get; set; }
-        public List<JSON_DetectorStyle>? DetectorStyles { get; set; }
-        public List<JSON_TextStyle>? TextStyles { get; set; }
+        public List<CustomColorLoader>? Colors { get; set; }
+        public List<TrackStyleLoader>? TrackStyles { get; set; }
+        public List<PointsStyleLoader>? PointsStyles { get; set; }
+        public List<DetectorStyleLoader>? DetectorStyles { get; set; }
+        public List<TextStyleLoader>? TextStyles { get; set; }
     }
 
     public struct JSON_Module_Signal
@@ -322,59 +191,47 @@ namespace ModularPanels
 
     public static class JSONLib
     {
-        public static void LoadTrackStyles(List<JSON_TrackStyle>? list)
+        public static void LoadTrackStyles(List<TrackStyleLoader>? list)
         {
             if (list == null)
                 return;
 
-            foreach (JSON_TrackStyle styleData in list)
+            foreach (TrackStyleLoader styleData in list)
             {
-                if (DrawLib.StyleBank.TrackStyles.HasItem(styleData.ID))
-                    throw new Exception("Duplicate track style ID: " + styleData.ID);
-
-                DrawLib.StyleBank.TrackStyles.AddItem(styleData.ID, styleData.Load());
+                styleData.Load(JsonLib.GlobalBank.Instance);
             }
         }
 
-        public static void LoadPointsStyles(List<JSON_PointsStyle>? list)
+        public static void LoadPointsStyles(List<PointsStyleLoader>? list)
         {
             if (list == null)
                 return;
 
-            foreach (JSON_PointsStyle styleData in list)
+            foreach (PointsStyleLoader styleData in list)
             {
-                if (DrawLib.StyleBank.PointsStyles.HasItem(styleData.ID))
-                    throw new Exception("Duplicate points style ID: " + styleData.ID);
-
-                DrawLib.StyleBank.PointsStyles.AddItem(styleData.ID, styleData.Load());
+                styleData.Load(JsonLib.GlobalBank.Instance);
             }
         }
 
-        public static void LoadDetectorStyles(List<JSON_DetectorStyle>? list)
+        public static void LoadDetectorStyles(List<DetectorStyleLoader>? list)
         {
             if (list == null)
                 return;
 
-            foreach (JSON_DetectorStyle styleData in list)
+            foreach (DetectorStyleLoader styleData in list)
             {
-                if (DrawLib.StyleBank.DetectorStyles.HasItem(styleData.ID))
-                    throw new Exception("Duplicate track style ID: " + styleData.ID);
-
-                DrawLib.StyleBank.DetectorStyles.AddItem(styleData.ID, styleData.Load());
+                styleData.Load(JsonLib.GlobalBank.Instance);
             }
         }
 
-        public static void LoadTextStyles(List<JSON_TextStyle>? list)
+        public static void LoadTextStyles(List<TextStyleLoader>? list)
         {
             if (list == null)
                 return;
 
-            foreach (JSON_TextStyle styleData in list)
+            foreach (TextStyleLoader styleData in list)
             {
-                if (DrawLib.StyleBank.TextStyles.HasItem(styleData.ID))
-                    throw new Exception("Duplicate text style ID: " + styleData.ID);
-
-                DrawLib.StyleBank.TextStyles.AddItem(styleData.ID, styleData.Load());
+                styleData.Load(JsonLib.GlobalBank.Instance);
             }
         }
 
@@ -395,9 +252,9 @@ namespace ModularPanels
                 {
                     if (styleData.Colors != null)
                     {
-                        foreach (JSON_CustomColor color in styleData.Colors)
+                        foreach (CustomColorLoader colorData in styleData.Colors)
                         {
-                            color.AddToBank();
+                            colorData.Load(JsonLib.GlobalBank.Instance);
                         }
                     }
                     
