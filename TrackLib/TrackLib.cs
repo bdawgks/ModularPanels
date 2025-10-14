@@ -1,20 +1,18 @@
-﻿using System.Drawing;
+﻿using ModularPanels.DrawLib;
+using PanelLib;
+using System.Drawing;
+using System.Text.Json.Serialization;
 
-namespace PanelLib
+namespace ModularPanels.TrackLib
 {
-    public class TrackNode(string id, int x, int y)
+    [JsonConverter(typeof(TrackNodeJsonConverter))]
+    public class TrackNode(string id, GridPos pos)
     {
         public readonly string id = id;
-        public readonly int x = x;
-        public readonly int y = y;
+        public readonly GridPos pos = pos;
         public TrackStyle style = new();
         public bool squareEnd = false;
         public float segDir = 0f;
-
-        public Point GetPoint(int gridSize = 1)
-        {
-            return new Point(x * gridSize, y * gridSize);
-        }
     }
 
     public readonly struct TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)

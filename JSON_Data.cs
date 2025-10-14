@@ -1,6 +1,7 @@
 ﻿using PanelLib;
 using System.Text.Json;
 using ModularPanels.DrawLib;
+using ModularPanels.TrackLib;
 
 namespace ModularPanels
 {
@@ -139,30 +140,6 @@ namespace ModularPanels
         }
     }
 
-    public struct JSON_Module_Node
-    {
-        public string ID { get; set; }
-        public int[] Pos { get; set; }
-        public bool? Square { get; set; }
-
-        public readonly PanelLib.TrackNode? Load()
-        {
-            if (Pos.Length != 2)
-                return null;
-
-            bool squareEnd = false;
-            if (Square != null)
-                squareEnd = Square.Value;
-
-            PanelLib.TrackNode node = new(ID, Pos[0], Pos[1])
-            {
-                squareEnd = squareEnd
-            };
-
-            return node;
-        }
-    }
-
     public struct JSON_Module_Segment
     {
         public string ID { get; set; }
@@ -228,7 +205,7 @@ namespace ModularPanels
 
     public struct JSON_Module_TrackData
     {
-        public List<JSON_Module_Node> Nodes { get; set; }
+        public List<TrackNode> Nodes { get; set; }
         public List<JSON_Module_Segment> Segments { get; set; }
         public List<JSON_Module_Point> Points { get; set; }
         public List<JSON_Module_Detector> Detectors { get; set; }

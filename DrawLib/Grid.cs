@@ -63,6 +63,11 @@ namespace ModularPanels.DrawLib
     public struct GridPos
     {
         public int x, y;
+
+        public readonly DrawingPos ToDrawingPos()
+        {
+            return Grid.Instance.TransformPos(this);
+        }
     }
 
     public class GridPosJsonConverter : JsonConverter<GridPos>

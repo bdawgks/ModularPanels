@@ -1,5 +1,6 @@
 ﻿using ModularPanels;
 using ModularPanels.DrawLib;
+using ModularPanels.TrackLib;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -253,8 +254,10 @@ namespace PanelLib
 
             foreach (TrackSegment seg in detector.GetSegments())
             {
-                Vector2 pos0 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n0));
-                Vector2 pos1 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n1));
+                DrawingPos nodePos0 = seg.n0.pos.ToDrawingPos();
+                DrawingPos nodePos1 = seg.n1.pos.ToDrawingPos();
+                Vector2 pos0 = Drawing.PointToVector(context.drawing.Transform(nodePos0));
+                Vector2 pos1 = Drawing.PointToVector(context.drawing.Transform(nodePos1));
                 Vector2 segDir = Vector2.Normalize(pos1 - pos0);
                 float angle = Drawing.VectorAngle(segDir);
 
@@ -516,10 +519,8 @@ namespace PanelLib
         {
             Brush trackBrush = new SolidBrush(segment.style.color);
             Pen trackPen = new(trackBrush, segment.style.width);
-            Point p1 = segment.n0.GetPoint(_gridSize);
-            Point p2 = segment.n1.GetPoint(_gridSize);
-            Transform(ref p1);
-            Transform(ref p2);
+            Point p1 = Transform(segment.n0.pos.ToDrawingPos());
+            Point p2 = Transform(segment.n1.pos.ToDrawingPos());
             g.DrawLine(trackPen, p1, p2);
 
             segment.n0.style = segment.style;
@@ -538,8 +539,7 @@ namespace PanelLib
         [SupportedOSPlatform("windows")]
         private void DrawNode(Graphics g, TrackNode node)
         {
-            Point p = node.GetPoint(_gridSize);
-            Transform(ref p);
+            Point p = Transform(node.pos.ToDrawingPos());
 
             Brush b = new SolidBrush(node.style.color);
             PointF tl = new(p.X - node.style.width * 0.5f, p.Y - node.style.width * 0.5f);
@@ -562,12 +562,12 @@ namespace PanelLib
         [SupportedOSPlatform("windows")]
         private void DrawPoints(Graphics g, TrackPoints p)
         {
-            Point basePoint = p.baseNode.GetPoint(_gridSize);
-            Point normalPoint = p.routeNormal.GetPoint(_gridSize);
-            Point reversedPoint = p.routeReversed.GetPoint(_gridSize);
-            Transform(ref basePoint);
-            Transform(ref normalPoint);
-            Transform(ref reversedPoint);
+            DrawingPos baseDPos = p.baseNode.pos.ToDrawingPos();
+            DrawingPos normalDPos = p.routeNormal.pos.ToDrawingPos();
+            DrawingPos reverseDPos = p.routeReversed.pos.ToDrawingPos();
+            Point basePoint = Transform(baseDPos);
+            Point normalPoint = Transform(normalDPos);
+            Point reversedPoint = Transform(reverseDPos);
             Vector2 basePos = PointToVector(basePoint);
             Vector2 normalPos = PointToVector(normalPoint);
             Vector2 reversedPos = PointToVector(reversedPoint);
@@ -747,34 +747,6 @@ namespace PanelLib
             textFont.Dispose();
         }
 
-        public Point GetNodePointTransformed(TrackNode n)
-        {
-            Point p = n.GetPoint(_gridSize);
-            Transform(ref p);
-            return p;
-        }
-
-        public static Vector2 PointToVector(Point p)
-        {
-            return new Vector2(p.X, p.Y);
-        }
-        public static Point VectorToPoint(Vector2 v)
-        {
-            return new Point((int)Math.Round(v.X), (int)Math.Round(v.Y));
-        }
-        public static float VectorAngle(Vector2 from, Vector2 to)
-        {
-            return float.RadiansToDegrees(Vector2.Dot(from, to));
-        }
-        public static float VectorAngle(Vector2 v)
-        {
-            Vector2 up = new(0f, 1f);
-            float angle = VectorAngle(v, up);
-            if (v.X < 0f)
-                angle = -angle;
-            return angle;
-        }
-
         public void Transform(ref Point p)
         {
             p.X += _canvas.X;
@@ -807,6 +779,27 @@ namespace PanelLib
                 y = p.Y - _canvas.Y
             };
             return pos;
+        }
+
+        public static Vector2 PointToVector(Point p)
+        {
+            return new Vector2(p.X, p.Y);
+        }
+        public static Point VectorToPoint(Vector2 v)
+        {
+            return new Point((int)Math.Round(v.X), (int)Math.Round(v.Y));
+        }
+        public static float VectorAngle(Vector2 from, Vector2 to)
+        {
+            return float.RadiansToDegrees(Vector2.Dot(from, to));
+        }
+        public static float VectorAngle(Vector2 v)
+        {
+            Vector2 up = new(0f, 1f);
+            float angle = VectorAngle(v, up);
+            if (v.X < 0f)
+                angle = -angle;
+            return angle;
         }
     }
 }
