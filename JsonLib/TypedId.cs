@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.JsonLib
 {
-    public class TypedId<IType, OType> where OType : class
+    public class TypedId<IType, OType>(IType id) where OType : class
     {
-        readonly IType _id;
+        readonly IType _id = id;
         OType? _object;
-
-        public TypedId(IType id)
-        {
-            _id = id;
-        }
 
         public OType? Get()
         {
             return _object;
         }
+
+        internal void SetObject(OType? obj)
+        {
+            _object = obj;
+        }
+    }
+
+    public class StringId<OType>(string id) : TypedId<string, OType>(id) where OType : class
+    {
     }
 }
