@@ -6,15 +6,15 @@ namespace ModularPanels.DrawLib
 {
     public class CustomColor
     {
-        readonly StringId<CustomColor> _id;
+        readonly StringKey<CustomColor> _id;
         readonly int _r, _g, _b;
 
         public string Name
         {
-            get { return _id.Id; }
+            get { return _id.Key; }
         }
 
-        public CustomColor(StringId<CustomColor> id, int r, int g, int b)
+        public CustomColor(StringKey<CustomColor> id, int r, int g, int b)
         {
             _id = id;
             _r = r; _g = g; _b = b;
@@ -25,7 +25,7 @@ namespace ModularPanels.DrawLib
 
     internal struct JsonDataCustomColor
     {
-        public StringId<CustomColor> Name { get; set; }
+        public StringKey<CustomColor> Name { get; set; }
         public int R { get; set; }
         public int G { get; set; }
         public int B { get; set; }
@@ -73,13 +73,13 @@ namespace ModularPanels.DrawLib
 
         Color ToColor()
         {
-            StringId<CustomColor> _customColorId = new(_name);
-            GlobalBank.Instance.AssignId(ref _customColorId);
+            StringKey<CustomColor> _customColorId = new(_name);
+            GlobalBank.Instance.RegisterKey(_customColorId);
 
             if (_customColorId.IsNull)
                 return Color.FromName(_name);
 
-            return _customColorId.Get()!;
+            return _customColorId.Object!;
         }
 
         public static implicit operator Color(ColorJS colorJS) => colorJS.ToColor();

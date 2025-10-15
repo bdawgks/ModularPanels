@@ -5,32 +5,32 @@ namespace ModularPanels.TrackLib
 {
     internal struct JsonDataTrackNode
     {
-        public StringId<TrackNode> ID {  get; set; }
+        public StringKey<TrackNode> ID {  get; set; }
         public GridPos Pos {  get; set; }
         public bool? Square {  get; set; }
     }
 
     internal struct JsonDataTrackSegment
     {
-        public StringId<TrackSegment> ID {  get; set; }
-        public List<StringId<TrackNode>> Nodes { get; set; }
-        public StringId<TrackStyle> Style {  get; set; }
+        public StringKey<TrackSegment> ID {  get; set; }
+        public List<StringKey<TrackNode>> Nodes { get; set; }
+        public StringKey<TrackStyle> Style {  get; set; }
     }
     internal struct JsonDataTrackPoints
     {
-        public StringId<TrackPoints> ID { get; set; }
-        public StringId<TrackNode> PointsNode { get; set; }
-        public StringId<TrackNode> RouteNormal { get; set; }
-        public StringId<TrackNode> RouteReversed { get; set; }
-        public StringId<PointsStyle> Style { get; set; }
+        public StringKey<TrackPoints> ID { get; set; }
+        public StringKey<TrackNode> PointsNode { get; set; }
+        public StringKey<TrackNode> RouteNormal { get; set; }
+        public StringKey<TrackNode> RouteReversed { get; set; }
+        public StringKey<PointsStyle> Style { get; set; }
         public bool? UseBaseColor { get; set; }
     }
 
     internal struct JsonDataTrackDetector
     {
-        public StringId<TrackDetector> ID { get; set; }
-        public StringId<DetectorStyle> Style { get; set; }
-        public List<StringId<TrackSegment>> Segments { get; set; }
+        public StringKey<TrackDetector> ID { get; set; }
+        public StringKey<DetectorStyle> Style { get; set; }
+        public List<StringKey<TrackSegment>> Segments { get; set; }
     }
 
     internal class JsonDataTrack
@@ -43,14 +43,14 @@ namespace ModularPanels.TrackLib
 
     internal struct JsonDataTrackStyle
     {
-        public StringId<TrackStyle> ID { get; set; }
+        public StringKey<TrackStyle> ID { get; set; }
         public ColorJS Color { get; set; }
         public float Width { get; set; }
     }
 
     internal struct JsonDataPointsStyle
     {
-        public StringId<PointsStyle> ID { get; set; }
+        public StringKey<PointsStyle> ID { get; set; }
         public ColorJS ColorInactive { get; set; }
         public ColorJS ColorLock { get; set; }
         public float LockLength { get; set; }
@@ -69,7 +69,7 @@ namespace ModularPanels.TrackLib
 
     internal struct JsonDataDetectorStyle
     {
-        public StringId<DetectorStyle> ID { get; set; }
+        public StringKey<DetectorStyle> ID { get; set; }
         public ColorJS ColorEmpty { get; set; }
         public ColorJS ColorOccupied { get; set; }
         public ColorJS ColorOutline { get; set; }

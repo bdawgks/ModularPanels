@@ -52,13 +52,13 @@ namespace ModularPanels
             if (Angle != null)
                 angle = Angle.Value;
 
-            StringId<TextStyle> id = new(Style);
-            GlobalBank.Instance.AssignId(ref id);
+            StringKey<TextStyle> id = new(Style);
+            GlobalBank.Instance.RegisterKey(id);
             TextStyle style;
             if (id.IsNull)
                 style = new();
             else
-                style = id.Get()!;
+                style = id.Object!;
 
                 PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
                 {

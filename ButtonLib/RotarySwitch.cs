@@ -32,10 +32,10 @@ namespace ModularPanels.ButtonLib
 
                 if (template.TextStyle != null)
                 {
-                    StringId<TextStyle> styleId = new(template.TextStyle);
-                    GlobalBank.Instance.AssignId(ref styleId);
+                    StringKey<TextStyle> styleId = new(template.TextStyle);
+                    GlobalBank.Instance.RegisterKey(styleId);
                     if (!styleId.IsNull)
-                        textStyle = styleId.Get()!;
+                        textStyle = styleId.Object!;
                 }
             }
         }

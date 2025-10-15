@@ -9,18 +9,42 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.JsonLib
 {
-    public class TypedId<IType, OType>(IType id) where OType : class
+    public class BankKey<KType, OType>(KType key) where OType : class
     {
-        readonly IType _id = id;
+        readonly KType _key = key;
+        InternalKey<KType, OType>? _iKey;
+
+        public KType Key { get { return _key; } }
+
+        internal InternalKey<KType, OType>? InternalKey { get { return _iKey; } }
+
+
+        public OType? Object
+        {
+            get => _iKey?.Get();
+        }
+
+        public bool IsNull { get { return _iKey == null || _iKey.IsNull; } }
+
+        internal void SetInternalKey(InternalKey<KType, OType>? iKey)
+        {
+            _iKey = iKey;
+        }
+    }
+
+    internal class InternalKey<KType, OType>(KType key) where OType : class
+    {
+        readonly KType _key = key;
         OType? _object;
 
-        public IType Id { get { return _id; } }
+        internal KType Key { get { return _key; } }
 
-        public OType? Get()
+        internal OType? Get()
         {
             return _object;
         }
-        public bool IsNull { get { return _object == null; } }
+
+        internal bool IsNull { get { return _object == null; } }
 
         internal void SetObject(OType? obj)
         {
@@ -29,7 +53,7 @@ namespace ModularPanels.JsonLib
     }
 
     [JsonConverter(typeof(StringIdJsonConverter))]
-    public class StringId<OType>(string id) : TypedId<string, OType>(id) where OType : class
+    public class StringKey<OType>(string key) : BankKey<string, OType>(key) where OType : class
     {
     }
 
@@ -40,7 +64,7 @@ namespace ModularPanels.JsonLib
             if (!typeToConvert.IsGenericType)
                 return false;
 
-            if (typeToConvert.GetGenericTypeDefinition() != typeof(StringId<>))
+            if (typeToConvert.GetGenericTypeDefinition() != typeof(StringKey<>))
                 return false;
 
             return typeToConvert.GetGenericArguments()[0].IsClass;
@@ -52,20 +76,12 @@ namespace ModularPanels.JsonLib
 
             JsonConverter converter = (JsonConverter)Activator.CreateInstance(typeof(StringIdConverterInner<>).MakeGenericType([objectType]))!;
 
-            //JsonConverter converter = (JsonConverter)Activator.CreateInstance(
-            //    typeof(StringIdConverterInner<>).MakeGenericType(
-            //        [objectType]),
-            //    BindingFlags.Instance | BindingFlags.Public,
-            //    binder: null,
-            //    args: [options],
-            //    culture: null)!;
-
             return converter;
         }
 
-        private class StringIdConverterInner<TObj> : JsonConverter<StringId<TObj>> where TObj : class
+        private class StringIdConverterInner<TObj> : JsonConverter<StringKey<TObj>> where TObj : class
         {
-            public override StringId<TObj>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public override StringKey<TObj>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 if (reader.TokenType == JsonTokenType.String)
                 {
@@ -78,7 +94,7 @@ namespace ModularPanels.JsonLib
                 return null;
             }
 
-            public override void Write(Utf8JsonWriter writer, StringId<TObj> value, JsonSerializerOptions options)
+            public override void Write(Utf8JsonWriter writer, StringKey<TObj> value, JsonSerializerOptions options)
             {
                 throw new NotImplementedException();
             }

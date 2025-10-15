@@ -7,7 +7,7 @@ namespace ModularPanels.PanelLib
 {
     internal struct JsonDataTextStyle
     {
-        public StringId<TextStyle> ID { get; set; }
+        public StringKey<TextStyle> ID { get; set; }
         public string Font { get; set; }
         public ColorJS Color { get; set; }
         public int Size { get; set; }

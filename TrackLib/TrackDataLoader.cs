@@ -1,7 +1,6 @@
 ﻿using ModularPanels.JsonLib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Linq;
 
 namespace ModularPanels.TrackLib
 {
@@ -16,11 +15,11 @@ namespace ModularPanels.TrackLib
             set => data = value;
         }
 
-        private static void ValidateTrackNode(ref StringId<TrackNode> nodeId, ObjectBank bank)
+        private static void ValidateTrackNode(ref StringKey<TrackNode> nodeId, ObjectBank bank)
         {
-            bank.AssignId(ref nodeId);
+            bank.RegisterKey(nodeId);
             if (nodeId.IsNull)
-                throw new Exception(string.Format("Invalid track node ID: {0}", nodeId.Id));
+                throw new Exception(string.Format("Invalid track node ID: {0}", nodeId.Key));
         }
 
         public void Load(ObjectBank bank)
@@ -32,7 +31,7 @@ namespace ModularPanels.TrackLib
             {
                 foreach (var nodeData in data.Nodes)
                 {
-                    TrackNode node = new(nodeData.ID.Id, nodeData.Pos)
+                    TrackNode node = new(nodeData.ID.Key, nodeData.Pos)
                     {
                         squareEnd = nodeData.Square != null && nodeData.Square.Value
                     };
@@ -45,7 +44,7 @@ namespace ModularPanels.TrackLib
                 foreach (var segData in data.Segments)
                 {
                     if (segData.Nodes.Count != 2)
-                        throw new Exception(string.Format("Invalid track segment node definition: requires 2 valid node IDs [{0}]", segData.ID.Id));
+                        throw new Exception(string.Format("Invalid track segment node definition: requires 2 valid node IDs [{0}]", segData.ID.Key));
 
                     var n0 = segData.Nodes[0];
                     var n1 = segData.Nodes[1];
@@ -53,15 +52,14 @@ namespace ModularPanels.TrackLib
                     ValidateTrackNode(ref n0, bank);
                     ValidateTrackNode(ref n1, bank);
 
-                    var styleId = segData.Style;
-                    GlobalBank.Instance.AssignId(ref styleId);
+                    GlobalBank.Instance.RegisterKey(segData.Style);
                     TrackStyle style;
-                    if (styleId.IsNull)
+                    if (segData.Style.IsNull)
                         style = new();
                     else
-                        style = styleId.Get()!;
+                        style = segData.Style.Object!;
 
-                    TrackSegment segment = new(segData.ID.Id, style, n0.Get()!, n1.Get()!);
+                    TrackSegment segment = new(segData.ID.Key, style, n0.Object!, n1.Object!);
                     bank.DefineObject(segment.id, segment);
                 }
             }
@@ -78,16 +76,15 @@ namespace ModularPanels.TrackLib
                     ValidateTrackNode(ref n1, bank);
                     ValidateTrackNode(ref n2, bank);
 
-                    var styleId = pointsData.Style;
-                    GlobalBank.Instance.AssignId(ref styleId);
+                    GlobalBank.Instance.RegisterKey(pointsData.Style);
                     PointsStyle style;
-                    if (styleId.IsNull)
+                    if (pointsData.Style.IsNull)
                         style = new();
                     else
-                        style = styleId.Get()!;
+                        style = pointsData.Style.Object!;
 
                     bool useBaseColor = pointsData.UseBaseColor != null && pointsData.UseBaseColor.Value;
-                    TrackPoints points = new(pointsData.ID.Id, n0.Get()!, n1.Get()!, n2.Get()!, useBaseColor)
+                    TrackPoints points = new(pointsData.ID.Key, n0.Object!, n1.Object!, n2.Object!, useBaseColor)
                     {
                         Style = style
                     };
@@ -99,27 +96,25 @@ namespace ModularPanels.TrackLib
             {
                 foreach (var detectorData in data.Detectors)
                 {
-                    var styleId = detectorData.Style;
-                    GlobalBank.Instance.AssignId(ref styleId);
+                    GlobalBank.Instance.RegisterKey(detectorData.Style);
                     DetectorStyle style;
-                    if (styleId.IsNull)
+                    if (detectorData.Style.IsNull)
                         style = DetectorStyle.Default;
                     else
-                        style = styleId.Get()!;
+                        style = detectorData.Style.Object!;
 
-                    TrackDetector detector = new(detectorData.ID.Id)
+                    TrackDetector detector = new(detectorData.ID.Key)
                     {
                         Style = style
                     };
 
-                    foreach (StringId<TrackSegment> s in detectorData.Segments)
+                    foreach (StringKey<TrackSegment> segKey in detectorData.Segments)
                     {
-                        var segId = s;
-                        bank.AssignId(ref segId);
-                        if (segId.IsNull)
-                            throw new Exception(string.Format("Invalid track segment ID: {0}", segId.Id));
+                        bank.RegisterKey(segKey);
+                        if (segKey.IsNull)
+                            throw new Exception(string.Format("Invalid track segment ID: {0}", segKey.Key));
 
-                        detector.AddSegment(segId.Get()!);
+                        detector.AddSegment(segKey.Object!);
                     }
 
                     bank.DefineObject(detector.ID, detector);

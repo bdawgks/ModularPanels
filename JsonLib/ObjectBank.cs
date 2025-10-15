@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ModularPanels.JsonLib
 {
@@ -10,43 +11,38 @@ namespace ModularPanels.JsonLib
     {
         private class TypeBank<T> where T : class
         {
-            readonly Dictionary<string, StringId<T>> _ids = [];
+            readonly Dictionary<string, InternalKey<string,T>> _keys = [];
 
-            public StringId<T> Get(string idStr)
+            public InternalKey<string, T> GetInternalKey(string keyStr)
             {
-                if (_ids.TryGetValue(idStr, out var id))
+                if (_keys.TryGetValue(keyStr, out var iKey))
                 {
-                    return id;
+                    return iKey;
                 }
-                StringId<T> newId = new(idStr);
-                _ids.Add(idStr, newId);
-                return newId;
+                InternalKey<string, T> newKey = new(keyStr);
+                _keys.Add(keyStr, newKey);
+                return newKey;
             }
 
-            /// <summary>
-            /// When passed a reference to a StringId, it will either add it to the bank or
-            /// reassign the ref to the existing StringId in the bank with matching ID.
-            /// </summary>
-            /// <param name="id">Id reference</param>
-            /// <returns>true if the id was newly added, false the ref was modified to an existing id</returns>
-            public bool GetOrAddId(ref StringId<T> id)
+            public StringKey<T> Get(string keyStr)
             {
-                if (_ids.TryGetValue(id.Id, out var storedId))
-                {
-                    id = storedId;
-                    return false;
-                }
-                _ids.Add(id.Id, id);
-                return true;
+                StringKey<T> key = new(keyStr);
+                key.SetInternalKey(GetInternalKey(keyStr));
+                return key;
+            }
+
+            public void RegisterKey(StringKey<T> key)
+            {
+                key.SetInternalKey(GetInternalKey(key.Key));
             }
 
             public Dictionary<string, T> GetObjects()
             {
                 Dictionary<string, T> map = [];
-                foreach (var id in _ids.Values)
+                foreach (var key in _keys.Values)
                 {
-                    if (!id.IsNull)
-                        map.Add(id.Id, id.Get()!);
+                    if (!key.IsNull)
+                        map.Add(key.Key, key.Get()!);
                 }
 
                 return map;
@@ -68,40 +64,52 @@ namespace ModularPanels.JsonLib
         }
 
         /// <summary>
-        /// Define the object associated with the given Id.
+        /// Define the object associated with the given Key.
         /// </summary>
-        /// <typeparam name="T">Object type</typeparam>
-        /// <param name="idStr">String of id.</param>
-        /// <param name="obj">Object to assign to Id</param>
+        /// <typeparam name="T">Object type.</typeparam>
+        /// <param name="keyStr">String key value.</param>
+        /// <param name="obj">Object to assign to Key.</param>
         /// <returns></returns>
-        public bool DefineObject<T>(string idStr, T obj) where T : class
+        public bool DefineObject<T>(string keyStr, T obj) where T : class
         {
-            if (string.IsNullOrEmpty(idStr))
+            if (string.IsNullOrEmpty(keyStr))
                 return false;
 
             TypeBank<T> bank = GetType<T>();
-            StringId<T> id = bank.Get(idStr);
-            id.SetObject(obj);
+            StringKey<T> key = bank.Get(keyStr);
+            key.InternalKey?.SetObject(obj);
             return true;
         }
 
-        public bool DefineObject<T>(StringId<T> id, T obj) where T : class
+        /// <summary>
+        /// Define the object associated with the given Key.
+        /// </summary>
+        /// <typeparam name="T">Object type.</typeparam>
+        /// <param name="key">Key to define.</param>
+        /// <param name="obj">Object to assign to the Key.</param>
+        /// <returns></returns>
+        public bool DefineObject<T>(StringKey<T> key, T obj) where T : class
         {
-            return DefineObject(id.Id, obj);
+            return DefineObject(key.Key, obj);
         }
 
         /// <summary>
-        /// When passed a reference to a StringId, it will either add it to the bank or
-        /// reassign the ref to the existing StringId in the bank with matching ID.
+        /// Registers the given Key to this bank. This Key will now point to the object with the
+        /// associated key value if it is defined.
         /// </summary>
-        /// <param name="id">Id reference</param>
-        /// <returns>true if the id was newly added, false the ref was modified to an existing id</returns>
-        public bool AssignId<T>(ref StringId<T> id) where T : class
+        /// <typeparam name="T">Object type.</typeparam>
+        /// <param name="key">The Key to register.</param>
+        public void RegisterKey<T>(StringKey<T> key) where T : class
         {
             TypeBank<T> bank = GetType<T>();
-            return bank.GetOrAddId(ref id);
+            bank.RegisterKey(key);
         }
 
+        /// <summary>
+        /// Returns a map of all currently defined objects and their keys.
+        /// </summary>
+        /// <typeparam name="T">Object type.</typeparam>
+        /// <returns>Dictionary with key type and object type.</returns>
         public Dictionary<string, T> GetObjects<T>() where T : class
         {
             TypeBank<T> bank = GetType<T>();
@@ -109,6 +117,9 @@ namespace ModularPanels.JsonLib
         }
     }
 
+    /// <summary>
+    /// Singleton ObjectBank that persists the whole session and can be accessed globally.
+    /// </summary>
     public class GlobalBank : ObjectBank
     {
         static GlobalBank? _instance;
