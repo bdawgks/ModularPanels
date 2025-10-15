@@ -1,3 +1,4 @@
+using ModularPanels.SignalLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -6,7 +7,11 @@ namespace ModularPanels
     {
         public static MainWindow? Instance;
 
+        static SignalBank? _signalBank;
+
         List<PanelLib.Drawing> _drawings = [];
+
+        public static SignalBank SignalBank { get { _signalBank??= new SignalBank(); return _signalBank; } }
 
         public DrawPanel DrawPanel { get => drawPanel1; }
 
@@ -29,7 +34,7 @@ namespace ModularPanels
         {
             string dataPath = Application.StartupPath + "data";
             JSONLib.LoadStyleFiles(dataPath + "\\styles\\");
-            JSONLib.LoadSignalFiles(ModularPanels.Layout.SignalSpace, dataPath + "\\signals\\");
+            JSONLib.LoadSignalFiles(dataPath + "\\signals\\");
             LoadControlTemplates();
         }
 

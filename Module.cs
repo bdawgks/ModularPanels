@@ -5,6 +5,7 @@ using ModularPanels.JsonLib;
 using ModularPanels.TrackLib;
 using ModularPanels.PanelLib;
 using ModularPanels.DrawLib;
+using ModularPanels.SignalLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -61,7 +62,7 @@ namespace ModularPanels
                 TrackData.Load(module.ObjectBank);
             }
 
-            SignalData.InitSignals(module, Layout.SignalSpace);
+            SignalData.InitSignals(module);
 
             if (Controls != null)
                 module.AddControls(Controls.Value);
@@ -80,21 +81,16 @@ namespace ModularPanels
         readonly string _name;
         readonly int _width;
         readonly int _height;
-        readonly ComponentContainer _components = new();
+        readonly ComponentContainer _components;
 
-        PanelLib.Drawing? _drawing;
+        Drawing? _drawing;
         Color? _backgroundColor;
 
         JSON_Module_Controls? _controlsData;
 
         readonly ObjectBank _objBank = new();
-
-        //readonly Dictionary<string, TrackSegment> _trackSegments = [];
-        //readonly Dictionary<string, TrackNode> _trackNodes = [];
-        //readonly Dictionary<string, TrackPoints> _trackPoints = [];
-        //readonly Dictionary<string, TrackDetector> _trackDetectors = [];
-        readonly Dictionary<string, PanelLib.Signal> _signals = [];
-        readonly List<PanelLib.PanelText> _texts = [];
+        readonly Dictionary<string, Signal> _signals = [];
+        readonly List<PanelText> _texts = [];
         readonly List<IControl> _allControls = [];
 
         public ObjectBank ObjectBank { get { return _objBank; } }
@@ -102,14 +98,16 @@ namespace ModularPanels
         public Dictionary<string, TrackNode> TrackNodes { get { return _objBank.GetObjects<TrackNode>(); } } 
         public Dictionary<string, TrackPoints> TrackPoints { get { return _objBank.GetObjects<TrackPoints>(); } }
         public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
-        public Dictionary<string, PanelLib.Signal> Signals { get { return _signals; } }
-        public List<PanelLib.PanelText> Texts { get { return _texts; } }
+        public Dictionary<string, Signal> Signals { get { return _signals; } }
+        public List<PanelText> Texts { get { return _texts; } }
 
         public Module(string name, int width, int height)
         {
             _name = name;
             _width = width;
             _height = height;
+
+            _components = new(this);
         }
 
         public ComponentContainer Components { get { return _components; } }
@@ -169,11 +167,11 @@ namespace ModularPanels
             {
                 drawing.AddDetector(d);
             }
-            foreach (PanelLib.Signal s in _signals.Values)
+            foreach (Signal s in _signals.Values)
             {
                 drawing.AddSignal(s);
             }
-            foreach (PanelLib.PanelText t in _texts)
+            foreach (PanelText t in _texts)
             {
                 drawing.AddText(t);
             }

@@ -1,15 +1,8 @@
-﻿using ModularPanels;
-using ModularPanels.DrawLib;
+﻿using ModularPanels.DrawLib;
 using ModularPanels.TrackLib;
-using System.Drawing;
-using System.Linq;
+using ModularPanels.SignalLib;
 using System.Numerics;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Forms.Design.Behavior;
 
 namespace ModularPanels.PanelLib
 {
@@ -180,7 +173,7 @@ namespace ModularPanels.PanelLib
 
     public class ShapeBank
     {
-        readonly Dictionary<string, Shape> _shapes = new();
+        readonly Dictionary<string, Shape> _shapes = [];
 
         public void AddShape(string name, Shape shape)
         {

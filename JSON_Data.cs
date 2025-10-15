@@ -1,8 +1,8 @@
 ﻿using ModularPanels.DrawLib;
 using ModularPanels.JsonLib;
 using ModularPanels.PanelLib;
+using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
-using System.Collections.Generic;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -102,14 +102,17 @@ namespace ModularPanels
     {
         public List<JSON_Module_Signal> Signals { get; set; }
 
-        public readonly void InitSignals(Module mod, SignalSpace space)
+        public readonly void InitSignals(Module mod)
         {
             if (Signals == null)
                 return;
 
+            if (!mod.Components.CreateComponent([MainWindow.SignalBank], out SignalComponent? comp))
+                return;
+
             foreach (var signal in Signals)
             {
-                Signal? sig = space.CreateSignal(signal.ID, signal.Type);
+                Signal? sig = comp.CreateSignal(signal.ID, signal.Type);
                 if (sig == null)
                     continue;
 
@@ -198,7 +201,7 @@ namespace ModularPanels
 
             foreach (TrackStyleLoader styleData in list)
             {
-                styleData.Load(JsonLib.GlobalBank.Instance);
+                styleData.Load(GlobalBank.Instance);
             }
         }
 
@@ -209,7 +212,7 @@ namespace ModularPanels
 
             foreach (PointsStyleLoader styleData in list)
             {
-                styleData.Load(JsonLib.GlobalBank.Instance);
+                styleData.Load(GlobalBank.Instance);
             }
         }
 
@@ -220,7 +223,7 @@ namespace ModularPanels
 
             foreach (DetectorStyleLoader styleData in list)
             {
-                styleData.Load(JsonLib.GlobalBank.Instance);
+                styleData.Load(GlobalBank.Instance);
             }
         }
 
@@ -231,7 +234,7 @@ namespace ModularPanels
 
             foreach (TextStyleLoader styleData in list)
             {
-                styleData.Load(JsonLib.GlobalBank.Instance);
+                styleData.Load(GlobalBank.Instance);
             }
         }
 
@@ -266,7 +269,7 @@ namespace ModularPanels
             }
         }
 
-        public static void LoadSignalFiles(PanelLib.SignalSpace sigSpace, string dir)
+        public static void LoadSignalFiles(string dir)
         {
             if (!Directory.Exists(dir))
                 return;
@@ -277,8 +280,13 @@ namespace ModularPanels
                 if (Path.GetExtension(file) != ".json")
                     continue;
 
-                PanelLib.JSONData.JSONLoader.LoadSignalLibrary(sigSpace, file);
+                string json = File.ReadAllText(file);
+                SignalLibraryLoader? lib = JsonSerializer.Deserialize<SignalLibraryLoader>(json);
+
+                lib?.Load(MainWindow.SignalBank);
             }
+
+            MainWindow.SignalBank.InitShapes();
         }
     }
 }

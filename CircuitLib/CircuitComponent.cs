@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ModularPanels.Components;
+using ModularPanels.SignalLib;
 
 namespace ModularPanels.CircuitLib
 {
@@ -118,23 +119,28 @@ namespace ModularPanels.CircuitLib
             }
             if (circuitData.SignalCircuits != null)
             {
-                foreach (var sc in circuitData.SignalCircuits)
+                SignalComponent? signalComp = Parent.Components.GetComponent<SignalComponent>();
+                if (signalComp != null)
                 {
-                    if (!ModularPanels.Layout.SignalSpace.SignalMap.TryGetValue(sc.SigID, out PanelLib.Signal? sig))
-                        continue;
-
-                    if (!_circuits.TryGetValue(sc.Circuit, out Circuit? circuit))
-                        continue;
-
-                    PanelLib.SignalHead? sigHead = sig.GetDefaultHead();
-                    if (sigHead == null)
-                        continue;
-
-                    circuit.ActivationEvents += (sender, e) =>
+                    foreach (var sc in circuitData.SignalCircuits)
                     {
-                        sigHead.SetIndication(sc.Indication);
-                    };
+                        if (!signalComp.SignalMap.TryGetValue(sc.SigID, out Signal? sig))
+                            continue;
+
+                        if (!_circuits.TryGetValue(sc.Circuit, out Circuit? circuit))
+                            continue;
+
+                        SignalHead? sigHead = sig.GetDefaultHead();
+                        if (sigHead == null)
+                            continue;
+
+                        circuit.ActivationEvents += (sender, e) =>
+                        {
+                            sigHead.SetIndication(sc.Indication);
+                        };
+                    }
                 }
+
             }
         }
     }

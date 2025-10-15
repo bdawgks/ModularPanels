@@ -11,7 +11,7 @@ namespace ModularPanels
 
         public readonly Layout Initialize()
         {
-            Layout layout = new(Name, Layout.SignalSpace);
+            Layout layout = new(Name);
 
             foreach (string m in Modules)
             {
@@ -30,27 +30,15 @@ namespace ModularPanels
         readonly string _name;
         readonly List<Module> _modules = [];
 
-        static PanelLib.SignalSpace? _sigSpace;
-
         int _width = 0;
         public int Width
         {
             get => _width;
         }
 
-        public static PanelLib.SignalSpace SignalSpace
-        {
-            get
-            {
-                _sigSpace ??= new();
-                return _sigSpace;
-            }
-        }
-
-        public Layout(string name, SignalSpace sigSpace)
+        public Layout(string name)
         {
             _name = name;
-            _sigSpace = sigSpace;
         }
 
         public void AddModule(Module module)
@@ -58,14 +46,14 @@ namespace ModularPanels
             _modules.Add(module);
         }
 
-        public List<PanelLib.Drawing> GetDrawings()
+        public List<Drawing> GetDrawings()
         {
-            List<PanelLib.Drawing> drawings = [];
+            List<Drawing> drawings = [];
 
             int x = 0;
             foreach (Module m in _modules)
             {
-                PanelLib.Drawing drawing = new();
+                Drawing drawing = new();
 
                 int drawingWidth = m.Width * drawing.GridSize;
                 int drawingHeight = m.Height * drawing.GridSize;
