@@ -17,7 +17,7 @@ namespace ModularPanels.SignalLib
         readonly string _id;
         SignalHead? _precedingSignal;
         SignalHead? _advancedSignal;
-        readonly List<SignalRoute> _routes = new();
+        readonly List<SignalRoute> _routes = [];
         SignalRoute? _activeRoute;
         string? _indication;
         string _aspect = "0";

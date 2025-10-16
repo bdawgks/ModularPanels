@@ -57,7 +57,7 @@ namespace ModularPanels
         private void LoadLayout()
         {
 
-            string path = "C:\\Users\\Kyle\\source\\repos\\ModularPanels\\data\\layouts\\testlayout.json";
+            string path = Application.StartupPath + "data\\layouts\\testlayout.json";
             if (File.Exists(path))
             {
                 try

@@ -43,7 +43,7 @@ namespace ModularPanels
         public int[] Pos { get; set; }
         public float? Angle { get; set; }
 
-        public readonly PanelLib.PanelText Load()
+        public readonly PanelText Load()
         {
             if (Pos.Length != 2)
                 throw new Exception("Invalid position for text " + Text);
@@ -60,7 +60,7 @@ namespace ModularPanels
             else
                 style = id.Object!;
 
-                PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
+                PanelText text = new(Text, Pos[0], Pos[1], angle)
                 {
                     Text = Text,
                     Style = style

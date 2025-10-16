@@ -21,6 +21,12 @@ namespace ModularPanels.TrackLib
 
     public class TrackPoints(string id, TrackNode baseNode, TrackNode routeNormal, TrackNode routeReversed, bool useBaseColor = false)
     {
+        public class PointsStateChangeArgs(TrackPoints points, TrackPoints.PointsState newState)
+        {
+            public TrackPoints Points { get; } = points;
+            public PointsState NewState { get; } = newState;
+        }
+
         public enum PointsState
         {
             Normal,
@@ -39,6 +45,8 @@ namespace ModularPanels.TrackLib
         private bool _showMoving = false;
         private PointsState _state = PointsState.Normal;
         private bool _locked = false;
+
+        public event EventHandler<PointsStateChangeArgs>? StateChangeEvents;
 
         public PointsStyle Style
         {
@@ -74,7 +82,11 @@ namespace ModularPanels.TrackLib
 
         public void SetState(PointsState state)
         {
+            if (_state == state)
+                return;
+
             _state = state;
+            StateChangeEvents?.Invoke(this, new PointsStateChangeArgs(this, state));
         }
     }
 

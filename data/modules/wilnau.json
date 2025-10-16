@@ -188,9 +188,9 @@
 			{"Op": "EQ", "Circuit": "points_3_N"},
 			{"Op": "AND", "Circuit": "A'_stop"}
 		], "Desc": "Switch P1 interlocking"}
-	],
-	"SignalCircuits": [
-		{"SigID": "A'", "Circuit": "A'_clear", "Indication": "Clear"},
-		{"SigID": "A'", "Circuit": "A'_stop", "Indication": "Stop"}
 	]
-}}
+},
+"SignalCircuits": [
+	{"SigID": "A'", "Circuit": "A'_clear", "Indication": "Clear"},
+	{"SigID": "A'", "Circuit": "A'_stop", "Indication": "Stop"}
+]}

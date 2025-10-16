@@ -19,7 +19,8 @@ namespace ModularPanels
         public TrackDataLoader? TrackData { get;set;}
         public JSON_Module_SignalData SignalData { get;set;}
         public JSON_Module_Controls? Controls { get;set;}
-        public JSON_Module_RelayCircuits? RelayCircuits { get;set;}
+        public CircuitDataLoader? RelayCircuits { get;set;}
+        public PointsCircuitLoader? PointsCircuits { get;set;}
 
         public Module Initialize()
         {
@@ -69,7 +70,7 @@ namespace ModularPanels
 
             if (RelayCircuits != null)
             {
-                module.GetCircuitComponent().InitCircuits(RelayCircuits.Value);
+                module.GetCircuitComponent().InitCircuits(RelayCircuits);
             }
 
             return module;

@@ -23,5 +23,16 @@ namespace ModularPanels.SignalLib
 
             return sig;
         }
+
+        public SignalHead? GetSignalHead(SignalHeadId id)
+        {
+            if (!_signalMap.TryGetValue(id.id, out Signal? sig))
+                return null;
+
+            if (id.head == null)
+                return sig.GetDefaultHead();
+
+            return sig.GetHead(id.head);
+        }
     }
 }

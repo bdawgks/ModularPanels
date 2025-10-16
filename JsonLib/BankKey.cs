@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace ModularPanels.JsonLib
 {
@@ -25,6 +20,12 @@ namespace ModularPanels.JsonLib
         }
 
         public bool IsNull { get { return _iKey == null || _iKey.IsNull; } }
+
+        public bool TryGet([NotNullWhen(true)]out OType? obj)
+        {
+            obj = Object;
+            return !IsNull;
+        }
 
         internal void SetInternalKey(InternalKey<KType, OType>? iKey)
         {
