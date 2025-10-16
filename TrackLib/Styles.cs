@@ -59,7 +59,7 @@ namespace ModularPanels.TrackLib
                 Vector2 pos0 = Drawing.PointToVector(context.drawing.Transform(nodePos0));
                 Vector2 pos1 = Drawing.PointToVector(context.drawing.Transform(nodePos1));
                 Vector2 segDir = Vector2.Normalize(pos1 - pos0);
-                float angle = Drawing.VectorAngle(segDir);
+                float angle = Drawing.VectorAngle(segDir) - 90f;
 
                 float segLenF = segmentLength;
                 float segLenH = segLenF * 0.5f;

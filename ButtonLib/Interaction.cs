@@ -1,10 +1,12 @@
 ﻿using ModularPanels.Components;
+using ModularPanels.DrawLib;
 
 namespace ModularPanels.ButtonLib
 {
-    public class ClickEventArgs(Point point) : EventArgs
+    public class ClickEventArgs(Point point, DrawingPos pos) : EventArgs
     {
         public Point Point { get; set; } = point;
+        public DrawingPos Pos { get; set; } = pos;
     }
 
     public interface IClickable

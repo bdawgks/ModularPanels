@@ -13,14 +13,14 @@ namespace ModularPanels.ButtonLib
         readonly DrawLib.DrawingPos _center = center;
         readonly float _radius = radius;
 
-        Func<Point, bool>? _canClickFunc;
+        Func<Point, DrawingPos, bool>? _canClickFunc;
 
         public event EventHandler<ClickEventArgs>? MouseDownEvents;
         public event EventHandler<ClickEventArgs>? MouseUpEvents;
 
         public DrawLib.DrawingPos Center { get { return _center; } }
         public float Radius { get { return _radius; } }
-        public Func<Point, bool> CanClickFunc
+        public Func<Point, DrawingPos, bool> CanClickFunc
         {
             set { _canClickFunc = value; }
         }
@@ -36,12 +36,12 @@ namespace ModularPanels.ButtonLib
 
         public void MouseDown(Point p)
         {
-            MouseDownEvents?.Invoke(this, new ClickEventArgs(p));
+            MouseDownEvents?.Invoke(this, new ClickEventArgs(p, InverseTransform(p)));
         }
 
         public void MouseUp(Point p)
         {
-            MouseUpEvents?.Invoke(this, new ClickEventArgs(p));
+            MouseUpEvents?.Invoke(this, new ClickEventArgs(p, InverseTransform(p)));
         }
 
         public bool CanClick(Point p)
@@ -49,7 +49,7 @@ namespace ModularPanels.ButtonLib
             if (_canClickFunc == null)
                 return true;
 
-            return _canClickFunc.Invoke(p);
+            return _canClickFunc.Invoke(p, InverseTransform(p));
         }
     }
 }

@@ -697,12 +697,13 @@ namespace ModularPanels.PanelLib
         }
         public static float VectorAngle(Vector2 from, Vector2 to)
         {
-            return float.RadiansToDegrees(Vector2.Dot(from, to));
+            float angle = MathF.Acos(Vector2.Dot(from, to));
+            return float.RadiansToDegrees(angle);
         }
         public static float VectorAngle(Vector2 v)
         {
-            Vector2 up = new(0f, 1f);
-            float angle = VectorAngle(v, up);
+            Vector2 up = new(0f, -1f);
+            float angle = VectorAngle(Vector2.Normalize(v), up);
             if (v.X < 0f)
                 angle = -angle;
             return angle;

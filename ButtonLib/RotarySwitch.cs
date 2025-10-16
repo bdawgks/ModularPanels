@@ -229,14 +229,78 @@ namespace ModularPanels.ButtonLib
             {
                 _positions[i] = new(this, i, template.Positions[i]);
             }
+            _switchVolume.CanClickFunc = CanClick;
+            _switchVolume.MouseDownEvents += MouseDown;
+            _switchVolume.MouseUpEvents += MouseUp;
 
             _parent.AddControl(this);
+        }
+
+        private bool CanClick(Point p, DrawingPos pos)
+        {
+            return !_locked;
+        }
+        private void MouseDown(object? sender, ClickEventArgs e)
+        {
+            int posIdx = GetClickedPosition(e.Pos);
+            if (posIdx != -1)
+            {
+                SetPosition(posIdx);
+            }
+        }
+        private void MouseUp(object? sender, ClickEventArgs e)
+        {
+            if (!_positions[_curPos].Latching)
+            {
+                ReturnToCenter(_curPos);
+            }
+        }
+
+        private int GetClickedPosition(DrawingPos clickPos)
+        {
+            Vector2 vClick = clickPos.ToVector2();
+            Vector2 vCenter = _pos.ToVector2();
+            Vector2 clickDir = Vector2.Normalize(vClick - vCenter);
+
+            Vector2[] posVectors = new Vector2[_positions.Length];
+            for (int i = 0; i < _positions.Length; i++)
+            {
+                float radAngle = float.DegreesToRadians(_angle + _positions[i].Angle);
+                posVectors[i] = new(MathF.Sin(radAngle), -MathF.Cos(radAngle));
+            }
+            const float maxAngle = 35f;
+            for (int i = 0; i < _positions.Length; i++)
+            {
+                Vector2 thisDir = posVectors[i];
+                float thisAngle = MathF.Abs(Drawing.VectorAngle(thisDir, clickDir));
+                if (thisAngle > maxAngle)
+                    continue;
+
+                if (i > 0)
+                {
+                    Vector2 prevDir = posVectors[i - 1];
+                    float prevAngle = MathF.Abs(Drawing.VectorAngle(prevDir, clickDir));
+                    if (thisAngle > prevAngle)
+                        continue;
+                }
+                if (i + 1 < _positions.Length)
+                {
+                    Vector2 nextDir = posVectors[i + 1];
+                    float nextAngle = MathF.Abs(Drawing.VectorAngle(nextDir, clickDir));
+                    if (thisAngle > nextAngle)
+                        continue;
+                }
+                return i;
+            }
+
+            return -1;
         }
 
         public List<DrawTransform> GetTransforms()
         {
             List<DrawTransform> transforms = [];
             transforms.Add(this);
+            transforms.Add(_switchVolume);
             foreach (var pos in _positions)
             {
                 transforms.AddRange(pos.GetTransforms());
