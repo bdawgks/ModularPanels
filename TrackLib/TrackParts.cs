@@ -1,23 +1,17 @@
-﻿using System.Drawing;
+﻿using ModularPanels.DrawLib;
 
-namespace PanelLib
+namespace ModularPanels.TrackLib
 {
-    public class TrackNode(string id, int x, int y)
+    public class TrackNode(string id, GridPos pos)
     {
         public readonly string id = id;
-        public readonly int x = x;
-        public readonly int y = y;
+        public readonly GridPos pos = pos;
         public TrackStyle style = new();
         public bool squareEnd = false;
         public float segDir = 0f;
-
-        public Point GetPoint(int gridSize = 1)
-        {
-            return new Point(x * gridSize, y * gridSize);
-        }
     }
 
-    public readonly struct TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)
+    public class TrackSegment(string id, TrackStyle style, TrackNode n0, TrackNode n1)
     {
         public readonly string id = id;
         public readonly TrackStyle style = style;
@@ -40,7 +34,7 @@ namespace PanelLib
         public readonly TrackNode routeReversed = routeReversed;
         public readonly bool useBaseColor = useBaseColor;
 
-        private PointsStyle _style;
+        private PointsStyle _style = new();
 
         private bool _showMoving = false;
         private PointsState _state = PointsState.Normal;

@@ -1,18 +1,19 @@
-using ModularPanels.ButtonLib;
-using PanelLib;
-using PanelLib.JSONData;
-using System.IO;
+using ModularPanels.SignalLib;
 using System.Text.Json;
 
 namespace ModularPanels
 {
     public partial class MainWindow : Form
     {
-        public InteractionSpace ISpace;
-
         public static MainWindow? Instance;
 
+        static SignalBank? _signalBank;
+
         List<PanelLib.Drawing> _drawings = [];
+
+        public static SignalBank SignalBank { get { _signalBank??= new SignalBank(); return _signalBank; } }
+
+        public DrawPanel DrawPanel { get => drawPanel1; }
 
         public MainWindow()
         {
@@ -25,8 +26,6 @@ namespace ModularPanels
             SizeChanged += OnResizeEnd;
             drawPanel1.InitScrollbar(hScrollBar1, this, 20);
 
-            ISpace = new(drawPanel1);
-
             LoadLibFiles();
             LoadLayout();
         }
@@ -35,7 +34,7 @@ namespace ModularPanels
         {
             string dataPath = Application.StartupPath + "data";
             JSONLib.LoadStyleFiles(dataPath + "\\styles\\");
-            JSONLib.LoadSignalFiles(ModularPanels.Layout.SignalSpace, dataPath + "\\signals\\");
+            JSONLib.LoadSignalFiles(dataPath + "\\signals\\");
             LoadControlTemplates();
         }
 

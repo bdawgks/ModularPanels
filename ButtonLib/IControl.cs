@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ModularPanels.DrawLib;
 
 namespace ModularPanels.ButtonLib
 {
-    public interface IControl
+    public interface IControl : DrawLib.IDrawable, IDrawTransformable
     {
         public IClickable[] GetClickables();
-
-        public void Draw(Graphics g);
     }
 }

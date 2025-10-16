@@ -1,97 +1,11 @@
-﻿using ModularPanels;
-using System.Drawing;
-using System.Linq;
+﻿using ModularPanels.DrawLib;
+using ModularPanels.TrackLib;
+using ModularPanels.SignalLib;
 using System.Numerics;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
-using System.Windows.Forms.Design.Behavior;
 
-namespace PanelLib
+namespace ModularPanels.PanelLib
 {
-    public class BankSingleton<T>
-    {
-        static BankSingleton<T>? _instance;
-
-        readonly Dictionary<string, T> _items = [];
-
-        public static G Instance<G> () where G : BankSingleton<T>, new()
-        {
-            _instance ??= new G();
-            return (G)_instance;
-        }
-
-        public bool HasItem(string name)
-        {
-            return _items.ContainsKey(name);
-        }
-
-        public void AddItem(string name, T item)
-        {
-            _items.Add(name, item);
-        }
-
-        public bool TryGetItem(string name, out T? item)
-        {
-            return _items.TryGetValue(name, out item);
-        }
-    }
-
-    public class CustomColorBank: BankSingleton<Color>
-    {
-        public static CustomColorBank Instance
-        {
-            get => Instance<CustomColorBank>();
-        }
-
-        public bool HasColor(string name)
-        {
-            return HasItem(name);
-        }
-
-        public void AddColor(string name, Color color)
-        {
-            AddItem(name, color);
-        }
-
-        public bool TryGetColor(string name, out Color color)
-        {
-            return TryGetItem(name, out color);
-        }
-    }
-
-    public static class StyleBank
-    {
-        public static BankSingleton<TrackStyle> TrackStyles
-        {
-            get
-            {
-                return BankSingleton<TrackStyle>.Instance<BankSingleton<TrackStyle>>();
-            }
-        }
-        public static BankSingleton<PointsStyle> PointsStyles
-        {
-            get
-            {
-                return BankSingleton<PointsStyle>.Instance<BankSingleton<PointsStyle>>();
-            }
-        }
-        public static BankSingleton<DetectorStyle> DetectorStyles
-        {
-            get
-            {
-                return BankSingleton<DetectorStyle>.Instance<BankSingleton<DetectorStyle>>();
-            }
-        }
-        public static BankSingleton<TextStyle> TextStyles
-        {
-            get
-            {
-                return BankSingleton<TextStyle>.Instance<BankSingleton<TextStyle>>();
-            }
-        }
-    }
-
     public enum ShapeMirror
     {
         None,
@@ -259,7 +173,7 @@ namespace PanelLib
 
     public class ShapeBank
     {
-        readonly Dictionary<string, Shape> _shapes = new();
+        readonly Dictionary<string, Shape> _shapes = [];
 
         public void AddShape(string name, Shape shape)
         {
@@ -289,97 +203,12 @@ namespace PanelLib
         public GridStyle() { }
     }
 
-    public struct TrackStyle
-    {
-        public Color color = Color.Black;
-        public float width = 7f;
-        public TrackStyle() { }
-    }
-
-    public struct PointsStyle
-    {
-        public Color colorInactive = Color.LightGray;
-        public Color colorLock = Color.Blue;
-        public float lockLength = 20.0f;
-        public float lockWidth = 4.0f;
-        public float lockSpace = 3.0f;
-        public int length = 35;
-        public PointsStyle() { }
-    }
-
-    public abstract class DetectorStyle
-    {
-        public Color colorEmpty = Color.Gray;
-        public Color colorOccupied = Color.Orange;
-        public Color colorOutline = Color.Black;
-        public float outline = 2f;
-
-        public abstract void Draw(DrawingContext context, TrackDetector detector);
-    }
-
-    public class DetectorStyleRectangle : DetectorStyle
-    {
-        public int minEdgeMargin = 5;
-        public int segmentLength = 10;
-        public int segmentSpace = 5;
-        public int width = 5;
-
-        public override void Draw(DrawingContext context, TrackDetector detector)
-        {
-            Color fillColor = detector.IsOccupied ? colorOccupied : colorEmpty;
-            Brush fillBrush = new SolidBrush(fillColor);
-            Brush outlineBrush = new SolidBrush(colorOutline);
-            Pen outlinePen = new(outlineBrush, outline);
-
-            foreach (TrackSegment seg in detector.GetSegments())
-            {
-                Vector2 pos0 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n0));
-                Vector2 pos1 = Drawing.PointToVector(context.drawing.GetNodePointTransformed(seg.n1));
-                Vector2 segDir = Vector2.Normalize(pos1 - pos0);
-                float angle = Drawing.VectorAngle(segDir);
-
-                float segLenF = segmentLength;
-                float segLenH = segLenF * 0.5f;
-                float segSpaceF = segmentSpace;
-
-                float trackSegLength = Vector2.Distance(pos0, pos1);
-                float totalLen = trackSegLength - 2f * minEdgeMargin;
-                int numSegs = Math.Max((int)Math.Floor((totalLen - segSpaceF) / (segLenF + segSpaceF)), 1);
-                float totalSegLen = segLenF * numSegs;
-                float totalSpace = (numSegs - 1) * segSpaceF;
-                float remainder = totalLen - totalSegLen - totalSpace;
-                float margin = minEdgeMargin + remainder * 0.5f;
-
-                for (int i = 0; i < numSegs; i++)
-                {
-                    float offset = margin + (i * segLenF) + segLenH + segSpaceF * i;
-                    Vector2 pos = pos0 + segDir * offset;
-                    context.graphics.TranslateTransform(pos.X, pos.Y);
-                    context.graphics.RotateTransform(angle);
-
-                    PointF corner = new(-segLenH, -width * 0.5f);
-                    RectangleF rect = new(corner, new SizeF(segLenF, width));
-                    context.graphics.FillRectangle(fillBrush, rect);
-                    context.graphics.DrawRectangles(outlinePen, [rect]);
-
-                    context.graphics.ResetTransform();
-                }
-            }
-
-            fillBrush.Dispose();
-            outlineBrush.Dispose();
-            outlinePen.Dispose();
-        }
-    }
-
-    public struct TextStyle
+    public class TextStyle
     {
         public string font = "Calibri";
         public Color color = Color.Black;
         public int size = 30;
         public bool bold = false;
-
-        public TextStyle() { }
     }
 
     public class PanelText
@@ -390,7 +219,7 @@ namespace PanelLib
         readonly float _angle = 0f;
 
         string _text = "";
-        TextStyle _style;
+        TextStyle _style = new();
 
         public string Text
         {
@@ -452,6 +281,7 @@ namespace PanelLib
         readonly List<TrackDetector> _detectors = [];
         readonly List<Signal> _signals = [];
         readonly List<PanelText> _texts = [];
+        readonly List<IDrawable> _drawables = [];
 
         public int GridSize
         {
@@ -512,6 +342,17 @@ namespace PanelLib
         {
             _texts.Add(text);
         }
+        public void AddDrawable(IDrawable drawable)
+        {
+            _drawables.Add(drawable);
+        }
+        public void AddTransformable(IDrawTransformable transformable)
+        {
+            foreach (var t in transformable.GetTransforms())
+            {
+                t.SetDrawing(this);
+            }
+        }
 
         [SupportedOSPlatform("windows")]
         public void Draw(Graphics g)
@@ -544,6 +385,16 @@ namespace PanelLib
                 DrawText(g, t);
             }
 
+            DrawingContext context = new()
+            {
+                graphics = g,
+                drawing = this
+            };
+            foreach (IDrawable d in _drawables)
+            {
+                d.Draw(context);
+            }
+
             DrawBorder(g);
         }
 
@@ -574,10 +425,8 @@ namespace PanelLib
         {
             Brush trackBrush = new SolidBrush(segment.style.color);
             Pen trackPen = new(trackBrush, segment.style.width);
-            Point p1 = segment.n0.GetPoint(_gridSize);
-            Point p2 = segment.n1.GetPoint(_gridSize);
-            Transform(ref p1);
-            Transform(ref p2);
+            Point p1 = Transform(segment.n0.pos.ToDrawingPos());
+            Point p2 = Transform(segment.n1.pos.ToDrawingPos());
             g.DrawLine(trackPen, p1, p2);
 
             segment.n0.style = segment.style;
@@ -596,8 +445,7 @@ namespace PanelLib
         [SupportedOSPlatform("windows")]
         private void DrawNode(Graphics g, TrackNode node)
         {
-            Point p = node.GetPoint(_gridSize);
-            Transform(ref p);
+            Point p = Transform(node.pos.ToDrawingPos());
 
             Brush b = new SolidBrush(node.style.color);
             PointF tl = new(p.X - node.style.width * 0.5f, p.Y - node.style.width * 0.5f);
@@ -620,12 +468,12 @@ namespace PanelLib
         [SupportedOSPlatform("windows")]
         private void DrawPoints(Graphics g, TrackPoints p)
         {
-            Point basePoint = p.baseNode.GetPoint(_gridSize);
-            Point normalPoint = p.routeNormal.GetPoint(_gridSize);
-            Point reversedPoint = p.routeReversed.GetPoint(_gridSize);
-            Transform(ref basePoint);
-            Transform(ref normalPoint);
-            Transform(ref reversedPoint);
+            DrawingPos baseDPos = p.baseNode.pos.ToDrawingPos();
+            DrawingPos normalDPos = p.routeNormal.pos.ToDrawingPos();
+            DrawingPos reverseDPos = p.routeReversed.pos.ToDrawingPos();
+            Point basePoint = Transform(baseDPos);
+            Point normalPoint = Transform(normalDPos);
+            Point reversedPoint = Transform(reverseDPos);
             Vector2 basePos = PointToVector(basePoint);
             Vector2 normalPos = PointToVector(normalPoint);
             Vector2 reversedPos = PointToVector(reversedPoint);
@@ -805,11 +653,38 @@ namespace PanelLib
             textFont.Dispose();
         }
 
-        public Point GetNodePointTransformed(TrackNode n)
+        public void Transform(ref Point p)
         {
-            Point p = n.GetPoint(_gridSize);
-            Transform(ref p);
+            p.X += _canvas.X;
+            p.Y += _canvas.Y;
+        }
+
+        /// <summary>
+        /// Transforms a drawing position (relative to module) to absolute position for drawing.
+        /// </summary>
+        /// <param name="pos">Drawing position.</param>
+        /// <returns>Point representing absolute position on draw panel</returns>
+        public Point Transform(DrawingPos pos)
+        {
+            Point p = new(pos.x, pos.y);
+            p.X += _canvas.X;
+            p.Y += _canvas.Y;
             return p;
+        }
+
+        /// <summary>
+        /// Inverse transforms a point to drawing position relative to the drawing origin.
+        /// </summary>
+        /// <param name="p">Point (absolute pos) to transform.</param>
+        /// <returns>DrawPos relative to drawing</returns>
+        public DrawingPos InverseTransform(Point p)
+        {
+            DrawingPos pos = new()
+            {
+                x = p.X - _canvas.X,
+                y = p.Y - _canvas.Y
+            };
+            return pos;
         }
 
         public static Vector2 PointToVector(Point p)
@@ -831,12 +706,6 @@ namespace PanelLib
             if (v.X < 0f)
                 angle = -angle;
             return angle;
-        }
-
-        public void Transform(ref Point p)
-        {
-            p.X += _canvas.X;
-            p.Y += _canvas.Y;
         }
     }
 }

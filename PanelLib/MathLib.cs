@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace PanelLib
+namespace ModularPanels.PanelLib
 {
     public static class MathLib
     {
