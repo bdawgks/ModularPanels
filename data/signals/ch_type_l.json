@@ -53,7 +53,7 @@
 		{"Type": "CH_TL_LampDwarf", "Offset": [7,7], "Aspect": ["STOP", "CAUTION"]},
 		{"Type": "CH_TL_LampDwarf", "Offset": [-7,-7], "Aspect": ["CLEAR", "CAUTION"]}
 	]},
-	{"Name": "CH_TL_EndOfTrack"}
+	{"Name": "CH_TL_EndOfTrack", "Ruleset": "CH_TYPE_L_DWARF"}
 ],
 "Shapes": [
 	{

@@ -254,6 +254,18 @@
 		{"ID": "sw_A'_clear", "Desc": "Switch for A' dwarf to CLEAR"},
 		{"ID": "sw_B1'_stop", "Desc": "Switch for B1' dwarf to STOP"},
 		{"ID": "sw_B1'_clear", "Desc": "Switch for B1' dwarf to CLEAR"},
+		{"ID": "sw_B2'_stop", "Desc": "Switch for B2' dwarf to STOP"},
+		{"ID": "sw_B2'_clear", "Desc": "Switch for B2' dwarf to CLEAR"},
+		{"ID": "sw_C1'_stop", "Desc": "Switch for C1' dwarf to STOP"},
+		{"ID": "sw_C1'_clear", "Desc": "Switch for C1' dwarf to CLEAR"},
+		{"ID": "sw_C2'_stop", "Desc": "Switch for C2' dwarf to STOP"},
+		{"ID": "sw_C2'_clear", "Desc": "Switch for C2' dwarf to CLEAR"},
+		{"ID": "sw_D'_stop", "Desc": "Switch for D' dwarf to STOP"},
+		{"ID": "sw_D'_clear", "Desc": "Switch for D' dwarf to CLEAR"},
+		{"ID": "sw_E'_stop", "Desc": "Switch for E' dwarf to STOP"},
+		{"ID": "sw_E'_clear", "Desc": "Switch for E' dwarf to CLEAR"},
+		{"ID": "sw_F'_stop", "Desc": "Switch for F' dwarf to STOP"},
+		{"ID": "sw_F'_clear", "Desc": "Switch for F' dwarf to CLEAR"},
 		{"ID": "sw_P1_R", "Desc": "Switch for points 1, 2 & 3 to REMOTE"},
 		{"ID": "sw_P1_1", "Desc": "Switch for points route Track 1 through"},
 		{"ID": "sw_P1_2", "Desc": "Switch for points route Track 1 to Track 2"},
@@ -288,6 +300,7 @@
 			{"Op": "EQ", "Circuit": "A'_clear"}
 		], "Desc": "A' dwarf signal to STOP"},
 		
+		
 		{"ID": "B1'_clear",
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_B1'_clear"}
@@ -302,6 +315,119 @@
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "B1'_clear"}
 		], "Desc": "B1' dwarf signal to STOP"},
+		
+		
+		{"ID": "B2'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_B2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_B2'_stop"}
+		], "Desc": "B2' dwarf signal to CLEAR"},
+		{"ID": "B2'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "B2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "B2'_clear"}
+		], "Desc": "B2' dwarf signal to STOP"},
+		
+		
+		{"ID": "C1'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_C1'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_C1'_stop"}
+		], "Desc": "C1' dwarf signal to CLEAR"},
+		{"ID": "C1'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "C1'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "C1'_clear"}
+		], "Desc": "C1' dwarf signal to STOP"},
+		
+		
+		{"ID": "C2'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_C2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_C2'_stop"}
+		], "Desc": "C2' dwarf signal to CLEAR"},
+		{"ID": "C2'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "C2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "C2'_clear"}
+		], "Desc": "C2' dwarf signal to STOP"},
+		
+		
+		{"ID": "C2'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_C2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_C2'_stop"}
+		], "Desc": "C2' dwarf signal to CLEAR"},
+		{"ID": "C2'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "C2'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "C2'_clear"}
+		], "Desc": "C2' dwarf signal to STOP"},
+		
+		
+		{"ID": "D'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_D'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_D'_stop"}
+		], "Desc": "D' dwarf signal to CLEAR"},
+		{"ID": "D'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "D'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "D'_clear"}
+		], "Desc": "D' dwarf signal to STOP"},
+		
+		
+		{"ID": "E'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_E'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_E'_stop"}
+		], "Desc": "E' dwarf signal to CLEAR"},
+		{"ID": "E'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "E'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "E'_clear"}
+		], "Desc": "E' dwarf signal to STOP"},
+		
+		
+		{"ID": "F'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_F'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_F'_stop"}
+		], "Desc": "F' dwarf signal to CLEAR"},
+		{"ID": "F'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "F'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "F'_clear"}
+		], "Desc": "F' dwarf signal to STOP"},
+		
 		
 		{"ID": "P1_lock", 
 		"ConditionOn": [
