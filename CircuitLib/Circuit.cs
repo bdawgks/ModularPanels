@@ -16,12 +16,19 @@ namespace ModularPanels.CircuitLib
         readonly string _name = name;
         protected HashSet<LogicCircuit> _affectedCircuits = [];
         protected bool _active = false;
+        private string _description = "";
+
+        internal virtual bool InitEvaluation { get => true; }
 
         public event EventHandler<CircuitActivationArgs>? ActivationEvents;
 
         public bool Active { get => _active; }
 
         public string Name { get => _name; }
+
+        public string Description { get => _description; set => _description = value; }
+
+        public virtual void Reevaluate() { }
 
         public void SetActive(bool active)
         {
@@ -54,6 +61,9 @@ namespace ModularPanels.CircuitLib
         List<CircuitCondition> _conditionOn = [];
         List<CircuitCondition> _conditionOff = [];
         private bool _singleCondition = false;
+        private bool _initEvaluation = false;
+
+        internal override bool InitEvaluation { get => _initEvaluation; }
 
         public void AddCondition(CircuitCondition cond)
         {
@@ -86,15 +96,18 @@ namespace ModularPanels.CircuitLib
             return result;
         }
 
-        public void Reevaluate()
+        public override void Reevaluate()
         {
+            _initEvaluation = true;
+
             if (_singleCondition)
             {
                 bool active = EvaluateCondition(ref _conditionOn);
-                if (_active)
-                    active = !active;
 
-                SetActive(active);
+                if (active != _active)
+                {
+                    SetActive(active);
+                }
                 return;
             }
 

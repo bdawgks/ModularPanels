@@ -111,6 +111,11 @@ namespace ModularPanels
         readonly List<PanelText> _texts = [];
         readonly List<IControl> _allControls = [];
 
+        public string Name
+        {
+            get => _name;
+        }
+
         public ObjectBank ObjectBank { get { return _objBank; } }
         public Dictionary<string, TrackSegment> TrackSegments { get { return _objBank.GetObjects<TrackSegment>(); } }
         public Dictionary<string, TrackNode> TrackNodes { get { return _objBank.GetObjects<TrackNode>(); } } 

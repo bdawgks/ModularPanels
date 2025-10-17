@@ -285,25 +285,29 @@
 		{"ID": "points_4_R", "Desc": "Points 4 in Reverse"}
 	],
 	"LogicCircuits": [
-		{"ID": "A'_clear",
-		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_A'_clear"}
-		],
-		"ConditionOff": [
+		{"ID": "A'_opposingMoveB2", "Condition": [
+			{"Op": "EQ", "Circuit": "points_3_N"},
+			{"Op": "ANDNOT", "Circuit": "B2'_stop"}
+		], "Desc": "C2' set in opposition to A'"},
+		{"ID": "A'_clear", "ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_A'_clear"},
+			{"Op": "ANDNOT", "Circuit": "A'_opposingMoveB2"},
+			{"Op": "AND", "Circuit": "B1'_stop"}
+		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_A'_stop"}
 		], "Desc": "A' dwarf signal to CLEAR"},
-		{"ID": "A'_stop", 
-		"ConditionOn": [
+		{"ID": "A'_stop", "ConditionOn": [
 			{"Op": "NOT", "Circuit": "A'_clear"}
-		],
-		"ConditionOff": [
+		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "A'_clear"}
 		], "Desc": "A' dwarf signal to STOP"},
 		
 		
 		{"ID": "B1'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_B1'_clear"}
+			{"Op": "EQ", "Circuit": "sw_B1'_clear"},
+			{"Op": "AND", "Circuit": "points_1_N"},
+			{"Op": "AND", "Circuit": "A'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_B1'_stop"}
@@ -316,10 +320,24 @@
 			{"Op": "EQ", "Circuit": "B1'_clear"}
 		], "Desc": "B1' dwarf signal to STOP"},
 		
-		
+		{"ID": "B2'_P2against", "Condition": [
+			{"Op": "EQ", "Circuit": "points_3_N"},
+			{"Op": "ANDNOT", "Circuit": "points_2_N"}
+		], "Desc": "Switch 2 is against route from B2'"},
+		{"ID": "B2'_P1against", "Condition": [
+			{"Op": "EQ", "Circuit": "points_3_N"},
+			{"Op": "ANDNOT", "Circuit": "points_1_R"}
+		], "Desc": "Switch 1 is against route from B2'"},
+		{"ID": "B2'_opposingMoveA", "Condition": [
+			{"Op": "EQ", "Circuit": "points_1_R"},
+			{"Op": "ANDNOT", "Circuit": "A'_stop"}
+		], "Desc": "Switch 1 is against route from B2'"},
 		{"ID": "B2'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_B2'_clear"}
+			{"Op": "EQ", "Circuit": "sw_B2'_clear"},
+			{"Op": "ANDNOT", "Circuit": "B2'_P1against"},
+			{"Op": "ANDNOT", "Circuit": "B2'_P2against"},
+			{"Op": "ANDNOT", "Circuit": "B2'_opposingMoveA"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_B2'_stop"}
@@ -335,7 +353,9 @@
 		
 		{"ID": "C1'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_C1'_clear"}
+			{"Op": "EQ", "Circuit": "sw_C1'_clear"},
+			{"Op": "AND", "Circuit": "points_4_N"},
+			{"Op": "AND", "Circuit": "D'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_C1'_stop"}
@@ -351,23 +371,9 @@
 		
 		{"ID": "C2'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_C2'_clear"}
-		],
-		"ConditionOff": [
-			{"Op": "EQ", "Circuit": "sw_C2'_stop"}
-		], "Desc": "C2' dwarf signal to CLEAR"},
-		{"ID": "C2'_stop", 
-		"ConditionOn": [
-			{"Op": "NOT", "Circuit": "C2'_clear"}
-		],
-		"ConditionOff": [
-			{"Op": "EQ", "Circuit": "C2'_clear"}
-		], "Desc": "C2' dwarf signal to STOP"},
-		
-		
-		{"ID": "C2'_clear",
-		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_C2'_clear"}
+			{"Op": "EQ", "Circuit": "sw_C2'_clear"},
+			{"Op": "AND", "Circuit": "points_4_R"},
+			{"Op": "AND", "Circuit": "D'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_C2'_stop"}
@@ -383,7 +389,9 @@
 		
 		{"ID": "D'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_D'_clear"}
+			{"Op": "EQ", "Circuit": "sw_D'_clear"},
+			{"Op": "AND", "Circuit": "C1'_stop"},
+			{"Op": "AND", "Circuit": "C2'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_D'_stop"}
@@ -399,7 +407,8 @@
 		
 		{"ID": "E'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_E'_clear"}
+			{"Op": "EQ", "Circuit": "sw_E'_clear"},
+			{"Op": "AND", "Circuit": "points_3_R"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_E'_stop"}
@@ -415,7 +424,9 @@
 		
 		{"ID": "F'_clear",
 		"ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_F'_clear"}
+			{"Op": "EQ", "Circuit": "sw_F'_clear"},
+			{"Op": "AND", "Circuit": "points_1_R"},
+			{"Op": "AND", "Circuit": "points_2_R"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_F'_stop"}

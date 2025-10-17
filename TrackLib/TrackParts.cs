@@ -92,11 +92,18 @@ namespace ModularPanels.TrackLib
 
     public class TrackDetector
     {
+        public class DetectorStateArgs(bool occupied) : EventArgs 
+        {
+            public bool IsOccupied { get; } = occupied;
+        }
+
         readonly string _id;
         readonly HashSet<TrackSegment> _segments = [];
 
         DetectorStyle _style = new DetectorStyleRectangle();
         bool _isOccupied;
+
+        public event EventHandler<DetectorStateArgs>? StateChangedEvents;
 
         public TrackDetector(string id)
         {
@@ -117,7 +124,14 @@ namespace ModularPanels.TrackLib
         public bool IsOccupied
         {
             get => _isOccupied;
-            set => _isOccupied = value;
+            set => SetOccupied(value);
+        }
+
+        public void SetOccupied(bool occupied)
+        {
+            if (occupied != _isOccupied)
+                StateChangedEvents?.Invoke(this, new(_isOccupied));
+            _isOccupied = occupied;
         }
 
         public bool AddSegment(TrackSegment seg) 

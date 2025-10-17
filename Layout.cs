@@ -36,6 +36,11 @@ namespace ModularPanels
             get => _width;
         }
 
+        public List<Module> Modules
+        {
+            get => _modules;
+        }
+
         public Layout(string name)
         {
             _name = name;

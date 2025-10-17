@@ -69,7 +69,24 @@ namespace ModularPanels
                     {
                         Layout layout = layoutData.Value.Initialize();
                         _drawings = layout.GetDrawings();
+                        drawPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
                         drawPanel1.Width = layout.Width;
+
+                        foreach (var m in layout.Modules)
+                        {
+                            ToolStripMenuItem item = new()
+                            {
+                                Text = m.Name,
+                            };
+                            item.Click += (obj, e) =>
+                            {
+                                CircuitMonitor monitor = new();
+                                monitor.SetModule(m);
+                                monitor.Show();
+                            };
+
+                            monitorCircuitsToolStripMenuItem.DropDownItems.Add(item);
+                        }
                     }
                 }
                 catch (Exception e)

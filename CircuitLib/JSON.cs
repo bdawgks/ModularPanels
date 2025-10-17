@@ -52,6 +52,9 @@ namespace ModularPanels.CircuitLib
                     if (sc.Active)
                         circuit.SetActive(true);
 
+                    if (!string.IsNullOrEmpty(sc.Desc))
+                        circuit.Description = sc.Desc;
+
                     comp.AddCircuit(circuit);
                 }
             }
@@ -61,6 +64,9 @@ namespace ModularPanels.CircuitLib
                 {
                     LogicCircuit circuit = new(lc.ID.Key);
                     comp.AddCircuit(lc.ID, circuit);
+
+                    if (!string.IsNullOrEmpty(lc.Desc))
+                        circuit.Description = lc.Desc;
                 }
 
                 foreach (var lc in Data.Value.LogicCircuits)

@@ -13,6 +13,8 @@ namespace ModularPanels.CircuitLib
     {
         readonly ObjectBank _circuitBank = new();
 
+        public event EventHandler? CircuitChangeEvents;
+
         public CircuitComponent(IParent parent) : base(parent)
         {
         }
@@ -27,15 +29,22 @@ namespace ModularPanels.CircuitLib
             return _circuitBank.TryGetObject(circuitName, out circuit);
         }
 
+        private void OnCircuitChanged(object? sender, CircuitActivationArgs e)
+        {
+            CircuitChangeEvents?.Invoke(this, new());
+        }
+
         public void AddCircuit(Circuit circuit)
         {
             _circuitBank.DefineObject(circuit.Name, circuit);
+            circuit.ActivationEvents += OnCircuitChanged;
         }
 
         public void AddCircuit(StringKey<Circuit> key, Circuit circuit)
         {
             _circuitBank.RegisterKey(key);
             _circuitBank.DefineObject(circuit.Name, circuit);
+            circuit.ActivationEvents += OnCircuitChanged;
         }
 
         public CircuitCondition? CreateCircuitOperator(string id, string op)
@@ -70,6 +79,11 @@ namespace ModularPanels.CircuitLib
         public void InitCircuits(CircuitDataLoader loader)
         {
             loader.Load(this);
+        }
+
+        public List<Circuit> GetCircuits()
+        {
+            return [.. _circuitBank.GetObjects<Circuit>().Values];
         }
     }
 }
