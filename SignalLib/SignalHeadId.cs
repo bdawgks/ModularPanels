@@ -1,11 +1,15 @@
-﻿using System;
+﻿using ModularPanels.DrawLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ModularPanels.SignalLib
 {
+    [JsonConverter(typeof(SignalHeadIdJsonConverter))]
     public readonly struct SignalHeadId
     {
         public readonly string id;
@@ -43,5 +47,24 @@ namespace ModularPanels.SignalLib
 
         public static implicit operator SignalHeadId(string s) { return new SignalHeadId(s); }
         public static implicit operator string(SignalHeadId shid) { return shid.ToString(); }
+    }
+
+    public class SignalHeadIdJsonConverter : JsonConverter<SignalHeadId>
+    {
+        public override SignalHeadId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            string? idStr = reader.GetString();
+            if (idStr == null)
+            {
+                throw new Exception(string.Format("Invalid signal ID: Line {0}", reader.Position));
+            }
+
+            return new(idStr);
+        }
+
+        public override void Write(Utf8JsonWriter writer, SignalHeadId value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

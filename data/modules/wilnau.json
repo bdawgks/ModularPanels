@@ -93,12 +93,45 @@
 		{"ID": "C2'", "Type": "CH_TL_Dw", "Pos": [255, 45], "Angle": 90},
 		{"ID": "D'", "Type": "CH_TL_Dw", "Pos": [315, 75], "Angle": -90},
 		{"ID": "E'", "Type": "CH_TL_Dw", "Pos": [85, 25], "Angle": 90},
-		{"ID": "F'", "Type": "CH_TL_Dw", "Pos": [135, 35], "Angle": -90}
+		{"ID": "F'", "Type": "CH_TL_Dw", "Pos": [135, 35], "Angle": -90},
+		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]},
+		{"ID": "ML", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]},
+		{"ID": "MR", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
+	],
+	"SignalRoutes": [
+		{"SigID": "A'", "NextSigID": "C1'", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		]},
+		{"SigID": "A'", "NextSigID": "C2'", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Normal"}
+		]},
+		{"SigID": "A'", "NextSigID": "EoT", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"}
+		]},
+		{"SigID": "B1'", "NextSigID": "ML", "Indication": "Clear"},
+		{"SigID": "B2'", "NextSigID": "ML", "Indication": "Clear", "Route": [
+			{"PointsID": "3", "Direction": "Normal"}
+		]},
+		{"SigID": "B2'", "NextSigID": "EoT", "Indication": "Caution", "Route": [
+			{"PointsID": "3", "Direction": "Reversed"}
+		]},
+		{"SigID": "C1'", "NextSigID": "MR", "Indication": "Clear"},
+		{"SigID": "C2'", "NextSigID": "MR", "Indication": "Clear"},
+		{"SigID": "D'", "NextSigID": "B1'", "Indication": "Clear", "Route": [
+			{"PointsID": "4", "Direction": "Normal"}
+		]},
+		{"SigID": "D'", "NextSigID": "B2'", "Indication": "Clear", "Route": [
+			{"PointsID": "4", "Direction": "Reversed"}
+		]},
+		{"SigID": "E'", "NextSigID": "C2'", "Indication": "Clear"},
+		{"SigID": "F'", "NextSigID": "ML", "Indication": "Clear"}
 	]
 },
 "Controls": {
 	"RotarySwitches": [
-		{"ID": "A'", "Pos": [120,100], "Template": "STB_DwarfSwitch",
+		{"ID": "A'", "Pos": [100,110], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_A'_stop"},
 			{"Pos": 2, "Circuit": "sw_A'_clear"}
@@ -107,7 +140,8 @@
 			{"Pos": 0, "Circuit": "A'_stop"},
 			{"Pos": 2, "Circuit": "A'_clear"}
 		]},
-		{"ID": "B1'", "Pos": [140,100], "Template": "STB_DwarfSwitch",
+		
+		{"ID": "B1'", "Pos": [120,110], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_B1'_stop"},
 			{"Pos": 2, "Circuit": "sw_B1'_clear"}
@@ -115,8 +149,69 @@
 		"LampCircuits": [
 			{"Pos": 0, "Circuit": "B1'_stop"},
 			{"Pos": 2, "Circuit": "B1'_clear"}
+		]},	
+		
+		{"ID": "B2'", "Pos": [140,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_B2'_stop"},
+			{"Pos": 2, "Circuit": "sw_B2'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "B2'_stop"},
+			{"Pos": 2, "Circuit": "B2'_clear"}
+		]},	
+		
+		{"ID": "C1'", "Pos": [160,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_C1'_stop"},
+			{"Pos": 2, "Circuit": "sw_C1'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "C1'_stop"},
+			{"Pos": 2, "Circuit": "C1'_clear"}
+		]},	
+		
+		{"ID": "C2'", "Pos": [180,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_C2'_stop"},
+			{"Pos": 2, "Circuit": "sw_C2'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "C2'_stop"},
+			{"Pos": 2, "Circuit": "C2'_clear"}
+		]},	
+		
+		{"ID": "D'", "Pos": [200,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_D'_stop"},
+			{"Pos": 2, "Circuit": "sw_D'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "D'_stop"},
+			{"Pos": 2, "Circuit": "D'_clear"}
+		]},	
+		
+		{"ID": "E'", "Pos": [220,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_E'_stop"},
+			{"Pos": 2, "Circuit": "sw_E'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "E'_stop"},
+			{"Pos": 2, "Circuit": "E'_clear"}
+		]},	
+		
+		{"ID": "F'", "Pos": [240,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_F'_stop"},
+			{"Pos": 2, "Circuit": "sw_F'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "F'_stop"},
+			{"Pos": 2, "Circuit": "F'_clear"}
 		]},
-		{"ID": "P1", "Pos": [40,100], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
+		
+		{"ID": "P1", "Pos": [40,110], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P1_R"},
 			{"Pos": 1, "Circuit": "sw_P1_1"},
@@ -129,7 +224,8 @@
 			{"Pos": 2, "Text": "2"},
 			{"Pos": 3, "Text": "3"}
 		]},
-		{"ID": "P3", "Pos": [60,100], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		
+		{"ID": "P3", "Pos": [60,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P3_1"},
 			{"Pos": 1, "Circuit": "sw_P3_4"}
@@ -138,7 +234,8 @@
 			{"Pos": 0, "Text": "1"},
 			{"Pos": 1, "Text": "4"}
 		]},
-		{"ID": "P4", "Pos": [280,100], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		
+		{"ID": "P4", "Pos": [280,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P4_R"},
 			{"Pos": 1, "Circuit": "sw_P4_1"},
@@ -309,19 +406,19 @@
 ],
 "SignalCircuits": [
 	{"SignalID": "A'", "InputCircuit": "A'_clear", "Indication": "Clear"},
-	{"SignalID": "A'", "InputCircuit": "A'_stop", "Indication": "Stop"},
+	{"SignalID": "A'", "InputCircuit": "A'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "B1'", "InputCircuit": "B1'_clear", "Indication": "Clear"},
-	{"SignalID": "B1'", "InputCircuit": "B1'_stop", "Indication": "Stop"},
+	{"SignalID": "B1'", "InputCircuit": "B1'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "B2'", "InputCircuit": "B2'_clear", "Indication": "Clear"},
-	{"SignalID": "B2'", "InputCircuit": "B2'_stop", "Indication": "Stop"},
+	{"SignalID": "B2'", "InputCircuit": "B2'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C1'", "InputCircuit": "C1'_clear", "Indication": "Clear"},
-	{"SignalID": "C1'", "InputCircuit": "C1'_stop", "Indication": "Stop"},
+	{"SignalID": "C1'", "InputCircuit": "C1'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C2'", "InputCircuit": "C2'_clear", "Indication": "Clear"},
-	{"SignalID": "C2'", "InputCircuit": "C2'_stop", "Indication": "Stop"},
+	{"SignalID": "C2'", "InputCircuit": "C2'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "D'", "InputCircuit": "D'_clear", "Indication": "Clear"},
-	{"SignalID": "D'", "InputCircuit": "D'_stop", "Indication": "Stop"},
+	{"SignalID": "D'", "InputCircuit": "D'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "E'", "InputCircuit": "E'_clear", "Indication": "Clear"},
-	{"SignalID": "E'", "InputCircuit": "E'_stop", "Indication": "Stop"},
+	{"SignalID": "E'", "InputCircuit": "E'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "F'", "InputCircuit": "F'_clear", "Indication": "Clear"},
-	{"SignalID": "F'", "InputCircuit": "F'_stop", "Indication": "Stop"}
+	{"SignalID": "F'", "InputCircuit": "F'_stop", "Indication": "Stop", "Fixed": true}
 ]}

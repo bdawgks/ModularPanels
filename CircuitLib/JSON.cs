@@ -142,6 +142,7 @@ namespace ModularPanels.CircuitLib
         public required string Indication { get; set; }
         public StringKey<Circuit>? InputCircuit { get; set; }
         public StringKey<Circuit>? OutputCircuit { get; set; }
+        public bool? Fixed { get; set; }
     }
 
     [JsonConverter(typeof(SignalCircuitLoaderJsonConverter))]
@@ -158,7 +159,11 @@ namespace ModularPanels.CircuitLib
             if (head == null)
                 return null;
 
-            SignalCircuit circuit = new(head, Data.Indication);
+            bool fixedIndication = false;
+            if (Data.Fixed != null)
+                fixedIndication = Data.Fixed.Value;
+
+            SignalCircuit circuit = new(head, Data.Indication, fixedIndication);
 
             if (Data.InputCircuit != null)
             {

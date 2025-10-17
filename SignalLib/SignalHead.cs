@@ -81,6 +81,17 @@ namespace ModularPanels.SignalLib
             return null;
         }
 
+        public void SetRouteIndication(string indication)
+        {
+            string? routeIndicaiton = GetRouteIndication();
+            if (routeIndicaiton == null)
+            {
+                SetIndication(indication);
+                return;
+            }
+            SetIndication(routeIndicaiton);
+        }
+
         public void SetIndication(string indication)
         {
             _indication = indication;

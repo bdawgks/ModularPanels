@@ -81,7 +81,5 @@ namespace ModularPanels.CircuitLib
             if (AssignInputCircuit(ref _inputPointsReverse, inputReverse))
                 _inputPointsReverse.ActivationEvents += OnInputReverse;
         }
-
-
     }
 }

@@ -45,10 +45,10 @@ namespace ModularPanels.SignalLib
             foreach (PointsRoute pr in _pointsRouting)
             {
                 if (pr.IsSet())
-                    return false;
+                    return true;
             }
 
-            return true;
+            return false;
         }
     }
 }

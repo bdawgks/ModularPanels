@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.CircuitLib
 {
-    public class SignalCircuit(SignalHead signal, string indication)
+    public class SignalCircuit(SignalHead signal, string indication, bool fixedIndication = false)
     {
         readonly SignalHead _signal = signal;
         readonly string _indication = indication;
+        readonly bool _fixedIndication = fixedIndication;
         Circuit? _input;
         SimpleCircuit? _output;
 
@@ -42,7 +43,10 @@ namespace ModularPanels.CircuitLib
         {
             if (e.Active)
             {
-                _signal.SetIndication(_indication);
+                if (_fixedIndication)
+                    _signal.SetIndication(_indication);
+                else
+                    _signal.SetRouteIndication(_indication);
             }
         }
 

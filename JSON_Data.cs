@@ -100,6 +100,8 @@ namespace ModularPanels
 
     public struct JSON_Module_SignalData
     {
+        public List<SignalRouteLoader>? SignalRoutes { get; set; }
+
         public List<JSON_Module_Signal> Signals { get; set; }
 
         public readonly void InitSignals(Module mod)
@@ -124,6 +126,14 @@ namespace ModularPanels
 
                 mod.Signals.Add(sig.Name, sig);
                 sig.InitSignal();
+            }
+
+            if (SignalRoutes != null)
+            {
+                foreach (var sr in SignalRoutes)
+                {
+                    sr.Load(mod.GetSignalComponent(), mod.ObjectBank);
+                }
             }
         }
     }
