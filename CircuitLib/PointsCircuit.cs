@@ -48,8 +48,10 @@ namespace ModularPanels.CircuitLib
         private static void AssignOutputCircuit(ref SimpleCircuit? member, SimpleCircuit? value)
         {
             if (value == null)
+                return;
 
             if (member != null)
+                return;
 
             member = value;
         }

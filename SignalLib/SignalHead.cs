@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.SignalLib
 {
-    public class SignalAspectEventArgs(string aspect) : EventArgs
+    public class SignalStateChangeArgs(string aspect, string? indication) : EventArgs
     {
         public string Aspect { get; } = aspect;
+        public string? Indication { get; } = indication;
     }
 
     public class SignalHead
@@ -22,7 +23,7 @@ namespace ModularPanels.SignalLib
         string? _indication;
         string _aspect = "0";
 
-        public EventHandler<SignalAspectEventArgs>? AspectEvents { get; set; }
+        public EventHandler<SignalStateChangeArgs>? StateChangedEvents { get; set; }
 
         public string ID
         {
@@ -138,7 +139,7 @@ namespace ModularPanels.SignalLib
                 return;
 
             _aspect = newAspect;
-            AspectEvents?.Invoke(this, new SignalAspectEventArgs(newAspect));
+            StateChangedEvents?.Invoke(this, new SignalStateChangeArgs(newAspect, _indication));
         }
     }
 }

@@ -20,6 +20,10 @@ namespace ModularPanels.CircuitLib
                 return;
 
             _input = input;
+            if (_input == null)
+                return;
+
+            _input.ActivationEvents += OnInputChange;
         }
 
         public void SetOutput(SimpleCircuit? output)
@@ -28,6 +32,29 @@ namespace ModularPanels.CircuitLib
                 return;
 
             _output = output;
+            if (_output == null)
+                return;
+
+            _signal.StateChangedEvents += OnSignalChange;
+        }
+
+        private void OnInputChange(object? sender, CircuitActivationArgs e)
+        {
+            if (e.Active)
+            {
+                _signal.SetIndication(_indication);
+            }
+        }
+
+        private void OnSignalChange(object? sender, SignalStateChangeArgs e)
+        {
+            if (e.Indication != null && _output != null)
+            {
+                if (e.Indication == _indication)
+                    _output.SetActive(true);
+            }
+            else
+                _output?.SetActive(false);
         }
     }
 }

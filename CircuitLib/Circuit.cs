@@ -53,12 +53,13 @@ namespace ModularPanels.CircuitLib
     {
         List<CircuitCondition> _conditionOn = [];
         List<CircuitCondition> _conditionOff = [];
-        private bool _singleCondition = true;
+        private bool _singleCondition = false;
 
         public void AddCondition(CircuitCondition cond)
         {
-            _conditionOn.Add(cond);
             _singleCondition = true;
+            _conditionOn.Add(cond);
+            cond.AddCondition(this);
         }
 
         public void AddOnCondition(CircuitCondition cond)

@@ -1,5 +1,6 @@
 ﻿using ModularPanels.JsonLib;
 using ModularPanels.TrackLib;
+using ModularPanels.SignalLib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -33,6 +34,7 @@ namespace ModularPanels.CircuitLib
         public List<LogicCircuitJsonData> LogicCircuits { get; set; }
     }
 
+    [JsonConverter(typeof(CircuitDataLoaderJsonConverter))]
     public class CircuitDataLoader
     {
         internal CircuitJsonData? Data { get; set; }
@@ -41,6 +43,7 @@ namespace ModularPanels.CircuitLib
         {
             if (Data == null)
                 return;
+
             if (Data.Value.SimpleCircuits != null)
             {
                 foreach (var sc in Data.Value.SimpleCircuits)
@@ -87,6 +90,7 @@ namespace ModularPanels.CircuitLib
                         {
                             foreach (var condData in lc.ConditionOn)
                             {
+                                comp.RegisterKey(condData.Circuit);
                                 if (condData.Circuit.IsNull)
                                     continue;
 
@@ -101,6 +105,7 @@ namespace ModularPanels.CircuitLib
                         {
                             foreach (var condData in lc.ConditionOff)
                             {
+                                comp.RegisterKey(condData.Circuit);
                                 if (condData.Circuit.IsNull)
                                     continue;
 
@@ -143,6 +148,33 @@ namespace ModularPanels.CircuitLib
     public class SignalCircuitLoader
     {
         internal SignalCircuitJsonData? Data { get; set; }
+
+        public SignalCircuit? Load(SignalComponent signalComp, CircuitComponent circuitComp)
+        {
+            if (Data == null)
+                return null;
+
+            SignalHead? head = signalComp.GetSignalHead(Data.SignalID);
+            if (head == null)
+                return null;
+
+            SignalCircuit circuit = new(head, Data.Indication);
+
+            if (Data.InputCircuit != null)
+            {
+                circuitComp.RegisterKey(Data.InputCircuit);
+                circuit.SetInput(Data.InputCircuit.Object);
+            }
+
+            if (Data.OutputCircuit != null)
+            {
+                circuitComp.RegisterKey(Data.OutputCircuit);
+                if (Data.OutputCircuit.Object is SimpleCircuit)
+                    circuit.SetOutput(Data.OutputCircuit.Object as SimpleCircuit);
+            }
+
+            return circuit;
+        }
     }
 
     public class SignalCircuitLoaderJsonConverter : JsonConverter<SignalCircuitLoader>
@@ -162,10 +194,10 @@ namespace ModularPanels.CircuitLib
     internal class PointsCircuitJsonData
     {
         public required StringKey<TrackPoints> PointsID { get; set; }
-        public StringKey<Circuit>? CircutOutPointsNormal { get; set; }
-        public StringKey<Circuit>? CircutOutPointsReversed { get; set; }
-        public StringKey<Circuit>? CircutInPointsNormal { get; set; }
-        public StringKey<Circuit>? CircutInPointsReverse { get; set; }
+        public StringKey<Circuit>? CircuitOutPointsNormal { get; set; }
+        public StringKey<Circuit>? CircuitOutPointsReversed { get; set; }
+        public StringKey<Circuit>? CircuitInPointsNormal { get; set; }
+        public StringKey<Circuit>? CircuitInPointsReverse { get; set; }
     }
 
     [JsonConverter(typeof(PointsCircuitLoaderJsonConverter))]
@@ -186,30 +218,30 @@ namespace ModularPanels.CircuitLib
             PointsCircuit? circuit = new(pointsKey.Object!);
             
             Circuit? cInNormal = null;
-            if (Data.CircutInPointsNormal != null)
+            if (Data.CircuitInPointsNormal != null)
             {
-                comp.RegisterKey(Data.CircutInPointsNormal);
-                cInNormal = Data.CircutInPointsNormal.Object;
+                comp.RegisterKey(Data.CircuitInPointsNormal);
+                cInNormal = Data.CircuitInPointsNormal.Object;
             }
             Circuit? cInReverse = null;
-            if (Data.CircutInPointsReverse != null)
+            if (Data.CircuitInPointsReverse != null)
             {
-                comp.RegisterKey(Data.CircutInPointsReverse);
-                cInReverse = Data.CircutInPointsReverse.Object;
+                comp.RegisterKey(Data.CircuitInPointsReverse);
+                cInReverse = Data.CircuitInPointsReverse.Object;
             }
             circuit.SetInputs(cInNormal, cInReverse);
 
             SimpleCircuit? cOutNormal = null;
-            if (Data.CircutOutPointsNormal != null)
+            if (Data.CircuitOutPointsNormal != null)
             {
-                comp.RegisterKey(Data.CircutOutPointsNormal);
-                cOutNormal = (SimpleCircuit?)Data.CircutOutPointsNormal.Object;
+                comp.RegisterKey(Data.CircuitOutPointsNormal);
+                cOutNormal = (SimpleCircuit?)Data.CircuitOutPointsNormal.Object;
             }
             SimpleCircuit? cOutReversed = null;
-            if (Data.CircutOutPointsReversed != null)
+            if (Data.CircuitOutPointsReversed != null)
             {
-                comp.RegisterKey(Data.CircutOutPointsReversed);
-                cOutReversed = (SimpleCircuit?)Data.CircutOutPointsReversed.Object;
+                comp.RegisterKey(Data.CircuitOutPointsReversed);
+                cOutReversed = (SimpleCircuit?)Data.CircuitOutPointsReversed.Object;
             }
             circuit.SetOutputs(cOutNormal, cOutReversed);
 

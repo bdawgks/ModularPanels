@@ -98,7 +98,7 @@
 },
 "Controls": {
 	"RotarySwitches": [
-		{"ID": "A'", "Pos": [10,20], "Template": "STB_DwarfSwitch",
+		{"ID": "A'", "Pos": [120,100], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_A'_stop"},
 			{"Pos": 2, "Circuit": "sw_A'_clear"}
@@ -107,7 +107,16 @@
 			{"Pos": 0, "Circuit": "A'_stop"},
 			{"Pos": 2, "Circuit": "A'_clear"}
 		]},
-		{"ID": "P1", "Pos": [50,100], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
+		{"ID": "B1'", "Pos": [140,100], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_B1'_stop"},
+			{"Pos": 2, "Circuit": "sw_B1'_clear"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "B1'_stop"},
+			{"Pos": 2, "Circuit": "B1'_clear"}
+		]},
+		{"ID": "P1", "Pos": [40,100], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P1_R"},
 			{"Pos": 1, "Circuit": "sw_P1_1"},
@@ -120,16 +129,16 @@
 			{"Pos": 2, "Text": "2"},
 			{"Pos": 3, "Text": "3"}
 		]},
-		{"ID": "P3", "Pos": [140,100], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		{"ID": "P3", "Pos": [60,100], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P3_1"},
-			{"Pos": 1, "Circuit": "sw_P1_4"}
+			{"Pos": 1, "Circuit": "sw_P3_4"}
 		],
 		"TextLabels": [
 			{"Pos": 0, "Text": "1"},
 			{"Pos": 1, "Text": "4"}
 		]},
-		{"ID": "P4", "Pos": [250,100], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		{"ID": "P4", "Pos": [280,100], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P4_R"},
 			{"Pos": 1, "Circuit": "sw_P4_1"},
@@ -146,6 +155,8 @@
 	"SimpleCircuits": [
 		{"ID": "sw_A'_stop", "Desc": "Switch for A' dwarf to STOP"},
 		{"ID": "sw_A'_clear", "Desc": "Switch for A' dwarf to CLEAR"},
+		{"ID": "sw_B1'_stop", "Desc": "Switch for B1' dwarf to STOP"},
+		{"ID": "sw_B1'_clear", "Desc": "Switch for B1' dwarf to CLEAR"},
 		{"ID": "sw_P1_R", "Desc": "Switch for points 1, 2 & 3 to REMOTE"},
 		{"ID": "sw_P1_1", "Desc": "Switch for points route Track 1 through"},
 		{"ID": "sw_P1_2", "Desc": "Switch for points route Track 1 to Track 2"},
@@ -155,14 +166,14 @@
 		{"ID": "sw_P4_R", "Desc": "Switch for points 4 to REMOTE"},
 		{"ID": "sw_P4_1", "Desc": "Switch for points route Track 1 through"},
 		{"ID": "sw_P4_2", "Desc": "Switch for points route Track 1 to Track 2"},
-		{"ID": "points_1_N", "Desc": "Points 1 in Normal"},
+		{"ID": "points_1_N", "Desc": "Points 1 in Normal", "Active": true},
 		{"ID": "points_1_R", "Desc": "Points 1 in Reverse"},
-		{"ID": "points_2_N", "Desc": "Points 1 in Normal"},
-		{"ID": "points_2_R", "Desc": "Points 1 in Reverse"},
-		{"ID": "points_3_N", "Desc": "Points 1 in Normal", "Active": true},
-		{"ID": "points_3_R", "Desc": "Points 1 in Reverse"},
-		{"ID": "points_4_N", "Desc": "Points 1 in Normal"},
-		{"ID": "points_4_R", "Desc": "Points 1 in Reverse"}
+		{"ID": "points_2_N", "Desc": "Points 2 in Normal", "Active": true},
+		{"ID": "points_2_R", "Desc": "Points 2 in Reverse"},
+		{"ID": "points_3_N", "Desc": "Points 3 in Normal", "Active": true},
+		{"ID": "points_3_R", "Desc": "Points 3 in Reverse"},
+		{"ID": "points_4_N", "Desc": "Points 4 in Normal", "Active": true},
+		{"ID": "points_4_R", "Desc": "Points 4 in Reverse"}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_clear",
@@ -179,18 +190,138 @@
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "A'_clear"}
 		], "Desc": "A' dwarf signal to STOP"},
+		
+		{"ID": "B1'_clear",
+		"ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_B1'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "sw_B1'_stop"}
+		], "Desc": "B1' dwarf signal to CLEAR"},
+		{"ID": "B1'_stop", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "B1'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "B1'_clear"}
+		], "Desc": "B1' dwarf signal to STOP"},
+		
 		{"ID": "P1_lock", 
 		"ConditionOn": [
 			{"Op": "NOT", "Circuit": "points_3_N"},
-			{"Op": "OR", "Circuit": "A'_clear"}
+			{"Op": "OR", "Circuit": "A'_clear"},
+			{"Op": "OR", "Circuit": "B1'_clear"},
+			{"Op": "OR", "Circuit": "B2'_clear"},
+			{"Op": "OR", "Circuit": "F'_clear"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "points_3_N"},
-			{"Op": "AND", "Circuit": "A'_stop"}
-		], "Desc": "Switch P1 interlocking"}
+			{"Op": "AND", "Circuit": "A'_stop"},
+			{"Op": "AND", "Circuit": "B1'_stop"},
+			{"Op": "AND", "Circuit": "B2'_stop"},
+			{"Op": "AND", "Circuit": "F'_stop"}
+		], "Desc": "Switch P1 interlocking"},
+		{"ID": "P1_throw_N", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P1_1"}
+		], "Desc": "Switch 1 throw Normal"},
+		{"ID": "P1_throw_R", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P1_2"},
+			{"Op": "OR", "Circuit": "sw_P1_3"}
+		], "Desc": "Switch 1 throw Reverse"},
+		
+		{"ID": "P2_throw_N", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P1_1"},
+			{"Op": "OR", "Circuit": "sw_P1_2"}
+		], "Desc": "Switch 2 throw Normal"},
+		{"ID": "P2_throw_R", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P1_3"},
+			{"Op": "AND", "Circuit": "points_3_N"}
+		], "Desc": "Switch 2 throw Reverse"},
+		
+		{"ID": "P3_throw_N", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P3_1"}
+		], "Desc": "Switch 3 throw Normal"},
+		{"ID": "P3_throw_R", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P3_4"}
+		], "Desc": "Switch 3 throw Reverse"},
+		{"ID": "P3_lock", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "points_1_N"},
+			{"Op": "OR", "Circuit": "B2'_clear"},
+			{"Op": "OR", "Circuit": "E'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "points_1_N"},
+			{"Op": "AND", "Circuit": "B2'_stop"},
+			{"Op": "AND", "Circuit": "E'_stop"}
+		], "Desc": "Switch P3 interlocking"},
+		
+		{"ID": "P4_throw_N", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P4_1"}
+		], "Desc": "Switch 4 throw Normal"},
+		{"ID": "P4_throw_R", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "sw_P4_2"}
+		], "Desc": "Switch 4 throw Reverse"},
+		{"ID": "P4_lock", 
+		"ConditionOn": [
+			{"Op": "NOT", "Circuit": "points_1_N"},
+			{"Op": "OR", "Circuit": "C1'_clear"},
+			{"Op": "OR", "Circuit": "C2'_clear"},
+			{"Op": "OR", "Circuit": "D'_clear"}
+		],
+		"ConditionOff": [
+			{"Op": "EQ", "Circuit": "points_1_N"},
+			{"Op": "AND", "Circuit": "C1'_stop"},
+			{"Op": "AND", "Circuit": "C2'_stop"},
+			{"Op": "AND", "Circuit": "D'_stop"}
+		], "Desc": "Switch P4 interlocking"}
 	]
 },
+"PointsCircuits": [
+	{"PointsID": "1",
+	"CircuitInPointsNormal": "P1_throw_N",
+	"CircuitInPointsReverse": "P1_throw_R",
+	"CircuitOutPointsNormal": "points_1_N",
+	"CircuitOutPointsReversed": "points_1_R"},
+	{"PointsID": "2",
+	"CircuitInPointsNormal": "P2_throw_N",
+	"CircuitInPointsReverse": "P2_throw_R",
+	"CircuitOutPointsNormal": "points_2_N",
+	"CircuitOutPointsReversed": "points_2_R"},
+	{"PointsID": "3",
+	"CircuitInPointsNormal": "P3_throw_N",
+	"CircuitInPointsReverse": "P3_throw_R",
+	"CircuitOutPointsNormal": "points_3_N",
+	"CircuitOutPointsReversed": "points_3_R"},
+	{"PointsID": "4",
+	"CircuitInPointsNormal": "P4_throw_N",
+	"CircuitInPointsReverse": "P4_throw_R",
+	"CircuitOutPointsNormal": "points_4_N",
+	"CircuitOutPointsReversed": "points_4_R"}
+],
 "SignalCircuits": [
-	{"SigID": "A'", "Circuit": "A'_clear", "Indication": "Clear"},
-	{"SigID": "A'", "Circuit": "A'_stop", "Indication": "Stop"}
+	{"SignalID": "A'", "InputCircuit": "A'_clear", "Indication": "Clear"},
+	{"SignalID": "A'", "InputCircuit": "A'_stop", "Indication": "Stop"},
+	{"SignalID": "B1'", "InputCircuit": "B1'_clear", "Indication": "Clear"},
+	{"SignalID": "B1'", "InputCircuit": "B1'_stop", "Indication": "Stop"},
+	{"SignalID": "B2'", "InputCircuit": "B2'_clear", "Indication": "Clear"},
+	{"SignalID": "B2'", "InputCircuit": "B2'_stop", "Indication": "Stop"},
+	{"SignalID": "C1'", "InputCircuit": "C1'_clear", "Indication": "Clear"},
+	{"SignalID": "C1'", "InputCircuit": "C1'_stop", "Indication": "Stop"},
+	{"SignalID": "C2'", "InputCircuit": "C2'_clear", "Indication": "Clear"},
+	{"SignalID": "C2'", "InputCircuit": "C2'_stop", "Indication": "Stop"},
+	{"SignalID": "D'", "InputCircuit": "D'_clear", "Indication": "Clear"},
+	{"SignalID": "D'", "InputCircuit": "D'_stop", "Indication": "Stop"},
+	{"SignalID": "E'", "InputCircuit": "E'_clear", "Indication": "Clear"},
+	{"SignalID": "E'", "InputCircuit": "E'_stop", "Indication": "Stop"},
+	{"SignalID": "F'", "InputCircuit": "F'_clear", "Indication": "Clear"},
+	{"SignalID": "F'", "InputCircuit": "F'_stop", "Indication": "Stop"}
 ]}

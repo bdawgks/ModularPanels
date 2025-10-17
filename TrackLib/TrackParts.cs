@@ -21,7 +21,7 @@ namespace ModularPanels.TrackLib
 
     public class TrackPoints(string id, TrackNode baseNode, TrackNode routeNormal, TrackNode routeReversed, bool useBaseColor = false)
     {
-        public class PointsStateChangeArgs(TrackPoints points, TrackPoints.PointsState newState)
+        public class PointsStateChangeArgs(TrackPoints points, PointsState newState) : EventArgs
         {
             public TrackPoints Points { get; } = points;
             public PointsState NewState { get; } = newState;

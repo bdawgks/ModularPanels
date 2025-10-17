@@ -20,7 +20,8 @@ namespace ModularPanels
         public JSON_Module_SignalData SignalData { get;set;}
         public JSON_Module_Controls? Controls { get;set;}
         public CircuitDataLoader? RelayCircuits { get;set;}
-        public PointsCircuitLoader? PointsCircuits { get;set;}
+        public List<PointsCircuitLoader>? PointsCircuits { get;set;}
+        public List<SignalCircuitLoader>? SignalCircuits { get;set;}
 
         public Module Initialize()
         {
@@ -71,6 +72,22 @@ namespace ModularPanels
             if (RelayCircuits != null)
             {
                 module.GetCircuitComponent().InitCircuits(RelayCircuits);
+            }
+
+            if (PointsCircuits != null)
+            {
+                foreach (var pc in PointsCircuits)
+                {
+                    pc.Load(module.ObjectBank, module.GetCircuitComponent());
+                }
+            }
+
+            if (SignalCircuits != null)
+            {
+                foreach (var sc in SignalCircuits)
+                {
+                    sc.Load(module.GetSignalComponent(), module.GetCircuitComponent());
+                }
             }
 
             return module;
@@ -207,6 +224,18 @@ namespace ModularPanels
             if (component == null)
             {
                 component = new(this);
+                _components.AddComponent(component);
+            }
+
+            return component;
+        }
+
+        public SignalComponent GetSignalComponent()
+        {
+            SignalComponent? component = _components.GetComponent<SignalComponent>();
+            if (component == null)
+            {
+                component = new(this, MainWindow.SignalBank);
                 _components.AddComponent(component);
             }
 
