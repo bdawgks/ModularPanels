@@ -12,7 +12,23 @@
 		{"Text": "C2", "Style": "Signal", "Pos": [245,40]},
 		{"Text": "D", "Style": "Signal", "Pos": [320,80]},
 		{"Text": "E", "Style": "Signal", "Pos": [80,25]},
-		{"Text": "F", "Style": "Signal", "Pos": [140,35]}
+		{"Text": "F", "Style": "Signal", "Pos": [140,35]},
+		{"Text": "Zwergsignalen", "Style": "Control2", "Pos": [170,90]},
+		{"Text": "A", "Style": "Control1", "Pos": [100,100]},
+		{"Text": "B1", "Style": "Control1", "Pos": [120,100]},
+		{"Text": "B2", "Style": "Control1", "Pos": [140,100]},
+		{"Text": "C1", "Style": "Control1", "Pos": [160,100]},
+		{"Text": "C2", "Style": "Control1", "Pos": [180,100]},
+		{"Text": "D", "Style": "Control1", "Pos": [200,100]},
+		{"Text": "E", "Style": "Control1", "Pos": [220,100]},
+		{"Text": "F", "Style": "Control1", "Pos": [240,100]},
+		{"Text": "W 1/2", "Style": "Control2", "Pos": [40,95]},
+		{"Text": "W 3", "Style": "Control2", "Pos": [60,95]},
+		{"Text": "W 4", "Style": "Control2", "Pos": [280,95]},
+		{"Text": "1", "Style": "TrackNumber", "Pos": [170,75]},
+		{"Text": "2", "Style": "TrackNumber", "Pos": [170,55]},
+		{"Text": "3", "Style": "TrackNumber", "Pos": [170,35]},
+		{"Text": "4", "Style": "TrackNumber", "Pos": [60,35]}
 	]
 },
 "TrackData": {
@@ -289,10 +305,24 @@
 			{"Op": "EQ", "Circuit": "points_3_N"},
 			{"Op": "ANDNOT", "Circuit": "B2'_stop"}
 		], "Desc": "C2' set in opposition to A'"},
+		{"ID": "A'_opposingMove1D", "Condition": [
+			{"Op": "EQ", "Circuit": "points_4_N"},
+			{"Op": "AND", "Circuit": "points_1_N"},
+			{"Op": "ANDNOT", "Circuit": "D'_stop"}
+		], "Desc": "D' set in opposition to A' into track 1"},
+		{"ID": "A'_opposingMove2D", "Condition": [
+			{"Op": "EQ", "Circuit": "points_4_R"},
+			{"Op": "AND", "Circuit": "points_1_R"},
+			{"Op": "AND", "Circuit": "points_2_N"},
+			{"Op": "ANDNOT", "Circuit": "D'_stop"}
+		], "Desc": "D' set in opposition to A' into track 2'"},
 		{"ID": "A'_clear", "ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_A'_clear"},
 			{"Op": "ANDNOT", "Circuit": "A'_opposingMoveB2"},
-			{"Op": "AND", "Circuit": "B1'_stop"}
+			{"Op": "ANDNOT", "Circuit": "A'_opposingMove1D"},
+			{"Op": "ANDNOT", "Circuit": "A'_opposingMove2D"},
+			{"Op": "AND", "Circuit": "B1'_stop"},
+			{"Op": "AND", "Circuit": "F'_stop"}
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_A'_stop"}
 		], "Desc": "A' dwarf signal to CLEAR"},
@@ -337,7 +367,8 @@
 			{"Op": "EQ", "Circuit": "sw_B2'_clear"},
 			{"Op": "ANDNOT", "Circuit": "B2'_P1against"},
 			{"Op": "ANDNOT", "Circuit": "B2'_P2against"},
-			{"Op": "ANDNOT", "Circuit": "B2'_opposingMoveA"}
+			{"Op": "ANDNOT", "Circuit": "B2'_opposingMoveA"},
+			{"Op": "AND", "Circuit": "E'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_B2'_stop"}
@@ -387,11 +418,30 @@
 		], "Desc": "C2' dwarf signal to STOP"},
 		
 		
+		{"ID": "D'_opposingMove1A", "Condition": [
+			{"Op": "EQ", "Circuit": "points_1_N"},
+			{"Op": "AND", "Circuit": "points_4_N"},
+			{"Op": "ANDNOT", "Circuit": "A'_stop"}
+		], "Desc": "A' set in opposition to D' into track 1"},
+		{"ID": "D'_opposingMove2A", "Condition": [
+			{"Op": "EQ", "Circuit": "points_1_R"},
+			{"Op": "AND", "Circuit": "points_4_R"},
+			{"Op": "AND", "Circuit": "points_2_N"},
+			{"Op": "ANDNOT", "Circuit": "A'_stop"}
+		], "Desc": "A' set in opposition to D' into track 2'"},
+		{"ID": "D'_opposingMoveE", "Condition": [
+			{"Op": "EQ", "Circuit": "points_4_R"},
+			{"Op": "AND", "Circuit": "points_3_R"},
+			{"Op": "ANDNOT", "Circuit": "E'_stop"}
+		], "Desc": "E' set in opposition to D' into track 2'"},
 		{"ID": "D'_clear",
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_D'_clear"},
 			{"Op": "AND", "Circuit": "C1'_stop"},
-			{"Op": "AND", "Circuit": "C2'_stop"}
+			{"Op": "AND", "Circuit": "C2'_stop"},
+			{"Op": "ANDNOT", "Circuit": "D'_opposingMove1A"},
+			{"Op": "ANDNOT", "Circuit": "D'_opposingMove2A"},
+			{"Op": "ANDNOT", "Circuit": "D'_opposingMoveE"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_D'_stop"}
@@ -405,10 +455,17 @@
 		], "Desc": "D' dwarf signal to STOP"},
 		
 		
+		{"ID": "E'_opposingMoveD", "Condition": [
+			{"Op": "EQ", "Circuit": "points_4_R"},
+			{"Op": "AND", "Circuit": "points_3_R"},
+			{"Op": "ANDNOT", "Circuit": "D'_stop"}
+		], "Desc": "D' set in opposition to E'"},
 		{"ID": "E'_clear",
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_E'_clear"},
-			{"Op": "AND", "Circuit": "points_3_R"}
+			{"Op": "AND", "Circuit": "points_3_R"},
+			{"Op": "AND", "Circuit": "B2'_stop"},
+			{"Op": "ANDNOT", "Circuit": "E'_opposingMoveD"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_E'_stop"}
@@ -426,7 +483,8 @@
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_F'_clear"},
 			{"Op": "AND", "Circuit": "points_1_R"},
-			{"Op": "AND", "Circuit": "points_2_R"}
+			{"Op": "AND", "Circuit": "points_2_R"},
+			{"Op": "AND", "Circuit": "A'_stop"}
 		],
 		"ConditionOff": [
 			{"Op": "EQ", "Circuit": "sw_F'_stop"}
@@ -506,14 +564,12 @@
 		], "Desc": "Switch 4 throw Reverse"},
 		{"ID": "P4_lock", 
 		"ConditionOn": [
-			{"Op": "NOT", "Circuit": "points_1_N"},
-			{"Op": "OR", "Circuit": "C1'_clear"},
+			{"Op": "EQ", "Circuit": "C1'_clear"},
 			{"Op": "OR", "Circuit": "C2'_clear"},
 			{"Op": "OR", "Circuit": "D'_clear"}
 		],
 		"ConditionOff": [
-			{"Op": "EQ", "Circuit": "points_1_N"},
-			{"Op": "AND", "Circuit": "C1'_stop"},
+			{"Op": "EQ", "Circuit": "C1'_stop"},
 			{"Op": "AND", "Circuit": "C2'_stop"},
 			{"Op": "AND", "Circuit": "D'_stop"}
 		], "Desc": "Switch P4 interlocking"}
