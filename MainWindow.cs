@@ -1,4 +1,5 @@
 using ModularPanels.SignalLib;
+using ModularPanels.TrackLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -96,6 +97,21 @@ namespace ModularPanels
             }
 
             drawPanel1.SetMinWidth(drawPanel1.Width);
+        }
+
+        public void AddDetectorDebug(TrackDetector det)
+        {
+            ToolStripMenuItem item = new()
+            {
+                Text = det.ID
+            };
+            item.Click += (obj, e) =>
+            {
+                item.Checked = !item.Checked;
+                det.SetOccupied(item.Checked);
+                drawPanel1.Invalidate();
+            };
+            detectorsToolStripMenuItem.DropDownItems.Add(item);
         }
 
         private void OnResizeEnd(object? sender, EventArgs e)
