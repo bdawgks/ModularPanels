@@ -298,7 +298,15 @@
 		{"ID": "points_3_N", "Desc": "Points 3 in Normal", "Active": true},
 		{"ID": "points_3_R", "Desc": "Points 3 in Reverse"},
 		{"ID": "points_4_N", "Desc": "Points 4 in Normal", "Active": true},
-		{"ID": "points_4_R", "Desc": "Points 4 in Reverse"}
+		{"ID": "points_4_R", "Desc": "Points 4 in Reverse"},
+		{"ID": "detector_11", "Desc": "Detector 11 occupied"},
+		{"ID": "detector_21", "Desc": "Detector 21 occupied"},
+		{"ID": "detector_1", "Desc": "Detector 1 occupied"},
+		{"ID": "detector_2", "Desc": "Detector 2 occupied"},
+		{"ID": "detector_1-1", "Desc": "Detector 1-1 occupied"},
+		{"ID": "detector_1-2", "Desc": "Detector 1-2 occupied"},
+		{"ID": "detector_2-1", "Desc": "Detector 2-1 occupied"},
+		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_opposingMoveB2", "Condition": [
@@ -331,6 +339,26 @@
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "A'_clear"}
 		], "Desc": "A' dwarf signal to STOP"},
+		{"ID": "A'_ind_caut_1", "Condition": [
+			{"Op": "EQ", "Circuit": "A'_clear"},
+			{"Op": "AND", "Circuit": "points_1_N"},
+			{"Op": "AND", "Circuit": "detector_1"}
+		], "Desc": "A' caution indication block 1"},
+		{"ID": "A'_ind_caut_2", "Condition": [
+			{"Op": "EQ", "Circuit": "A'_clear"},
+			{"Op": "AND", "Circuit": "points_1_R"},
+			{"Op": "AND", "Circuit": "points_2_N"},
+			{"Op": "AND", "Circuit": "detector_2"}
+		], "Desc": "A' caution indication block 2"},
+		{"ID": "A'_ind_caut", "Condition": [
+			{"Op": "EQ", "Circuit": "A'_ind_caut_1"},
+			{"Op": "OR", "Circuit": "A'_ind_caut_2"}
+		], "Desc": "A' caution indication"},
+		{"ID": "A'_ind_clear", "Condition": [
+			{"Op": "EQ", "Circuit": "A'_clear"},
+			{"Op": "ANDNOT", "Circuit": "A'_ind_caut"}
+		], "Desc": "A' clear indication"},
+		
 		
 		
 		{"ID": "B1'_clear",
@@ -598,20 +626,38 @@
 	"CircuitOutPointsReversed": "points_4_R"}
 ],
 "SignalCircuits": [
-	{"SignalID": "A'", "InputCircuit": "A'_clear", "Indication": "Clear"},
+	{"SignalID": "A'", "InputCircuit": "A'_ind_clear", "Indication": "Clear"},
+	{"SignalID": "A'", "InputCircuit": "A'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "A'", "InputCircuit": "A'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "B1'", "InputCircuit": "B1'_clear", "Indication": "Clear"},
+	{"SignalID": "B1'", "InputCircuit": "B1'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "B1'", "InputCircuit": "B1'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "B2'", "InputCircuit": "B2'_clear", "Indication": "Clear"},
+	{"SignalID": "B2'", "InputCircuit": "B2'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "B2'", "InputCircuit": "B2'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C1'", "InputCircuit": "C1'_clear", "Indication": "Clear"},
+	{"SignalID": "C1'", "InputCircuit": "C1'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "C1'", "InputCircuit": "C1'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C2'", "InputCircuit": "C2'_clear", "Indication": "Clear"},
+	{"SignalID": "C2'", "InputCircuit": "C2'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "C2'", "InputCircuit": "C2'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "D'", "InputCircuit": "D'_clear", "Indication": "Clear"},
+	{"SignalID": "D'", "InputCircuit": "D'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "D'", "InputCircuit": "D'_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "E'", "InputCircuit": "E'_clear", "Indication": "Clear"},
+	{"SignalID": "E'", "InputCircuit": "E'_ind_clear", "Indication": "Clear"},
+	{"SignalID": "E'", "InputCircuit": "E'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "E'", "InputCircuit": "E'_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "F'", "InputCircuit": "F'_clear", "Indication": "Clear"},
+	{"SignalID": "F'", "InputCircuit": "F'_ind_clear", "Indication": "Clear"},
+	{"SignalID": "F'", "InputCircuit": "F'_ind_caut", "Indication": "Caution", "Fixed": true},
 	{"SignalID": "F'", "InputCircuit": "F'_stop", "Indication": "Stop", "Fixed": true}
+],
+"DetectorCircuits": [
+	{"DetectorID": "11", "Circuit": "detector_11"},
+	{"DetectorID": "21", "Circuit": "detector_21"},
+	{"DetectorID": "1", "Circuit": "detector_1"},
+	{"DetectorID": "2", "Circuit": "detector_2"},
+	{"DetectorID": "1-1", "Circuit": "detector_1-1"},
+	{"DetectorID": "1-2", "Circuit": "detector_1-2"},
+	{"DetectorID": "2-1", "Circuit": "detector_2-1"},
+	{"DetectorID": "2-2", "Circuit": "detector_2-2"}
 ]}

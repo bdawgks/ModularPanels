@@ -22,6 +22,7 @@ namespace ModularPanels
         public CircuitDataLoader? RelayCircuits { get;set;}
         public List<PointsCircuitLoader>? PointsCircuits { get;set;}
         public List<SignalCircuitLoader>? SignalCircuits { get;set;}
+        public List<DetectorCircuitLoader>? DetectorCircuits { get;set;}
 
         public Module Initialize()
         {
@@ -87,6 +88,14 @@ namespace ModularPanels
                 foreach (var sc in SignalCircuits)
                 {
                     sc.Load(module.GetSignalComponent(), module.GetCircuitComponent());
+                }
+            }
+
+            if (DetectorCircuits != null)
+            {
+                foreach (var dc in DetectorCircuits)
+                {
+                    dc.Load(module.ObjectBank, module.GetCircuitComponent());
                 }
             }
 

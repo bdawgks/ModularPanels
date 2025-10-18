@@ -130,7 +130,7 @@ namespace ModularPanels.TrackLib
         public void SetOccupied(bool occupied)
         {
             if (occupied != _isOccupied)
-                StateChangedEvents?.Invoke(this, new(_isOccupied));
+                StateChangedEvents?.Invoke(this, new(occupied));
             _isOccupied = occupied;
         }
 

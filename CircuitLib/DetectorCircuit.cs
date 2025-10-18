@@ -12,7 +12,7 @@ namespace ModularPanels.CircuitLib
         readonly TrackDetector _detector = detector;
         SimpleCircuit? _outputCircuit;
 
-        public void SetOutnput(SimpleCircuit? circuit)
+        public void SetOutput(SimpleCircuit circuit)
         {
             if (_outputCircuit != null)
                 return;

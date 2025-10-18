@@ -128,7 +128,7 @@ namespace ModularPanels.CircuitLib
         }
     }
 
-    public class CircuitDataLoaderJsonConverter : JsonConverter<CircuitDataLoader>
+    internal class CircuitDataLoaderJsonConverter : JsonConverter<CircuitDataLoader>
     {
         public override CircuitDataLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -188,7 +188,7 @@ namespace ModularPanels.CircuitLib
         }
     }
 
-    public class SignalCircuitLoaderJsonConverter : JsonConverter<SignalCircuitLoader>
+    internal class SignalCircuitLoaderJsonConverter : JsonConverter<SignalCircuitLoader>
     {
         public override SignalCircuitLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -260,7 +260,7 @@ namespace ModularPanels.CircuitLib
         }
     }
 
-    public class PointsCircuitLoaderJsonConverter : JsonConverter<PointsCircuitLoader>
+    internal class PointsCircuitLoaderJsonConverter : JsonConverter<PointsCircuitLoader>
     {
         public override PointsCircuitLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -269,6 +269,52 @@ namespace ModularPanels.CircuitLib
         }
 
         public override void Write(Utf8JsonWriter writer, PointsCircuitLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal struct DetectorCircuitJsonData
+    {
+        public StringKey<TrackDetector> DetectorID { get; set; }
+        public StringKey<Circuit> Circuit { get; set; }
+    }
+
+    [JsonConverter(typeof(DetectorCircuitLoaderJsonConverter))]
+    public class DetectorCircuitLoader
+    {
+        internal DetectorCircuitJsonData? Data { get; set; }
+
+        public DetectorCircuit? Load(ObjectBank bank, CircuitComponent comp)
+        {
+            if (Data == null)
+                return null;
+
+            bank.RegisterKey(Data.Value.DetectorID);
+            comp.RegisterKey(Data.Value.Circuit);
+
+            if (Data.Value.DetectorID.IsNull || Data.Value.Circuit.IsNull)
+                return null;
+
+            if (Data.Value.Circuit.Object is SimpleCircuit sc)
+            {
+                DetectorCircuit circuit = new(Data.Value.DetectorID.Object!);
+                circuit.SetOutput(sc);
+            }
+
+            return null;
+        }
+    }
+
+    internal class DetectorCircuitLoaderJsonConverter : JsonConverter<DetectorCircuitLoader>
+    {
+        public override DetectorCircuitLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            DetectorCircuitJsonData? data = JsonSerializer.Deserialize<DetectorCircuitJsonData>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, DetectorCircuitLoader value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
