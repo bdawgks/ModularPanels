@@ -62,10 +62,7 @@ namespace ModularPanels.CircuitLib
         private void OnSignalChange(object? sender, SignalStateChangeArgs e)
         {
             if (e.Indication != null && _output != null)
-            {
-                if (e.Indication == _indication)
-                    _output.SetActive(true);
-            }
+                _output.SetActive(e.Indication == _indication);
             else
                 _output?.SetActive(false);
         }

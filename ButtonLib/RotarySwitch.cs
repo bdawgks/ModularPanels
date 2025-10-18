@@ -178,6 +178,7 @@ namespace ModularPanels.ButtonLib
             {
                 _lamp.LampOn = e.Active;
             };
+            _lamp.LampOn = circuit.Active;
         }
 
         public void SetText(string text)
