@@ -117,7 +117,7 @@
 	"SignalRoutes": [
 		{"SigID": "A'", "NextSigID": "C1'", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
-		]},
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "1"}},
 		{"SigID": "A'", "NextSigID": "C2'", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Normal"}
@@ -358,7 +358,6 @@
 			{"Op": "EQ", "Circuit": "A'_clear"},
 			{"Op": "ANDNOT", "Circuit": "A'_ind_caut"}
 		], "Desc": "A' clear indication"},
-		
 		
 		
 		{"ID": "B1'_clear",
@@ -626,8 +625,8 @@
 	"CircuitOutPointsReversed": "points_4_R"}
 ],
 "SignalCircuits": [
-	{"SignalID": "A'", "InputCircuit": "A'_ind_clear", "Indication": "Clear"},
-	{"SignalID": "A'", "InputCircuit": "A'_ind_caut", "Indication": "Caution", "Fixed": true},
+	{"SignalID": "A'", "InputCircuit": "A'_ind_clear", "Indication": "Clear", "DropIndication": "Stop"},
+	{"SignalID": "A'", "InputCircuit": "A'_ind_caut", "Indication": "Caution", "Fixed": true, "DropIndication": "Stop"},
 	{"SignalID": "A'", "InputCircuit": "A'_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "B1'", "InputCircuit": "B1'_clear", "Indication": "Clear"},
 	{"SignalID": "B1'", "InputCircuit": "B1'_ind_caut", "Indication": "Caution", "Fixed": true},

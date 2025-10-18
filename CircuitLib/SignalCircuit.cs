@@ -14,6 +14,7 @@ namespace ModularPanels.CircuitLib
         readonly bool _fixedIndication = fixedIndication;
         Circuit? _input;
         SimpleCircuit? _output;
+        string? _dropIndication;
 
         public void SetInput(Circuit? input)
         {
@@ -39,14 +40,22 @@ namespace ModularPanels.CircuitLib
             _signal.StateChangedEvents += OnSignalChange;
         }
 
+        public void SetDropIndication(string dropIndication)
+        {
+            _dropIndication = dropIndication;
+        }
+
         private void OnInputChange(object? sender, CircuitActivationArgs e)
         {
             if (e.Active)
             {
                 if (_fixedIndication)
-                    _signal.SetIndication(_indication);
+                    _signal.SetIndication(_indication, _dropIndication == null);
                 else
                     _signal.SetRouteIndication(_indication);
+
+                if (_dropIndication != null)
+                    _signal.SetAutoDropIndication(_dropIndication);
             }
         }
 

@@ -11,12 +11,19 @@ namespace ModularPanels.SignalLib
         public required string Direction { get; set; }
     }
 
+    internal struct DetectorLatchJsonData
+    {
+        public required StringKey<TrackDetector> ExitID {  get; set; }
+        public required StringKey<TrackDetector> EntryID {  get; set; }
+    }
+
     internal struct SignalRouteJsonData
     {
         public required SignalHeadId SigID { get; set; }
         public SignalHeadId? NextSigID { get; set; }
         public string Indication { get; set; }
         public List<RoutePointsJsonData>? Route { get; set; }
+        public DetectorLatchJsonData? DetectorLatch { get; set; }
     }
 
     [JsonConverter(typeof(SignalRouteLoaderJsonConverter))]
@@ -55,6 +62,20 @@ namespace ModularPanels.SignalLib
                     route.AddPointsRoute(pr);
                 }
             }
+
+            if (Data.Value.DetectorLatch != null)
+            {
+                var detectorLatchData = Data.Value.DetectorLatch.Value;
+                bank.RegisterKey(detectorLatchData.ExitID);
+                bank.RegisterKey(detectorLatchData.EntryID);
+                if (detectorLatchData.ExitID.TryGet(out TrackDetector? exitDetector) &&
+                    detectorLatchData.EntryID.TryGet(out TrackDetector? entryDetector))
+                {
+                    DetectorLatch latch = new(exitDetector, entryDetector);
+                    route.SetDetectorLatch(latch);
+                }
+            }
+
             sig.AddRoute(route);
         }
     }

@@ -149,6 +149,7 @@ namespace ModularPanels.CircuitLib
         public StringKey<Circuit>? InputCircuit { get; set; }
         public StringKey<Circuit>? OutputCircuit { get; set; }
         public bool? Fixed { get; set; }
+        public string? DropIndication { get; set; }
     }
 
     [JsonConverter(typeof(SignalCircuitLoaderJsonConverter))]
@@ -182,6 +183,11 @@ namespace ModularPanels.CircuitLib
                 circuitComp.RegisterKey(Data.OutputCircuit);
                 if (Data.OutputCircuit.Object is SimpleCircuit)
                     circuit.SetOutput(Data.OutputCircuit.Object as SimpleCircuit);
+            }
+
+            if (Data.DropIndication != null)
+            {
+                circuit.SetDropIndication(Data.DropIndication);
             }
 
             return circuit;
