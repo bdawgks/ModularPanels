@@ -22,6 +22,7 @@ namespace ModularPanels.SignalLib
         SignalRoute? _activeRoute;
         string? _indication;
         string _aspect = "0";
+        SignalLatchIndication? _latchIndication;
 
         public EventHandler<SignalStateChangeArgs>? StateChangedEvents { get; set; }
 
@@ -83,6 +84,9 @@ namespace ModularPanels.SignalLib
 
         public void SetRouteIndication(string indication)
         {
+            if (_latchIndication != null && _latchIndication.IsLatched)
+                return;
+
             string? routeIndicaiton = GetRouteIndication();
             if (routeIndicaiton == null)
             {
@@ -92,10 +96,33 @@ namespace ModularPanels.SignalLib
             SetIndication(routeIndicaiton);
         }
 
-        public void SetIndication(string indication)
+        public void SetIndication(string indication, bool forced = true)
         {
+            if (!forced && _latchIndication != null && _latchIndication.IsLatched)
+                return;
+
+            if (forced && _latchIndication != null)
+                _latchIndication.Reset();
+
             _indication = indication;
             UpdateIndication();
+        }
+
+        public void SetAutoDropIndication(string dropIndication)
+        {
+            UpdateRoute();
+            if (_activeRoute == null)
+                return;
+
+            if (_activeRoute.DetectorLatch == null)
+                return;
+
+            if (_latchIndication != null && _latchIndication.IsLatched)
+                return;
+
+            _activeRoute.DetectorLatch.Set();
+            _latchIndication = new(this, dropIndication);
+            _latchIndication.SetDetectorLatch(_activeRoute.DetectorLatch);
         }
 
         private void UpdateIndication()
