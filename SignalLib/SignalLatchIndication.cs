@@ -32,16 +32,21 @@ namespace ModularPanels.SignalLib
             _latch.StateChangedEvents += OnStateChanged;
         }
 
-        public void Reset()
+        public void Set()
         {
-            _latch?.Reset();
+            _latch?.Set();
+        }
+
+        public void Unset()
+        {
+            _latch?.Unset();
         }
 
         private void OnStateChanged(object? sender, DetectorLatch.StateChangeEventArgs e)
         {
             if (e.NewState == DetectorLatch.State.Released)
             {
-                _head.SetIndication(_indication);
+                _head.SetIndicationFixed(_indication);
             }
         }
     }

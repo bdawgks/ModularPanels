@@ -20,10 +20,17 @@ namespace ModularPanels.SignalLib
         public string? Head { get; set; }
     }
 
+    internal struct JsonDataSignalHeadRuleset
+    {
+        public string Head { get; set; }
+        public string Ruleset { get; set; }
+    }
+
     internal struct JsonDataSignal
     {
         public string Name { get; set; }
         public string? Ruleset { get; set; }
+        public List<JsonDataSignalHeadRuleset>? Rulesets { get; set; }
         public string? StartIndication { get; set; }
         public List<JsonDataSignalShape> Shapes { get; set; }
     }
@@ -73,12 +80,6 @@ namespace ModularPanels.SignalLib
                         ruleset.DefaultIndication = rsData.DefaultIndication;
                     }
 
-                    foreach (var ruleData in rsData.Rules)
-                    {
-                        SignalRuleIndication indicationRules = ruleset.AddIndication(ruleData.Indication);
-                        indicationRules.SetAspect(ruleData.NextAspect, ruleData.Aspect);
-                    }
-
                     if (rsData.Aspects != null)
                     {
                         int i = 0;
@@ -87,6 +88,12 @@ namespace ModularPanels.SignalLib
                             ruleset.SetAspectIndex(aspect, i);
                             i++;
                         }
+                    }
+
+                    foreach (var ruleData in rsData.Rules)
+                    {
+                        SignalRuleIndication indicationRules = ruleset.AddIndication(ruleData.Indication);
+                        indicationRules.SetAspect(ruleData.NextAspect, ruleData.Aspect);
                     }
                 }
             }
@@ -119,13 +126,25 @@ namespace ModularPanels.SignalLib
                     else if (ruleset != null)
                         type.StartIndication = ruleset.DefaultIndication;
 
+                    if (sig.Rulesets != null)
+                    {
+                        foreach (var sigRs in sig.Rulesets)
+                        {
+                            SignalRuleset? headRuleset = bank.GetRuleset(sigRs.Ruleset);
+                            if (headRuleset == null)
+                                continue;
+
+                            type.AddRuleset(sigRs.Head, headRuleset);
+                        }
+                    }
+
                     bank.AddType(type);
                 }
             }
         }
     }
 
-    public class JsonDataSignalLibraryJsonConverter : JsonConverter<SignalLibraryLoader>
+    internal class JsonDataSignalLibraryJsonConverter : JsonConverter<SignalLibraryLoader>
     {
         public override SignalLibraryLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

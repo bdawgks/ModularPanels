@@ -15,6 +15,7 @@ namespace ModularPanels.CircuitLib
         Circuit? _input;
         SimpleCircuit? _output;
         string? _dropIndication;
+        bool _resetLatch = false;
 
         public void SetInput(Circuit? input)
         {
@@ -45,12 +46,20 @@ namespace ModularPanels.CircuitLib
             _dropIndication = dropIndication;
         }
 
+        public void SetResetLatch(bool resetLatch)
+        {
+            _resetLatch = resetLatch;
+        }
+
         private void OnInputChange(object? sender, CircuitActivationArgs e)
         {
             if (e.Active)
             {
+                if (_resetLatch)
+                    _signal.ResetLatch();
+
                 if (_fixedIndication)
-                    _signal.SetIndication(_indication, _dropIndication == null);
+                    _signal.SetIndicationFixed(_indication);
                 else
                     _signal.SetRouteIndication(_indication);
 

@@ -59,6 +59,14 @@ namespace ModularPanels.CircuitLib
         }
     }
 
+    public class CircuitOrNot(Circuit circuit) : CircuitCondition(circuit)
+    {
+        protected override bool EvaluateOp(bool operand)
+        {
+            return operand || !_circuit.Active;
+        }
+    }
+
     public class CircuitNor(Circuit circuit) : CircuitCondition(circuit)
     {
         protected override bool EvaluateOp(bool operand)

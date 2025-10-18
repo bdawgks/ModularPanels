@@ -75,7 +75,7 @@ namespace ModularPanels.TrackLib
                 SetState(State.Primed);
         }
 
-        public void Reset()
+        public void Unset()
         {
             SetState(State.Inactive);
         }

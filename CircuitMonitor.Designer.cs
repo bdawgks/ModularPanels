@@ -28,33 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
+            dataGridView1 = new DataGridView();
+            ColumnName = new DataGridViewTextBoxColumn();
+            ColumnDescription = new DataGridViewTextBoxColumn();
+            ColumnState = new DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
-            // textBox1
+            // dataGridView1
             // 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.Location = new Point(12, 12);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(776, 426);
-            textBox1.TabIndex = 0;
+            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColumnName, ColumnDescription, ColumnState });
+            dataGridView1.Location = new Point(12, 12);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(676, 314);
+            dataGridView1.TabIndex = 0;
+            // 
+            // Name
+            // 
+            ColumnName.HeaderText = "Name";
+            ColumnName.Name = "Name";
+            // 
+            // Description
+            // 
+            ColumnDescription.HeaderText = "Description";
+            ColumnDescription.Name = "Description";
+            // 
+            // State
+            // 
+            ColumnState.HeaderText = "State";
+            ColumnState.Name = "State";
             // 
             // CircuitMonitor
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(textBox1);
+            ClientSize = new Size(700, 338);
+            Controls.Add(dataGridView1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "CircuitMonitor";
             Text = "CircuitMonitor";
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private TextBox textBox1;
+        private DataGridView dataGridView1;
+        private DataGridViewTextBoxColumn ColumnName;
+        private DataGridViewTextBoxColumn ColumnDescription;
+        private DataGridViewTextBoxColumn ColumnState;
     }
 }
