@@ -31,7 +31,7 @@ namespace ModularPanels.SignalLib
             List<string> headNames = type.GetHeadNames();
             if (headNames.Count < 1)
             {
-                _defaultHead = new("default", this);
+                _defaultHead = new("default", this, true);
             }
             else
             {
@@ -65,8 +65,8 @@ namespace ModularPanels.SignalLib
             if (id == null)
                 return _defaultHead;
 
-            if (_heads.ContainsKey(id))
-                return _heads[id];
+            if (_heads.TryGetValue(id, out var head))
+                return head;
 
             return null;
         }
@@ -85,6 +85,11 @@ namespace ModularPanels.SignalLib
 
             if (_defaultHead != null)
                 _defaultHead.InitSignal();
+        }
+
+        public SignalRuleset? GetRuleset(string? headId)
+        {
+            return Type.GetRuleset(headId);
         }
 
         public static bool ParseSignalID(string id, out string name, out string? head)

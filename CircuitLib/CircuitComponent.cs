@@ -9,11 +9,18 @@ using ModularPanels.SignalLib;
 
 namespace ModularPanels.CircuitLib
 {
+    public class CircuitChangeEventArgs(Circuit circuit, bool active) : EventArgs
+    {
+        public Circuit Circuit { get; } = circuit;
+        public bool Active { get; } = active;
+
+    }
+
     public class CircuitComponent : Component
     {
         readonly ObjectBank _circuitBank = new();
 
-        public event EventHandler? CircuitChangeEvents;
+        public event EventHandler<CircuitChangeEventArgs>? CircuitChangeEvents;
 
         public CircuitComponent(IParent parent) : base(parent)
         {
@@ -31,7 +38,8 @@ namespace ModularPanels.CircuitLib
 
         private void OnCircuitChanged(object? sender, CircuitActivationArgs e)
         {
-            CircuitChangeEvents?.Invoke(this, new());
+            if (sender is Circuit circuit)
+                CircuitChangeEvents?.Invoke(this, new(circuit, e.Active));
         }
 
         public void AddCircuit(Circuit circuit)
@@ -61,6 +69,7 @@ namespace ModularPanels.CircuitLib
                 case "ANDNOT": condition = new CircuitAndNot(circuit); break;
                 case "NAND": condition = new CircuitNand(circuit); break;
                 case "OR": condition = new CircuitOr(circuit); break;
+                case "ORNOT": condition = new CircuitOrNot(circuit); break;
                 case "NOR": condition = new CircuitNor(circuit); break;
             }
 

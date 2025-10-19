@@ -11,12 +11,12 @@ namespace ModularPanels.SignalLib
     public class SignalType
     {
         readonly string _name;
-        readonly SignalRuleset? _ruleset;
+        readonly SignalRuleset? _defaultRuleset;
         string? _startIndication = null;
         protected readonly HashSet<string> _headNames = [];
-        readonly List<SignalShape> _shapes = new();
+        readonly List<SignalShape> _shapes = [];
+        readonly Dictionary<string, SignalRuleset?> _headRulesets = [];
 
-        public SignalRuleset? Ruleset { get { return _ruleset; } }
         internal List<SignalShape> Shapes { get { return _shapes; } }
 
         public string? StartIndication
@@ -33,7 +33,26 @@ namespace ModularPanels.SignalLib
         public SignalType(string name, SignalRuleset? ruleset)
         {
             _name = name;
-            _ruleset = ruleset;
+            _defaultRuleset = ruleset;
+        }
+
+        public void AddRuleset(string headName, SignalRuleset ruleset)
+        {
+            if (_headRulesets.ContainsKey(headName))
+                return;
+
+            _headRulesets.Add(headName, ruleset);
+        }
+
+        public SignalRuleset? GetRuleset(string? headName = null)
+        {
+            if (string.IsNullOrEmpty(headName))
+                return _defaultRuleset;
+
+            if (_headRulesets.TryGetValue(headName, out SignalRuleset? ruleset))
+                return ruleset;
+
+            return null;
         }
 
         public List<string> GetHeadNames()

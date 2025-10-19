@@ -125,7 +125,6 @@ namespace ModularPanels
                     sig.SetScale(signal.Scale.Value);
 
                 mod.Signals.Add(sig.Name, sig);
-                sig.InitSignal();
             }
 
             if (SignalRoutes != null)
@@ -135,6 +134,8 @@ namespace ModularPanels
                     sr.Load(mod.GetSignalComponent(), mod.ObjectBank);
                 }
             }
+
+            mod.GetSignalComponent().InitSignals();
         }
     }
 

@@ -23,6 +23,7 @@ namespace ModularPanels.SignalLib
         string? _indication;
         string _aspect = "0";
         SignalLatchIndication? _latchIndication;
+        readonly SignalRuleset? _ruleset;
 
         public EventHandler<SignalStateChangeArgs>? StateChangedEvents { get; set; }
 
@@ -48,17 +49,25 @@ namespace ModularPanels.SignalLib
             get { return _advancedSignal; }
         }
 
-        public SignalHead(string id, Signal parent)
+        public SignalHead(string id, Signal parent, bool isDefault = false)
         {
             _id = id;
             _parent = parent;
+            _ruleset = parent.GetRuleset(isDefault ? null : _id);
             _indication = _parent.Type.StartIndication;
-            if (parent.Type.Ruleset != null && _indication != null)
+            if (_ruleset != null)
             {
-                string? startAspect = parent.Type.Ruleset.GetAspect(_indication, null);
+                _indication ??= _ruleset.DefaultIndication;
+
+                string? startAspect = _ruleset.GetAspect(_indication, null);
                 if (startAspect != null)
                     _aspect = startAspect;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}", _parent.Name, _id);
         }
 
         public void AddRoute(SignalRoute route)
@@ -90,20 +99,20 @@ namespace ModularPanels.SignalLib
             string? routeIndicaiton = GetRouteIndication();
             if (routeIndicaiton == null)
             {
-                SetIndication(indication);
+                SetIndicationFixed(indication);
                 return;
             }
-            SetIndication(routeIndicaiton);
+            SetIndicationFixed(routeIndicaiton);
         }
 
-        public void SetIndication(string indication, bool forced = true)
+        public void SetIndicationLatched(string indication)
         {
-            if (!forced && _latchIndication != null && _latchIndication.IsLatched)
+            if (_latchIndication != null && _latchIndication.IsLatched)
                 return;
+        }
 
-            if (forced && _latchIndication != null)
-                _latchIndication.Reset();
-
+        public void SetIndicationFixed(string indication)
+        {
             _indication = indication;
             UpdateIndication();
         }
@@ -125,18 +134,24 @@ namespace ModularPanels.SignalLib
             _latchIndication.SetDetectorLatch(_activeRoute.DetectorLatch);
         }
 
+        public void ResetLatch()
+        {
+            if (_latchIndication != null && _latchIndication.IsLatched)
+                _latchIndication.Unset();
+        }
+
         private void UpdateIndication()
         {
             if (_indication == null)
                 return;
 
-            if (_parent.Type.Ruleset != null)
+            if (_ruleset != null)
             {
                 string? nextAspect = null;
                 if (_activeRoute != null && _activeRoute.NextSignal != null)
                     nextAspect = _activeRoute.NextSignal.Aspect;
 
-                string? newAspect = _parent.Type.Ruleset.GetAspect(_indication, nextAspect);
+                string? newAspect = _ruleset.GetAspect(_indication, nextAspect);
                 SetAspect(newAspect);
             }
 

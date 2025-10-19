@@ -150,6 +150,7 @@ namespace ModularPanels.CircuitLib
         public StringKey<Circuit>? OutputCircuit { get; set; }
         public bool? Fixed { get; set; }
         public string? DropIndication { get; set; }
+        public bool? ResetLatch { get; set; }
     }
 
     [JsonConverter(typeof(SignalCircuitLoaderJsonConverter))]
@@ -188,6 +189,11 @@ namespace ModularPanels.CircuitLib
             if (Data.DropIndication != null)
             {
                 circuit.SetDropIndication(Data.DropIndication);
+            }
+
+            if (Data.ResetLatch != null)
+            {
+                circuit.SetResetLatch(Data.ResetLatch.Value);
             }
 
             return circuit;

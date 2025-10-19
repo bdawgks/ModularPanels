@@ -34,5 +34,13 @@ namespace ModularPanels.SignalLib
 
             return sig.GetHead(id.head);
         }
+
+        public void InitSignals()
+        {
+            foreach (Signal s in _signalMap.Values)
+            {
+                s.InitSignal();
+            }
+        }
     }
 }
