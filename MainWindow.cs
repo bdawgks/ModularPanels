@@ -16,8 +16,6 @@ namespace ModularPanels
 
         public DrawPanel DrawPanel { get => drawPanel1; }
 
-        public Layout? Layout { get; set; }
-
         public MainWindow()
         {
             Instance = this;
@@ -90,8 +88,6 @@ namespace ModularPanels
 
                             monitorCircuitsToolStripMenuItem.DropDownItems.Add(item);
                         }
-
-                        Layout = layout;
                     }
                 }
                 catch (Exception e)

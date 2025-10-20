@@ -71,7 +71,7 @@ namespace ModularPanels.SignalLib
             return newIndication;
         }
 
-        public string? GetAspect(string indicationName, string? nextAspect)
+        public string? GetAspect(string indicationName, string? nextAspect = null)
         {
             if (_indications.TryGetValue(indicationName, out SignalRuleIndication? value))
                 return value.GetAspect(nextAspect);

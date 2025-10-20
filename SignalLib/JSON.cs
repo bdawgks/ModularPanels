@@ -97,12 +97,13 @@ namespace ModularPanels.SignalLib
     internal struct BoundarySignalHeadJsonData
     {
         public string ID { get; set; }
-        public string DefaultIndicaiton { get; set; }
+        public string DefaultIndication { get; set; }
     }
 
     internal struct BoundarySignalJsonData
     {
         public string ID { get; set; }
+        public string Type { get; set; }
         public string Boundary { get; set; }
         public int Index { get; set; }
         public List<BoundarySignalHeadJsonData> Heads { get; set; }
@@ -121,11 +122,15 @@ namespace ModularPanels.SignalLib
             if (!Enum.TryParse(Data.Value.Boundary, out BoundarySignal.BoundarySide boundary))
                 boundary = BoundarySignal.BoundarySide.Left;
 
-            BoundarySignal sig = new(Data.Value.ID, null, boundary, Data.Value.Index);
+            SignalType? type = MainWindow.SignalBank[Data.Value.Type];
+            if (type == null)
+                return;
+
+            BoundarySignal sig = new(Data.Value.ID, type, boundary, Data.Value.Index);
             foreach (var headData in Data.Value.Heads)
             {
-                BoundarySignalHead headIn = new(headData.ID, sig, BoundarySignal.BoundaryDir.In);
-                BoundarySignalHead headOut = new(headData.ID, sig, BoundarySignal.BoundaryDir.Out);
+                BoundarySignalHead headIn = new(headData.ID, sig, BoundarySignal.BoundaryDir.In, headData.DefaultIndication);
+                BoundarySignalHead headOut = new(headData.ID, sig, BoundarySignal.BoundaryDir.Out, headData.DefaultIndication);
                 sig.AddHead(BoundarySignal.BoundaryDir.In, headIn);
                 sig.AddHead(BoundarySignal.BoundaryDir.Out, headOut);
             }

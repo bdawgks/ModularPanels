@@ -7,7 +7,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ModularPanels.SignalLib
 {
-    public class BoundarySignal : Signal
+    public class BoundarySignal(string name, SignalType type, BoundarySignal.BoundarySide boundary, int index) : Signal(name, type, true)
     {
         public enum BoundarySide
         {
@@ -20,18 +20,12 @@ namespace ModularPanels.SignalLib
             Out
         }
 
-        readonly BoundarySide _boundary;
-        readonly int _index = -1;
+        readonly BoundarySide _boundary = boundary;
+        readonly int _index = index;
         readonly Dictionary<string, BoundarySignalHead> _headsOut = [];
 
         public BoundarySide Boundary { get { return _boundary; } }
         public int Index { get { return _index; } }
-
-        public BoundarySignal(string name, SignalType type, BoundarySide boundary, int index) : base(name, type, true)
-        {
-            _boundary = boundary;
-            _index = index;
-        }
 
         internal void AddHead(BoundaryDir dir, BoundarySignalHead head)
         {

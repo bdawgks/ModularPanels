@@ -52,7 +52,7 @@ namespace ModularPanels.SignalLib
             if (_headRulesets.TryGetValue(headName, out SignalRuleset? ruleset))
                 return ruleset;
 
-            return null;
+            return _defaultRuleset;
         }
 
         public List<string> GetHeadNames()

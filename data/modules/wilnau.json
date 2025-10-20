@@ -110,16 +110,14 @@
 		{"ID": "D'", "Type": "CH_TL_Dw", "Pos": [315, 75], "Angle": -90},
 		{"ID": "E'", "Type": "CH_TL_Dw", "Pos": [85, 25], "Angle": 90},
 		{"ID": "F'", "Type": "CH_TL_Dw", "Pos": [135, 35], "Angle": -90},
-		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]},
-		{"ID": "ML", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]},
-		{"ID": "MR", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
+		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
 	],
 	"BoundarySignals": [
-		{"ID": "L0", "Boundary": "Left", "Index": 0, "Heads": [
+		{"ID": "L0", "Type": "CH_TL_EndOfTrack", "Boundary": "Left", "Index": 0, "Heads": [
 			{"ID": "Main", "DefaultIndication": "Stop"},
 			{"ID": "Zw", "DefaultIndication": "Stop"}
 		]},
-		{"ID": "R0", "Boundary": "Right", "Index": 0, "Heads": [
+		{"ID": "R0", "Type": "CH_TL_EndOfTrack", "Boundary": "Right", "Index": 0, "Heads": [
 			{"ID": "Main", "DefaultIndication": "Stop"},
 			{"ID": "Zw", "DefaultIndication": "Stop"}
 		]}
@@ -137,14 +135,14 @@
 			{"PointsID": "2", "Direction": "Reversed"}
 		]},
 		{"SigID": "B1'", "NextSigID": "L0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
-		{"SigID": "B2'", "NextSigID": "ML", "Indication": "Clear", "Route": [
+		{"SigID": "B2'", "NextSigID": "L0:Zw", "Indication": "Clear", "Route": [
 			{"PointsID": "3", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
 		{"SigID": "B2'", "NextSigID": "EoT", "Indication": "Caution", "Route": [
 			{"PointsID": "3", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "2-2"}},
-		{"SigID": "C1'", "NextSigID": "MR", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "21"}},
-		{"SigID": "C2'", "NextSigID": "MR", "Indication": "Clear", "DetectorLatch": {"ExitID": "2", "EntryID": "21"}},
+		{"SigID": "C1'", "NextSigID": "R0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "21"}},
+		{"SigID": "C2'", "NextSigID": "R0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "2", "EntryID": "21"}},
 		{"SigID": "D'", "NextSigID": "B1'", "Indication": "Clear", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
@@ -152,7 +150,7 @@
 			{"PointsID": "4", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
 		{"SigID": "E'", "NextSigID": "C2'", "Indication": "Clear"},
-		{"SigID": "F'", "NextSigID": "ML", "Indication": "Clear"},
+		{"SigID": "F'", "NextSigID": "L0:Zw", "Indication": "Clear"},
 		
 		{"SigID": "A:Main", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
@@ -213,7 +211,8 @@
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
 		
 		{"SigID": "R0:Main", "NextSigID": "D:Main", "Indication": "Distant"},
-		{"SigID": "R0:Zw", "NextSigID": "D'", "Indication": "Clear"}
+		{"SigID": "R0:Zw", "NextSigID": "D'", "Indication": "Clear"},
+		{"SigID": "L0:Zw", "NextSigID": "A'", "Indication": "Clear"}
 	]
 },
 "Controls": {
