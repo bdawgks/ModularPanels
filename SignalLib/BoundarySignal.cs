@@ -46,6 +46,16 @@ namespace ModularPanels.SignalLib
             return null;
         }
 
+        public override void InitSignal()
+        {
+            foreach (var head in _headsOut.Values)
+            {
+                head.InitSignal();
+            }
+
+            base.InitSignal();
+        }
+
         internal void Init(Module mod)
         {
             if (mod.LeftModule != null)
@@ -71,8 +81,9 @@ namespace ModularPanels.SignalLib
                             headB.SetRepeatedHeadNext(otherHeadB);
                             otherHeadB.SetRepeatedHeadPrev(headB);
                         }
-
                     }
+
+                    otherSig.InitSignal();
                 }
             }
         }

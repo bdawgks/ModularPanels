@@ -82,15 +82,14 @@ namespace ModularPanels.SignalLib
             return _defaultHead;
         }
 
-        public void InitSignal()
+        public virtual void InitSignal()
         {
             foreach (SignalHead head in _heads.Values)
             {
                 head.InitSignal();
             }
 
-            if (_defaultHead != null)
-                _defaultHead.InitSignal();
+            _defaultHead?.InitSignal();
         }
 
         public SignalRuleset? GetRuleset(string? headId)

@@ -39,7 +39,11 @@ namespace ModularPanels.SignalLib
         }
 
         internal virtual void UpdateIndication() { }
-        internal virtual void InitSignal() { }
+
+        internal virtual void InitSignal()
+        {
+            UpdateRoute();
+        }
 
         public virtual void ResetLatch() { }
         public virtual void SetIndicationFixed(string _) { }
@@ -110,11 +114,6 @@ namespace ModularPanels.SignalLib
                 if (startAspect != null)
                     _aspect = startAspect;
             }
-        }
-
-        internal override void InitSignal()
-        {
-            UpdateRoute();
         }
 
         public string? GetRouteIndication()

@@ -211,6 +211,7 @@
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
 		
 		{"SigID": "R0:Main", "NextSigID": "D:Main", "Indication": "Distant"},
+		{"SigID": "L0:Main", "NextSigID": "A:Main", "Indication": "Distant"},
 		{"SigID": "R0:Zw", "NextSigID": "D'", "Indication": "Clear"},
 		{"SigID": "L0:Zw", "NextSigID": "A'", "Indication": "Clear"}
 	]
