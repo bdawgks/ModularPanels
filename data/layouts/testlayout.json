@@ -1,5 +1,6 @@
 {"Name": "Test",
 "Modules": [
 	"test",
+	"wilnau",
 	"wilnau"
 ]}

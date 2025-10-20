@@ -100,9 +100,9 @@ namespace ModularPanels
 
     public struct JSON_Module_SignalData
     {
-        public List<SignalRouteLoader>? SignalRoutes { get; set; }
-
         public List<JSON_Module_Signal> Signals { get; set; }
+        public List<BoundarySignalLoader>? BoundarySignals { get; set; }
+        public List<SignalRouteLoader>? SignalRoutes { get; set; }
 
         public readonly void InitSignals(Module mod)
         {
@@ -125,6 +125,14 @@ namespace ModularPanels
                     sig.SetScale(signal.Scale.Value);
 
                 mod.Signals.Add(sig.Name, sig);
+            }
+
+            if (BoundarySignals != null)
+            {
+                foreach (var boundarySig in BoundarySignals)
+                {
+                    boundarySig.Load(mod);
+                }
             }
 
             if (SignalRoutes != null)

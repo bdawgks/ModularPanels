@@ -114,6 +114,16 @@
 		{"ID": "ML", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]},
 		{"ID": "MR", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
 	],
+	"BoundarySignals": [
+		{"ID": "L0", "Boundary": "Left", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Stop"}
+		]},
+		{"ID": "R0", "Boundary": "Right", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Stop"}
+		]}
+	],
 	"SignalRoutes": [
 		{"SigID": "A'", "NextSigID": "C1'", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
@@ -126,7 +136,7 @@
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Reversed"}
 		]},
-		{"SigID": "B1'", "NextSigID": "ML", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
+		{"SigID": "B1'", "NextSigID": "L0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
 		{"SigID": "B2'", "NextSigID": "ML", "Indication": "Clear", "Route": [
 			{"PointsID": "3", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
@@ -144,13 +154,13 @@
 		{"SigID": "E'", "NextSigID": "C2'", "Indication": "Clear"},
 		{"SigID": "F'", "NextSigID": "ML", "Indication": "Clear"},
 		
-		{"SigID": "A:Main", "NextSigID": "C1", "Indication": "Clear", "Route": [
+		{"SigID": "A:Main", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "1"}},
 		{"SigID": "A:Dist", "NextSigID": "C1", "Indication": "Distant", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "1"}},
-		{"SigID": "A:Main", "NextSigID": "C2", "Indication": "40km", "Route": [
+		{"SigID": "A:Main", "Indication": "40km", "Route": [
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "2"}},
@@ -158,7 +168,7 @@
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "2"}},
-		{"SigID": "A:Main", "NextSigID": "EoT", "Indication": "40km", "Route": [
+		{"SigID": "A:Main", "Indication": "40km", "Route": [
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "2-1"}},
@@ -167,33 +177,43 @@
 			{"PointsID": "2", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "2-1"}},
 		
-		{"SigID": "B1:Main", "NextSigID": "ML", "Indication": "Clear", "Route": [
+		{"SigID": "B1:Main", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
-		{"SigID": "B2:Main", "NextSigID": "ML", "Indication": "Clear", "Route": [
+		{"SigID": "B1:Dist", "NextSigID": "L0:Main", "Indication": "Distant", "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
+		{"SigID": "B2:Main", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
+		{"SigID": "B2:Dist", "NextSigID": "L0:Main", "Indication": "Distant", "Route": [
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
 		
-		{"SigID": "C1", "NextSigID": "MR", "Indication": "Clear", "Route": [
+		{"SigID": "C1", "Indication": "Clear", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "1", "EntryID": "21"}},
-		{"SigID": "C2", "NextSigID": "MR", "Indication": "Clear", "Route": [
+		{"SigID": "C2", "Indication": "Clear", "Route": [
 			{"PointsID": "4", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "21"}},
 		
-		{"SigID": "D:Main", "NextSigID": "B1:Main", "Indication": "Clear", "Route": [
+		{"SigID": "D:Main", "Indication": "Clear", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
 		{"SigID": "D:Dist", "NextSigID": "B1:Main", "Indication": "Distant", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
-		{"SigID": "D:Main", "NextSigID": "B2:Main", "Indication": "40km", "Route": [
+		{"SigID": "D:Main", "Indication": "40km", "Route": [
 			{"PointsID": "4", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
 		{"SigID": "D:Dist", "NextSigID": "B2:Main", "Indication": "Distant", "Route": [
 			{"PointsID": "4", "Direction": "Reversed"}
-		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}}
+		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
+		
+		{"SigID": "R0:Main", "NextSigID": "D:Main", "Indication": "Distant"},
+		{"SigID": "R0:Zw", "NextSigID": "D'", "Indication": "Clear"}
 	]
 },
 "Controls": {

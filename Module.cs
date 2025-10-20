@@ -7,6 +7,7 @@ using ModularPanels.PanelLib;
 using ModularPanels.DrawLib;
 using ModularPanels.SignalLib;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModularPanels
 {
@@ -113,6 +114,9 @@ namespace ModularPanels
         Drawing? _drawing;
         Color? _backgroundColor;
 
+        Module? _leftModule;
+        Module? _rightModule;
+
         JSON_Module_Controls? _controlsData;
 
         readonly ObjectBank _objBank = new();
@@ -132,6 +136,18 @@ namespace ModularPanels
         public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
         public Dictionary<string, Signal> Signals { get { return _signals; } }
         public List<PanelText> Texts { get { return _texts; } }
+
+        public Module? LeftModule
+        {
+            get => _leftModule;
+            set => _leftModule = value;
+        }
+
+        public Module? RightModule
+        {
+            get => _rightModule;
+            set => _rightModule = value;
+        }
 
         public Module(string name, int width, int height)
         {
@@ -299,7 +315,7 @@ namespace ModularPanels
             }
         }
 
-        public static bool LoadModule(string name, Layout layout, out Module? module)
+        public static bool LoadModule(string name, Layout layout, [NotNullWhen(true)] out Module? module)
         {
             module = null;
             string path = Application.StartupPath + "data\\modules\\" + name + ".json";
