@@ -1,0 +1,100 @@
+{"Name": "Sartnal Yard",
+"DrawingData": {
+	"Width": 350,
+	"Height": 130,
+	"BackgroundColor": "DominoBG",
+	"Texts": [
+		{"Text": "Sarntal Yard", "Style": "Title", "Pos": [185,10]}
+	]
+},
+"TrackData": {
+	"Nodes": [
+		{"ID": "1A", "Pos": [0, 30]},
+		{"ID": "1B", "Pos": [40, 30]},
+		{"ID": "1C", "Pos": [50, 30]},
+		{"ID": "1D", "Pos": [90, 30]},
+		{"ID": "1E", "Pos": [280, 30]},
+		{"ID": "1F", "Pos": [290, 30]},
+		{"ID": "1G", "Pos": [300, 30]},
+		{"ID": "1H", "Pos": [340, 70]},
+		{"ID": "1I", "Pos": [350, 70]},
+		{"ID": "2A", "Pos": [90, 50]},
+		{"ID": "2B", "Pos": [100, 50]},
+		{"ID": "2C", "Pos": [190, 50]},
+		{"ID": "2D", "Pos": [200, 50]},
+		{"ID": "2E", "Pos": [210, 50]},
+		{"ID": "2F", "Pos": [240, 50]},
+		{"ID": "2G", "Pos": [250, 50]},
+		{"ID": "3A", "Pos": [10, 70], "Square": true},
+		{"ID": "3B", "Pos": [100, 70], "Square": true},
+		{"ID": "3C", "Pos": [130, 70]},
+		{"ID": "3D", "Pos": [140, 70]},
+		{"ID": "3E", "Pos": [150, 70]},
+		{"ID": "3F", "Pos": [160, 70]},
+		{"ID": "3G", "Pos": [180, 70], "Square": true},
+		{"ID": "3H", "Pos": [250, 70], "Square": true},
+		{"ID": "4A", "Pos": [170, 90]},
+		{"ID": "4B", "Pos": [180, 90], "Square": true},
+		{"ID": "4C", "Pos": [250, 90], "Square": true}
+	],
+	"Segments": [
+		{"ID": "11A", "Style": "Mainline", "Nodes": ["1A","1B"]},
+		{"ID": "11B", "Style": "Mainline", "Nodes": ["1B","1C"]},
+		{"ID": "1A", "Style": "Mainline", "Nodes": ["1C","1D"]},
+		{"ID": "1B", "Style": "Mainline", "Nodes": ["1D","1E"]},
+		{"ID": "1C", "Style": "Mainline", "Nodes": ["1F","1G"]},
+		{"ID": "21A", "Style": "Mainline", "Nodes": ["1G","1H"]},
+		{"ID": "21B", "Style": "Mainline", "Nodes": ["1H","1I"]},
+		{"ID": "2X1", "Style": "Mainline", "Nodes": ["1C","2A"]},
+		{"ID": "12A", "Style": "Mainline", "Nodes": ["2A","2B"]},
+		{"ID": "12B", "Style": "Mainline", "Nodes": ["2B","2C"]},
+		{"ID": "12C", "Style": "Mainline", "Nodes": ["2C","2D"]},
+		{"ID": "2A", "Style": "Mainline", "Nodes": ["2D","2E"]},
+		{"ID": "2B", "Style": "Mainline", "Nodes": ["2E","2F"]},
+		{"ID": "2C", "Style": "Mainline", "Nodes": ["2F","2G"]},
+		{"ID": "2X2", "Style": "Mainline", "Nodes": ["2G","1F"]},
+		{"ID": "13A", "Style": "Yard", "Nodes": ["3A","3B"]},
+		{"ID": "13B", "Style": "Mainline", "Nodes": ["3B","3C"]},
+		{"ID": "23A", "Style": "Mainline", "Nodes": ["3C","3D"]},
+		{"ID": "23B", "Style": "Mainline", "Nodes": ["3D","3E"]},
+		{"ID": "23C", "Style": "Yard", "Nodes": ["3E","3F"]},
+		{"ID": "3X1", "Style": "Mainline", "Nodes": ["2A","3C"]},
+		{"ID": "3X2", "Style": "Mainline", "Nodes": ["3F","2D"]},
+		{"ID": "3A", "Style": "Mainline", "Nodes": ["3F","3G"]},
+		{"ID": "3B", "Style": "Yard", "Nodes": ["3G","3H"]},
+		{"ID": "4X", "Style": "Mainline", "Nodes": ["3C","4A"]},
+		{"ID": "4A", "Style": "Mainline", "Nodes": ["4A","4B"]},
+		{"ID": "4B", "Style": "Yard", "Nodes": ["4B","4C"]}
+	],
+	"Points": [
+		{"ID": "1", "PointsNode": "1C", "RouteNormal": "1D", "RouteReversed": "2A", "Style": "Main"},
+		{"ID": "2", "PointsNode": "2A", "RouteNormal": "2B", "RouteReversed": "3C", "Style": "Main"},
+		{"ID": "3A", "PointsNode": "3C", "RouteNormal": "4A", "RouteReversed": "3D", "Style": "Main"},
+		{"ID": "3B", "PointsNode": "3C", "RouteNormal": "2A", "RouteReversed": "3A", "Style": "Main"},
+		{"ID": "4A", "PointsNode": "3F", "RouteNormal": "3G", "RouteReversed": "2D", "Style": "Main"},
+		{"ID": "4A", "PointsNode": "2D", "RouteNormal": "2C", "RouteReversed": "3F", "Style": "Main"},
+		{"ID": "5", "PointsNode": "1F", "RouteNormal": "1E", "RouteReversed": "2G", "Style": "Main"}
+	],
+	"Detectors": [
+		{"ID": "11", "Segments": ["11A","11B"], "Style": "Main"},
+		{"ID": "1", "Segments": ["1A","1B","1C"], "Style": "Main"},
+		{"ID": "12", "Segments": ["12A","12B","12C"], "Style": "Main"}
+	]
+},
+"SignalData": {
+	"Signals": [
+		{"ID": "1A'", "Type": "CH_TL_Dw", "Pos": [40, 25], "Angle": 90},
+		{"ID": "1B'", "Type": "CH_TL_Dw", "Pos": [85, 35], "Angle": -90},
+		{"ID": "1C'", "Type": "CH_TL_Dw", "Pos": [250, 25], "Angle": 90},
+		{"ID": "1D'", "Type": "CH_TL_Dw", "Pos": [295, 35], "Angle": -90},
+		{"ID": "2B'", "Type": "CH_TL_Dw", "Pos": [120, 55], "Angle": -90},
+		{"ID": "21A'", "Type": "CH_TL_Dw", "Pos": [180, 45], "Angle": 90},
+		{"ID": "21B'", "Type": "CH_TL_Dw", "Pos": [210, 55], "Angle": -90},
+		{"ID": "2C'", "Type": "CH_TL_Dw", "Pos": [250, 45], "Angle": 90},
+		{"ID": "3A'", "Type": "CH_TL_Dw", "Pos": [100, 65], "Angle": 90},
+		{"ID": "3B'", "Type": "CH_TL_Dw", "Pos": [180, 75], "Angle": -90},
+		{"ID": "4B'", "Type": "CH_TL_Dw", "Pos": [180, 95], "Angle": -90},
+		{"ID": "A", "Type": "CH_TL_M3", "Pos": [20, 20], "Angle": 90},
+		{"ID": "B", "Type": "CH_TL_M3", "Pos": [100, 40], "Angle": -90}
+	]
+}}

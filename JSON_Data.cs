@@ -74,10 +74,12 @@ namespace ModularPanels
         public int Width { get; set; }
         public int Height { get; set; }
         public ColorJS BackgroundColor { get; set; }
+        public StringKey<GridStyle>? GridStyle { get; set; }
         public List<JSON_Text> Texts { get; set; }
         public List<TrackStyleLoader> TrackStyles { get; set; }
         public List<PointsStyleLoader> PointsStyles { get; set; }
         public List<DetectorStyleLoader> DetectorStyles { get; set; }
+        public List<GridStyleLoader> GridStyles { get; set; }
     }
 
     public class JSON_StyleData
@@ -87,6 +89,7 @@ namespace ModularPanels
         public List<PointsStyleLoader>? PointsStyles { get; set; }
         public List<DetectorStyleLoader>? DetectorStyles { get; set; }
         public List<TextStyleLoader>? TextStyles { get; set; }
+        public List<GridStyleLoader>? GridStyles { get; set; }
     }
 
     public struct JSON_Module_Signal
@@ -257,6 +260,17 @@ namespace ModularPanels
             }
         }
 
+        public static void LoadGridStyles(List<GridStyleLoader>? list)
+        {
+            if (list == null)
+                return;
+
+            foreach (GridStyleLoader styleData in list)
+            {
+                styleData.Load(GlobalBank.Instance);
+            }
+        }
+
         public static void LoadStyleFiles(string dir)
         {
             if (!Directory.Exists(dir))
@@ -284,6 +298,7 @@ namespace ModularPanels
                     LoadPointsStyles(styleData.PointsStyles);
                     LoadDetectorStyles(styleData.DetectorStyles);
                     LoadTextStyles(styleData.TextStyles);
+                    LoadGridStyles(styleData.GridStyles);
                 }
             }
         }

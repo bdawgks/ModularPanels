@@ -192,15 +192,13 @@ namespace ModularPanels.PanelLib
         }
     }
 
-    public struct GridStyle
+    public class GridStyle
     {
         public Color majorColor = Color.LightGray;
         public Color minorColor = Color.LightGray;
         public Color textColor = Color.Gray;
         public string textFont = "Calibri";
         public float textSize = 15f;
-
-        public GridStyle() { }
     }
 
     public class TextStyle
@@ -600,10 +598,10 @@ namespace ModularPanels.PanelLib
             List<Point> textPoints = [];
             List<string> textStrings = [];
 
-            Brush gridMajorBrush = new SolidBrush(_gridStyle.Value.majorColor);
-            Brush gridMinorBrush = new SolidBrush(_gridStyle.Value.minorColor);
-            Brush textBrush = new SolidBrush(_gridStyle.Value.textColor);
-            Font textFont = new(_gridStyle.Value.textFont, _gridStyle.Value.textSize);
+            Brush gridMajorBrush = new SolidBrush(_gridStyle.majorColor);
+            Brush gridMinorBrush = new SolidBrush(_gridStyle.minorColor);
+            Brush textBrush = new SolidBrush(_gridStyle.textColor);
+            Font textFont = new(_gridStyle.textFont, _gridStyle.textSize);
 
             int numH = _canvas.Height / _gridSize;
             int numV = _canvas.Width / _gridSize;

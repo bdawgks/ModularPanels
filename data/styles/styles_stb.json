@@ -36,4 +36,8 @@
 	{"ID": "TrackNumber", "Font": "Calibri", "Size": 18, "Color": "Black", "Bold": true},
 	{"ID": "Control1", "Font": "Calibri", "Size": 15, "Color": "Black"},
 	{"ID": "Control2", "Font": "Calibri", "Size": 22, "Color": "Black"}
+],
+"GridStyles": [
+	{"ID": "ST_Debug", "MajorColor": "Black", "MinorColor": "WhiteSmoke", "TextColor": "Black"},
+	{"ID": "ST_Grid", "MajorColor": "DarkGreen", "MinorColor": "Empty", "TextColor": "Empty"}
 ]}

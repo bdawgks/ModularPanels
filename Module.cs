@@ -60,11 +60,15 @@ namespace ModularPanels
             JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
             JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
             JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
+            JSONLib.LoadGridStyles(DrawingData.GridStyles);
 
-            if (TrackData != null)
+            if (DrawingData.GridStyle != null)
             {
-                TrackData.Load(module.ObjectBank);
+                GlobalBank.Instance.RegisterKey(DrawingData.GridStyle);
+                module.GridStyle = DrawingData.GridStyle.Object;
             }
+
+            TrackData?.Load(module.ObjectBank);
 
             SignalData.InitSignals(module);
 
@@ -113,6 +117,7 @@ namespace ModularPanels
 
         Drawing? _drawing;
         Color? _backgroundColor;
+        GridStyle? _gridStyle;
 
         Module? _leftModule;
         Module? _rightModule;
@@ -176,6 +181,12 @@ namespace ModularPanels
             set => _backgroundColor = value;
         }
 
+        public GridStyle? GridStyle
+        {
+            get => _gridStyle;
+            set => _gridStyle = value;
+        }
+
         public void InitDrawing(Drawing drawing)
         {
             _drawing = drawing;
@@ -186,19 +197,7 @@ namespace ModularPanels
                 width = 2f
             };
 
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.Black,
-            //    minorColor = Color.WhiteSmoke,
-            //    textColor = Color.Black
-            //};
-
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.DarkGreen,
-            //    minorColor = Color.Empty,
-            //    textColor = Color.Empty
-            //};
+            drawing.GridStyle = _gridStyle;
             foreach (TrackNode n in TrackNodes.Values)
             {
                 drawing.AddNode(n);

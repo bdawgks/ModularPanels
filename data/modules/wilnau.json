@@ -97,8 +97,8 @@
 "SignalData": {
 	"Signals": [
 		{"ID": "A", "Type": "CH_TL_M3_D", "Pos": [35, 60], "Angle": 90},
-		{"ID": "B1", "Type": "CH_TL_M3_D", "Pos": [95, 80], "Angle": -90},
-		{"ID": "B2", "Type": "CH_TL_M3_D", "Pos": [145, 60], "Angle": -90},
+		{"ID": "B1", "Type": "CH_TL_M3", "Pos": [95, 80], "Angle": -90},
+		{"ID": "B2", "Type": "CH_TL_M3", "Pos": [145, 60], "Angle": -90},
 		{"ID": "C1", "Type": "CH_TL_M2", "Pos": [250, 60], "Angle": 90},
 		{"ID": "C2", "Type": "CH_TL_M2", "Pos": [250, 40], "Angle": 90},
 		{"ID": "D", "Type": "CH_TL_M3_D", "Pos": [315, 80], "Angle": -90},
@@ -175,17 +175,10 @@
 			{"PointsID": "2", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "2-1"}},
 		
-		{"SigID": "B1:Main", "Indication": "Clear", "Route": [
+		{"SigID": "B1", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
-		{"SigID": "B1:Dist", "NextSigID": "L0:Main", "Indication": "Distant", "Route": [
-			{"PointsID": "1", "Direction": "Normal"}
-		], "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
-		{"SigID": "B2:Main", "Indication": "Clear", "Route": [
-			{"PointsID": "1", "Direction": "Reversed"},
-			{"PointsID": "2", "Direction": "Normal"}
-		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
-		{"SigID": "B2:Dist", "NextSigID": "L0:Main", "Indication": "Distant", "Route": [
+		{"SigID": "B2", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Reversed"},
 			{"PointsID": "2", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "2", "EntryID": "11"}},
@@ -200,13 +193,13 @@
 		{"SigID": "D:Main", "Indication": "Clear", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
-		{"SigID": "D:Dist", "NextSigID": "B1:Main", "Indication": "Distant", "Route": [
+		{"SigID": "D:Dist", "NextSigID": "B1", "Indication": "Distant", "Route": [
 			{"PointsID": "4", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
 		{"SigID": "D:Main", "Indication": "40km", "Route": [
 			{"PointsID": "4", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
-		{"SigID": "D:Dist", "NextSigID": "B2:Main", "Indication": "Distant", "Route": [
+		{"SigID": "D:Dist", "NextSigID": "B2", "Indication": "Distant", "Route": [
 			{"PointsID": "4", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "2"}},
 		
@@ -922,14 +915,10 @@
 	{"SignalID": "A:Dist", "InputCircuit": "A_off", "Indication": "Distant"},
 	{"SignalID": "A:Main", "InputCircuit": "A'_stop", "OutputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "A:Dist", "InputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B1:Main", "InputCircuit": "B1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
-	{"SignalID": "B1:Dist", "InputCircuit": "B1_off", "Indication": "Distant"},
-	{"SignalID": "B1:Main", "InputCircuit": "B1'_stop", "OutputCircuit": "B1_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B1:Dist", "InputCircuit": "B1_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B2:Main", "InputCircuit": "B2_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
-	{"SignalID": "B2:Dist", "InputCircuit": "B2_off", "Indication": "Distant"},
-	{"SignalID": "B2:Main", "InputCircuit": "B2'_stop", "OutputCircuit": "B2_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B2:Dist", "InputCircuit": "B2_stop", "Indication": "Stop", "Fixed": true},
+	{"SignalID": "B1", "InputCircuit": "B1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B1", "InputCircuit": "B1'_stop", "OutputCircuit": "B1_stop", "Indication": "Stop", "Fixed": true},
+	{"SignalID": "B2", "InputCircuit": "B2_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B2", "InputCircuit": "B2'_stop", "OutputCircuit": "B2_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C1", "InputCircuit": "C1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "C1", "InputCircuit": "C1'_stop", "OutputCircuit": "C1_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C2", "InputCircuit": "C2_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
