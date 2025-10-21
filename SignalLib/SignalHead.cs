@@ -12,47 +12,98 @@ namespace ModularPanels.SignalLib
         public string? Indication { get; } = indication;
     }
 
-    public class SignalHead
+    public abstract class SignalHead(string id, Signal parent)
     {
-        readonly Signal _parent;
-        readonly string _id;
-        SignalHead? _precedingSignal;
-        SignalHead? _advancedSignal;
-        readonly List<SignalRoute> _routes = [];
-        SignalRoute? _activeRoute;
-        string? _indication;
-        string _aspect = "0";
-        SignalLatchIndication? _latchIndication;
-        readonly SignalRuleset? _ruleset;
+        protected readonly Signal _parent = parent;
+        protected readonly string _id = id;
+        protected readonly List<SignalRoute> _routes = [];
+        protected SignalRoute? _activeRoute;
+        protected SignalHead? _precedingSignal;
+        protected SignalHead? _advancedSignal;
 
         public EventHandler<SignalStateChangeArgs>? StateChangedEvents { get; set; }
 
-        public string ID
-        {
-            get { return _id; }
-        }
+        public string ID { get { return _id; } }
 
-        public string Aspect
-        {
-            get { return _aspect; }
-            set { SetAspect(value); }
-        }
+        public virtual string Aspect { get { return string.Empty; } set { } }
 
-        public SignalHead? PrecedingSignal
+        internal virtual SignalHead? PrecedingSignal
         {
             get { return _precedingSignal; }
             set { _precedingSignal = value; }
         }
 
-        public SignalHead? AdvancedSignal
+        internal virtual SignalHead? AdvancedSignal
         {
             get { return _advancedSignal; }
         }
 
-        public SignalHead(string id, Signal parent, bool isDefault = false)
+        internal virtual void UpdateIndication() { }
+
+        internal virtual void InitSignal()
         {
-            _id = id;
-            _parent = parent;
+            UpdateRoute();
+        }
+
+        public virtual void ResetLatch() { }
+        public virtual void SetIndicationFixed(string _) { }
+        public virtual void SetIndicationLatched(string _) { }
+        public virtual void SetRouteIndication(string _) { }
+        public virtual void SetAutoDropIndication(string _) { }
+
+        public void AddRoute(SignalRoute route)
+        {
+            _routes.Add(route);
+        }
+
+        internal virtual void UpdateRoute()
+        {
+            if (_routes.Count < 1)
+                return;
+
+            foreach (SignalRoute r in _routes)
+            {
+                if (r.IsRouteSet())
+                {
+                    _advancedSignal = r.NextSignal;
+                    if (_advancedSignal != null)
+                    {
+                        _advancedSignal.UpdateRoute();
+                        _advancedSignal.PrecedingSignal = GetRoutePrecedingHead();
+                    }
+
+                    _activeRoute = r;
+                    return;
+                }
+            }
+        }
+
+        protected virtual SignalHead? GetRoutePrecedingHead()
+        {
+            return this;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}", _parent.Name, _id);
+        }
+    }
+
+    public class SignalHeadImpl : SignalHead
+    {
+        string? _indication;
+        string _aspect = "0";
+        SignalLatchIndication? _latchIndication;
+        readonly SignalRuleset? _ruleset;
+
+        public override string Aspect
+        {
+            get { return _aspect; }
+            set { SetAspect(value); }
+        }
+
+        public SignalHeadImpl(string id, Signal parent, bool isDefault = false) : base(id, parent)
+        {
             _ruleset = parent.GetRuleset(isDefault ? null : _id);
             _indication = _parent.Type.StartIndication;
             if (_ruleset != null)
@@ -63,21 +114,6 @@ namespace ModularPanels.SignalLib
                 if (startAspect != null)
                     _aspect = startAspect;
             }
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0}:{1}", _parent.Name, _id);
-        }
-
-        public void AddRoute(SignalRoute route)
-        {
-            _routes.Add(route);
-        }
-
-        public void InitSignal()
-        {
-            UpdateRoute();
         }
 
         public string? GetRouteIndication()
@@ -91,7 +127,7 @@ namespace ModularPanels.SignalLib
             return null;
         }
 
-        public void SetRouteIndication(string indication)
+        public override void SetRouteIndication(string indication)
         {
             if (_latchIndication != null && _latchIndication.IsLatched)
                 return;
@@ -105,19 +141,19 @@ namespace ModularPanels.SignalLib
             SetIndicationFixed(routeIndicaiton);
         }
 
-        public void SetIndicationLatched(string indication)
+        public override void SetIndicationLatched(string indication)
         {
             if (_latchIndication != null && _latchIndication.IsLatched)
                 return;
         }
 
-        public void SetIndicationFixed(string indication)
+        public override void SetIndicationFixed(string indication)
         {
             _indication = indication;
             UpdateIndication();
         }
 
-        public void SetAutoDropIndication(string dropIndication)
+        public override void SetAutoDropIndication(string dropIndication)
         {
             UpdateRoute();
             if (_activeRoute == null)
@@ -134,13 +170,13 @@ namespace ModularPanels.SignalLib
             _latchIndication.SetDetectorLatch(_activeRoute.DetectorLatch);
         }
 
-        public void ResetLatch()
+        public override void ResetLatch()
         {
             if (_latchIndication != null && _latchIndication.IsLatched)
                 _latchIndication.Unset();
         }
 
-        private void UpdateIndication()
+        internal override void UpdateIndication()
         {
             if (_indication == null)
                 return;
@@ -158,28 +194,6 @@ namespace ModularPanels.SignalLib
             if (_precedingSignal != null)
             {
                 _precedingSignal.UpdateIndication();
-            }
-        }
-
-        public void UpdateRoute()
-        {
-            if (_routes.Count < 1)
-                return;
-
-            foreach (SignalRoute r in _routes)
-            {
-                if (r.IsRouteSet())
-                {
-                    _advancedSignal = r.NextSignal;
-                    if (_advancedSignal != null)
-                    {
-                        _advancedSignal.UpdateRoute();
-                        _advancedSignal.PrecedingSignal = this;
-                    }
-
-                    _activeRoute = r;
-                    return;
-                }
             }
         }
 

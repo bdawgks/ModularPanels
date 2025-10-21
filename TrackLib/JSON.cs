@@ -1,5 +1,8 @@
 ﻿using ModularPanels.DrawLib;
 using ModularPanels.JsonLib;
+using ModularPanels.PanelLib;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ModularPanels.TrackLib
 {
@@ -76,5 +79,176 @@ namespace ModularPanels.TrackLib
         public float OutlineSize { get; set; }
         public string Style { get; set; }
         public JsonDataDetectorStyleRectangle? Rectangle { get; set; }
+    }
+
+    internal struct JsonDataGridStyle
+    {
+        public StringKey<GridStyle> ID { get; set; }
+        public ColorJS MajorColor { get; set; }
+        public ColorJS MinorColor { get; set; }
+        public ColorJS TextColor { get; set; }
+    }
+
+    [JsonConverter(typeof(TrackStyleLoaderJsonConverter))]
+    public class TrackStyleLoader()
+    {
+        internal JsonDataTrackStyle? Data { get; set; }
+
+        public TrackStyle? Load(ObjectBank bank)
+        {
+            if (Data == null)
+                return null;
+
+            TrackStyle style = new()
+            {
+                color = Data.Value.Color,
+                width = Data.Value.Width,
+            };
+            bank.DefineObject(Data.Value.ID, style);
+
+            return style;
+        }
+    }
+
+    internal class TrackStyleLoaderJsonConverter : JsonConverter<TrackStyleLoader>
+    {
+        public override TrackStyleLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            JsonDataTrackStyle? data = JsonSerializer.Deserialize<JsonDataTrackStyle>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, TrackStyleLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [JsonConverter(typeof(PointsStyleLoaderJsonConverter))]
+    public class PointsStyleLoader()
+    {
+        internal JsonDataPointsStyle? Data { get; set; }
+
+        public PointsStyle? Load(ObjectBank bank)
+        {
+            if (Data == null)
+                return null;
+
+            PointsStyle style = new()
+            {
+                colorInactive = Data.Value.ColorInactive,
+                colorLock = Data.Value.ColorLock,
+                length = Data.Value.Length,
+                lockLength = Data.Value.LockLength,
+                lockSpace = Data.Value.LockSpace,
+                lockWidth = Data.Value.LockWidth
+            };
+            bank.DefineObject(Data.Value.ID, style);
+
+            return style;
+        }
+    }
+
+    internal class PointsStyleLoaderJsonConverter : JsonConverter<PointsStyleLoader>
+    {
+        public override PointsStyleLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            JsonDataPointsStyle? data = JsonSerializer.Deserialize<JsonDataPointsStyle>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, PointsStyleLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [JsonConverter(typeof(DetectorStyleLoaderJsonConverter))]
+    public class DetectorStyleLoader()
+    {
+        internal JsonDataDetectorStyle? Data { get; set; }
+
+        public DetectorStyle? Load(ObjectBank bank)
+        {
+            if (Data == null)
+                return null;
+
+            DetectorStyle? style = null;
+            switch (Data.Value.Style)
+            {
+                case "Rectangle":
+                    DetectorStyleRectangle rectStyle = new();
+                    if (Data.Value.Rectangle != null)
+                    {
+                        rectStyle.minEdgeMargin = Data.Value.Rectangle.Value.MinEdgeMargin;
+                        rectStyle.segmentSpace = Data.Value.Rectangle.Value.SegmentSpace;
+                        rectStyle.segmentLength = Data.Value.Rectangle.Value.SegmentLength;
+                        rectStyle.width = Data.Value.Rectangle.Value.Width;
+                    }
+                    style = rectStyle;
+                    break;
+            }
+
+            style ??= DetectorStyle.Default;
+
+            style.outline = Data.Value.OutlineSize;
+            style.colorOutline = Data.Value.ColorOutline;
+            style.colorEmpty = Data.Value.ColorEmpty;
+            style.colorOccupied = Data.Value.ColorOccupied;
+
+            bank.DefineObject(Data.Value.ID, style);
+
+            return style;
+        }
+    }
+
+    internal class DetectorStyleLoaderJsonConverter : JsonConverter<DetectorStyleLoader>
+    {
+        public override DetectorStyleLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            JsonDataDetectorStyle? data = JsonSerializer.Deserialize<JsonDataDetectorStyle>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, DetectorStyleLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [JsonConverter(typeof(GridStyleLoaderJsonConverter))]
+    public class GridStyleLoader
+    {
+        internal JsonDataGridStyle? Data { get; set; }
+
+        public GridStyle? Load(ObjectBank bank)
+        {
+            if (Data == null)
+                return null;
+
+            GridStyle style = new()
+            {
+                majorColor = Data.Value.MajorColor,
+                minorColor = Data.Value.MinorColor,
+                textColor = Data.Value.TextColor
+            };
+            bank.DefineObject(Data.Value.ID, style);
+
+            return style;
+        }
+    }
+
+    internal class GridStyleLoaderJsonConverter : JsonConverter<GridStyleLoader>
+    {
+        public override GridStyleLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            JsonDataGridStyle? data = JsonSerializer.Deserialize<JsonDataGridStyle>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, GridStyleLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

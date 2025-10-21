@@ -17,7 +17,14 @@ namespace ModularPanels
             {
                 if (Module.LoadModule(m, layout, out Module? mod))
                 {
-                    layout.AddModule(mod!);
+                    if (layout.Modules.Count > 0)
+                    {
+                        mod.LeftModule = layout.Modules.Last();
+                        layout.Modules.Last().RightModule = mod;
+                    }
+                    layout.AddModule(mod);
+
+                    mod.GetSignalComponent().InitPost();
                 }
             }
 

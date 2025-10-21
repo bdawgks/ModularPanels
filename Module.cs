@@ -7,6 +7,7 @@ using ModularPanels.PanelLib;
 using ModularPanels.DrawLib;
 using ModularPanels.SignalLib;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModularPanels
 {
@@ -59,11 +60,15 @@ namespace ModularPanels
             JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
             JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
             JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
+            JSONLib.LoadGridStyles(DrawingData.GridStyles);
 
-            if (TrackData != null)
+            if (DrawingData.GridStyle != null)
             {
-                TrackData.Load(module.ObjectBank);
+                GlobalBank.Instance.RegisterKey(DrawingData.GridStyle);
+                module.GridStyle = DrawingData.GridStyle.Object;
             }
+
+            TrackData?.Load(module.ObjectBank);
 
             SignalData.InitSignals(module);
 
@@ -112,6 +117,10 @@ namespace ModularPanels
 
         Drawing? _drawing;
         Color? _backgroundColor;
+        GridStyle? _gridStyle;
+
+        Module? _leftModule;
+        Module? _rightModule;
 
         JSON_Module_Controls? _controlsData;
 
@@ -132,6 +141,18 @@ namespace ModularPanels
         public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
         public Dictionary<string, Signal> Signals { get { return _signals; } }
         public List<PanelText> Texts { get { return _texts; } }
+
+        public Module? LeftModule
+        {
+            get => _leftModule;
+            set => _leftModule = value;
+        }
+
+        public Module? RightModule
+        {
+            get => _rightModule;
+            set => _rightModule = value;
+        }
 
         public Module(string name, int width, int height)
         {
@@ -160,6 +181,12 @@ namespace ModularPanels
             set => _backgroundColor = value;
         }
 
+        public GridStyle? GridStyle
+        {
+            get => _gridStyle;
+            set => _gridStyle = value;
+        }
+
         public void InitDrawing(Drawing drawing)
         {
             _drawing = drawing;
@@ -170,19 +197,7 @@ namespace ModularPanels
                 width = 2f
             };
 
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.Black,
-            //    minorColor = Color.WhiteSmoke,
-            //    textColor = Color.Black
-            //};
-
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.DarkGreen,
-            //    minorColor = Color.Empty,
-            //    textColor = Color.Empty
-            //};
+            drawing.GridStyle = _gridStyle;
             foreach (TrackNode n in TrackNodes.Values)
             {
                 drawing.AddNode(n);
@@ -299,7 +314,7 @@ namespace ModularPanels
             }
         }
 
-        public static bool LoadModule(string name, Layout layout, out Module? module)
+        public static bool LoadModule(string name, Layout layout, [NotNullWhen(true)] out Module? module)
         {
             module = null;
             string path = Application.StartupPath + "data\\modules\\" + name + ".json";

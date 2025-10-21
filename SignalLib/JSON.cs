@@ -42,7 +42,7 @@ namespace ModularPanels.SignalLib
 
             SignalHead? nextSig = null;
             if (Data.Value.NextSigID != null)
-                nextSig = comp.GetSignalHead(Data.Value.NextSigID.Value);
+                nextSig = comp.GetRouteSignalHead(Data.Value.NextSigID.Value, true);
             SignalRoute route = new(Data.Value.Indication, nextSig);
 
             if (Data.Value.Route != null)
@@ -89,6 +89,64 @@ namespace ModularPanels.SignalLib
         }
 
         public override void Write(Utf8JsonWriter writer, SignalRouteLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal struct BoundarySignalHeadJsonData
+    {
+        public string ID { get; set; }
+        public string DefaultIndication { get; set; }
+    }
+
+    internal struct BoundarySignalJsonData
+    {
+        public string ID { get; set; }
+        public string Type { get; set; }
+        public string Boundary { get; set; }
+        public int Index { get; set; }
+        public List<BoundarySignalHeadJsonData> Heads { get; set; }
+    }
+
+    [JsonConverter(typeof(BoundarySignalLoaderJsonConverter))]
+    public class BoundarySignalLoader
+    {
+        internal BoundarySignalJsonData? Data { get; set; }
+
+        public void Load(Module module)
+        {
+            if (Data == null)
+                return;
+
+            if (!Enum.TryParse(Data.Value.Boundary, out BoundarySignal.BoundarySide boundary))
+                boundary = BoundarySignal.BoundarySide.Left;
+
+            SignalType? type = MainWindow.SignalBank[Data.Value.Type];
+            if (type == null)
+                return;
+
+            BoundarySignal sig = new(Data.Value.ID, type, boundary, Data.Value.Index);
+            foreach (var headData in Data.Value.Heads)
+            {
+                BoundarySignalHead headIn = new(headData.ID, sig, BoundarySignal.BoundaryDir.In, headData.DefaultIndication);
+                BoundarySignalHead headOut = new(headData.ID, sig, BoundarySignal.BoundaryDir.Out, headData.DefaultIndication);
+                sig.AddHead(BoundarySignal.BoundaryDir.In, headIn);
+                sig.AddHead(BoundarySignal.BoundaryDir.Out, headOut);
+            }
+            module.GetSignalComponent().AddBoundarySignal(sig);
+        }
+    }
+
+    internal class BoundarySignalLoaderJsonConverter : JsonConverter<BoundarySignalLoader>
+    {
+        public override BoundarySignalLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            BoundarySignalJsonData? data = JsonSerializer.Deserialize<BoundarySignalJsonData>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, BoundarySignalLoader value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
