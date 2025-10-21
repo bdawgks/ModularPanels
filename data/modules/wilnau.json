@@ -460,7 +460,7 @@
 		{"ID": "A'_opposingMoveB2", "Condition": [
 			{"Op": "EQ", "Circuit": "points_3_N"},
 			{"Op": "ANDNOT", "Circuit": "B2'_stop"}
-		], "Desc": "C2' set in opposition to A'"},
+		], "Desc": "B2' set in opposition to A'"},
 		{"ID": "A'_opposingMove1D", "Condition": [
 			{"Op": "EQ", "Circuit": "points_4_N"},
 			{"Op": "AND", "Circuit": "points_1_N"},
