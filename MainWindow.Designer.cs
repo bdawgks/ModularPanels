@@ -30,14 +30,17 @@
         {
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
+            monitorCircuitsToolStripMenuItem = new ToolStripMenuItem();
             hScrollBar1 = new HScrollBar();
             drawPanel1 = new DrawPanel();
+            detectorsToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
+            menuStrip1.ImageScalingSize = new Size(20, 20);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, monitorCircuitsToolStripMenuItem, detectorsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(800, 24);
@@ -50,6 +53,12 @@
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
+            // monitorCircuitsToolStripMenuItem
+            // 
+            monitorCircuitsToolStripMenuItem.Name = "monitorCircuitsToolStripMenuItem";
+            monitorCircuitsToolStripMenuItem.Size = new Size(105, 20);
+            monitorCircuitsToolStripMenuItem.Text = "Monitor Circuits";
+            // 
             // hScrollBar1
             // 
             hScrollBar1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -60,11 +69,17 @@
             // 
             // drawPanel1
             // 
-            drawPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            drawPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             drawPanel1.Location = new Point(9, 27);
             drawPanel1.Name = "drawPanel1";
             drawPanel1.Size = new Size(782, 388);
             drawPanel1.TabIndex = 2;
+            // 
+            // detectorsToolStripMenuItem
+            // 
+            detectorsToolStripMenuItem.Name = "detectorsToolStripMenuItem";
+            detectorsToolStripMenuItem.Size = new Size(69, 20);
+            detectorsToolStripMenuItem.Text = "Detectors";
             // 
             // MainWindow
             // 
@@ -89,5 +104,7 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private HScrollBar hScrollBar1;
         private DrawPanel drawPanel1;
+        private ToolStripMenuItem monitorCircuitsToolStripMenuItem;
+        private ToolStripMenuItem detectorsToolStripMenuItem;
     }
 }

@@ -6,11 +6,11 @@
 	"CenterPos": 1,
 	"Positions": [
 		{"Angle": -30.0, "Size": 10.0, "Latching": false,
-			"Lamp": {"Size": 6, "ColorOn": "Red", "ColorOff": "Maroon", "Border": 1.5}
+			"Lamp": {"Size": 6, "ColorOn": "Red", "ColorOff": "RedLampOff", "Border": 1.5}
 		},
 		{"Angle": 0.0, "Size": 0.0, "Latching": true},
 		{"Angle": 30.0, "Size": 10.0, "Latching": false,
-			"Lamp": {"Size": 6, "ColorOn": "FloralWhite", "ColorOff": "Silver", "Border": 1.5}
+			"Lamp": {"Size": 6, "ColorOn": "Info", "ColorOff": "WhiteLampOff", "Border": 1.5}
 		}
 	]},
 	{"Name": "STB_PointsSwitch_2P",
@@ -19,8 +19,8 @@
 	"SecondaryColor": "DimGray",
 	"CenterPos": 0,
 	"Positions": [
-		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"}
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Control1"}
 	]},
 	{"Name": "STB_PointsSwitch_2PM",
 	"Size": 30.0,
@@ -28,9 +28,9 @@
 	"SecondaryColor": "DimGray",
 	"CenterPos": 1,
 	"Positions": [
-		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"}
+		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Control1"}
 	]},
 	{"Name": "STB_PointsSwitch_3PM",
 	"Size": 30.0,
@@ -38,9 +38,9 @@
 	"SecondaryColor": "DimGray",
 	"CenterPos": 1,
 	"Positions": [
-		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Signal"},
-		{"Angle": 90.0, "Size": 10.0, "TextStyle": "Signal"}
+		{"Angle": -45.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 0.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 45.0, "Size": 10.0, "TextStyle": "Control1"},
+		{"Angle": 90.0, "Size": 10.0, "TextStyle": "Control1"}
 	]}
 ]}

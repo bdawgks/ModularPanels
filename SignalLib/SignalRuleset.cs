@@ -11,6 +11,11 @@ namespace ModularPanels.SignalLib
         readonly Dictionary<string, string> _aspects = [];
         string _defaultAspect = "0";
 
+        public void SetDefaultAspect(string aspect)
+        {
+            _defaultAspect = aspect;
+        }
+
         public void SetAspect(string? nextAspect, string aspect)
         {
             if (nextAspect == null)
@@ -51,11 +56,14 @@ namespace ModularPanels.SignalLib
 
         public SignalRuleIndication AddIndication(string indicationName)
         {
-            if (_indications.ContainsKey(indicationName))
-                return _indications[indicationName];
+            if (_indications.TryGetValue(indicationName, out SignalRuleIndication? value))
+                return value;
 
             SignalRuleIndication newIndication = new();
             _indications.Add(indicationName, newIndication);
+            string? firstAspect = GetAspectFromIndex(0);
+            if (firstAspect != null)
+                newIndication.SetDefaultAspect(firstAspect);
 
             if (_defaultIndication == string.Empty)
                 _defaultIndication = indicationName;
@@ -63,7 +71,7 @@ namespace ModularPanels.SignalLib
             return newIndication;
         }
 
-        public string? GetAspect(string indicationName, string? nextAspect)
+        public string? GetAspect(string indicationName, string? nextAspect = null)
         {
             if (_indications.TryGetValue(indicationName, out SignalRuleIndication? value))
                 return value.GetAspect(nextAspect);

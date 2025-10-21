@@ -7,6 +7,7 @@ using ModularPanels.PanelLib;
 using ModularPanels.DrawLib;
 using ModularPanels.SignalLib;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModularPanels
 {
@@ -19,7 +20,10 @@ namespace ModularPanels
         public TrackDataLoader? TrackData { get;set;}
         public JSON_Module_SignalData SignalData { get;set;}
         public JSON_Module_Controls? Controls { get;set;}
-        public JSON_Module_RelayCircuits? RelayCircuits { get;set;}
+        public CircuitDataLoader? RelayCircuits { get;set;}
+        public List<PointsCircuitLoader>? PointsCircuits { get;set;}
+        public List<SignalCircuitLoader>? SignalCircuits { get;set;}
+        public List<DetectorCircuitLoader>? DetectorCircuits { get;set;}
 
         public Module Initialize()
         {
@@ -56,11 +60,15 @@ namespace ModularPanels
             JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
             JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
             JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
+            JSONLib.LoadGridStyles(DrawingData.GridStyles);
 
-            if (TrackData != null)
+            if (DrawingData.GridStyle != null)
             {
-                TrackData.Load(module.ObjectBank);
+                GlobalBank.Instance.RegisterKey(DrawingData.GridStyle);
+                module.GridStyle = DrawingData.GridStyle.Object;
             }
+
+            TrackData?.Load(module.ObjectBank);
 
             SignalData.InitSignals(module);
 
@@ -69,7 +77,31 @@ namespace ModularPanels
 
             if (RelayCircuits != null)
             {
-                module.GetCircuitComponent().InitCircuits(RelayCircuits.Value);
+                module.GetCircuitComponent().InitCircuits(RelayCircuits);
+            }
+
+            if (PointsCircuits != null)
+            {
+                foreach (var pc in PointsCircuits)
+                {
+                    pc.Load(module.ObjectBank, module.GetCircuitComponent());
+                }
+            }
+
+            if (SignalCircuits != null)
+            {
+                foreach (var sc in SignalCircuits)
+                {
+                    sc.Load(module.GetSignalComponent(), module.GetCircuitComponent());
+                }
+            }
+
+            if (DetectorCircuits != null)
+            {
+                foreach (var dc in DetectorCircuits)
+                {
+                    dc.Load(module.ObjectBank, module.GetCircuitComponent());
+                }
             }
 
             return module;
@@ -85,6 +117,10 @@ namespace ModularPanels
 
         Drawing? _drawing;
         Color? _backgroundColor;
+        GridStyle? _gridStyle;
+
+        Module? _leftModule;
+        Module? _rightModule;
 
         JSON_Module_Controls? _controlsData;
 
@@ -93,6 +129,11 @@ namespace ModularPanels
         readonly List<PanelText> _texts = [];
         readonly List<IControl> _allControls = [];
 
+        public string Name
+        {
+            get => _name;
+        }
+
         public ObjectBank ObjectBank { get { return _objBank; } }
         public Dictionary<string, TrackSegment> TrackSegments { get { return _objBank.GetObjects<TrackSegment>(); } }
         public Dictionary<string, TrackNode> TrackNodes { get { return _objBank.GetObjects<TrackNode>(); } } 
@@ -100,6 +141,18 @@ namespace ModularPanels
         public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
         public Dictionary<string, Signal> Signals { get { return _signals; } }
         public List<PanelText> Texts { get { return _texts; } }
+
+        public Module? LeftModule
+        {
+            get => _leftModule;
+            set => _leftModule = value;
+        }
+
+        public Module? RightModule
+        {
+            get => _rightModule;
+            set => _rightModule = value;
+        }
 
         public Module(string name, int width, int height)
         {
@@ -128,6 +181,12 @@ namespace ModularPanels
             set => _backgroundColor = value;
         }
 
+        public GridStyle? GridStyle
+        {
+            get => _gridStyle;
+            set => _gridStyle = value;
+        }
+
         public void InitDrawing(Drawing drawing)
         {
             _drawing = drawing;
@@ -138,19 +197,7 @@ namespace ModularPanels
                 width = 2f
             };
 
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.Black,
-            //    minorColor = Color.WhiteSmoke,
-            //    textColor = Color.Black
-            //};
-
-            //drawing.GridStyle = new PanelLib.GridStyle()
-            //{
-            //    majorColor = Color.DarkGreen,
-            //    minorColor = Color.Empty,
-            //    textColor = Color.Empty
-            //};
+            drawing.GridStyle = _gridStyle;
             foreach (TrackNode n in TrackNodes.Values)
             {
                 drawing.AddNode(n);
@@ -212,6 +259,18 @@ namespace ModularPanels
             return component;
         }
 
+        public SignalComponent GetSignalComponent()
+        {
+            SignalComponent? component = _components.GetComponent<SignalComponent>();
+            if (component == null)
+            {
+                component = new(this, MainWindow.SignalBank);
+                _components.AddComponent(component);
+            }
+
+            return component;
+        }
+
         public void InitControls()
         {
             if (_drawing == null || _controlsData == null)
@@ -255,7 +314,7 @@ namespace ModularPanels
             }
         }
 
-        public static bool LoadModule(string name, Layout layout, out Module? module)
+        public static bool LoadModule(string name, Layout layout, [NotNullWhen(true)] out Module? module)
         {
             module = null;
             string path = Application.StartupPath + "data\\modules\\" + name + ".json";

@@ -11,11 +11,14 @@ namespace ModularPanels.CircuitLib
         public bool Active { get; set; } = active;
     }
 
-    public abstract class Circuit
+    public abstract class Circuit(string name)
     {
-        readonly string _name;
+        readonly string _name = name;
         protected HashSet<LogicCircuit> _affectedCircuits = [];
         protected bool _active = false;
+        private string _description = "";
+
+        internal virtual bool InitEvaluation { get => true; }
 
         public event EventHandler<CircuitActivationArgs>? ActivationEvents;
 
@@ -23,10 +26,9 @@ namespace ModularPanels.CircuitLib
 
         public string Name { get => _name; }
 
-        public Circuit(string name)
-        {
-            _name = name;
-        }
+        public string Description { get => _description; set => _description = value; }
+
+        public virtual void Reevaluate() { }
 
         public void SetActive(bool active)
         {
@@ -54,26 +56,37 @@ namespace ModularPanels.CircuitLib
         public SimpleCircuit(string name) : base(name) { }
     }
 
-    public class LogicCircuit : Circuit
+    public class LogicCircuit(string name) : Circuit(name)
     {
         List<CircuitCondition> _conditionOn = [];
         List<CircuitCondition> _conditionOff = [];
+        private bool _singleCondition = false;
+        private bool _initEvaluation = false;
 
-        public LogicCircuit(string name) : base(name) { }
+        internal override bool InitEvaluation { get => _initEvaluation; }
+
+        public void AddCondition(CircuitCondition cond)
+        {
+            _singleCondition = true;
+            _conditionOn.Add(cond);
+            cond.AddCondition(this);
+        }
 
         public void AddOnCondition(CircuitCondition cond)
         {
+            _singleCondition = false;
             _conditionOn.Add(cond);
             cond.AddCondition(this);
         }
 
         public void AddOffCondition(CircuitCondition cond)
         {
+            _singleCondition = false;
             _conditionOff.Add(cond);
             cond.AddCondition(this);
         }
 
-        private bool EvaluateCondition(ref List<CircuitCondition> operators)
+        private static bool EvaluateCondition(ref List<CircuitCondition> operators)
         {
             bool result = true;
             foreach (var c in operators)
@@ -83,8 +96,21 @@ namespace ModularPanels.CircuitLib
             return result;
         }
 
-        public void Reevaluate()
+        public override void Reevaluate()
         {
+            _initEvaluation = true;
+
+            if (_singleCondition)
+            {
+                bool active = EvaluateCondition(ref _conditionOn);
+
+                if (active != _active)
+                {
+                    SetActive(active);
+                }
+                return;
+            }
+
             bool change;
             if (_active)
                 change = EvaluateCondition(ref _conditionOff);

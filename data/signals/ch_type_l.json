@@ -19,7 +19,8 @@
 		{"Type": "CH_TL_LampYellow", "Offset": [0,-34], "Aspect": ["40KM"]}
 	]},
 	{"Name": "CH_TL_D", 
-	"Ruleset": "CH_TYPE_L_MAIN",
+	"Ruleset": "CH_TYPE_L_DIST",
+	"StartIndication": "Distant",
 	"Shapes": [
 		{"Type": "CH_TL_Mast", "Offset": [0,0]},
 		{"Type": "CH_TL_Base", "Offset": [0,0]},
@@ -30,7 +31,10 @@
 		{"Type": "CH_TL_LampGreen", "Offset": [-12,-34], "Aspect": ["D_CLEAR"]}
 	]},
 	{"Name": "CH_TL_M3_D", 
-	"Ruleset": "CH_TYPE_L_MAIN",
+	"Rulesets": [
+		{"Head": "Main", "Ruleset": "CH_TYPE_L_MAIN"},
+		{"Head": "Dist", "Ruleset": "CH_TYPE_L_DIST"}
+	], 
 	"Shapes": [
 		{"Type": "CH_TL_Mast", "Offset": [0,0]},
 		{"Type": "CH_TL_Base", "Offset": [0,0]},
@@ -53,7 +57,7 @@
 		{"Type": "CH_TL_LampDwarf", "Offset": [7,7], "Aspect": ["STOP", "CAUTION"]},
 		{"Type": "CH_TL_LampDwarf", "Offset": [-7,-7], "Aspect": ["CLEAR", "CAUTION"]}
 	]},
-	{"Name": "CH_TL_EndOfTrack"}
+	{"Name": "CH_TL_EndOfTrack", "Ruleset": "CH_TYPE_L_DWARF"}
 ],
 "Shapes": [
 	{
@@ -112,16 +116,22 @@
 	}
 ],
 "Rulesets": [
-	{"ID": "CH_TYPE_L_MAIN", "DefaultIndication": "Distant", "Rules": [
+	{"ID": "CH_TYPE_L_MAIN", "DefaultIndication": "Stop", "Rules": [
 		{"Indication": "Stop", "Aspect": "STOP"},
 		{"Indication": "Clear", "Aspect": "CLEAR"},
-		{"Indication": "40km", "Aspect": "40KM"},
-		{"Indication": "Distant", "NextAspect": "STOP", "Aspect": "D_STOP"},
-		{"Indication": "Distant", "NextAspect": "CLEAR", "Aspect": "D_CLEAR"},
-		{"Indication": "Distant", "NextAspect": "40KM", "Aspect": "D_40KM"}
+		{"Indication": "40km", "Aspect": "40KM"}
 	], 
 	"Aspects": [
-		"STOP", "CLEAR", "40KM", "D_STOP", "D_CLEAR", "D_40KM"
+		"STOP", "CLEAR", "40KM"
+	]},
+	{"ID": "CH_TYPE_L_DIST", "DefaultIndication": "Stop", "Rules": [
+		{"Indication": "Distant", "NextAspect": "STOP", "Aspect": "D_STOP"},
+		{"Indication": "Distant", "NextAspect": "CLEAR", "Aspect": "D_CLEAR"},
+		{"Indication": "Distant", "NextAspect": "40KM", "Aspect": "D_40KM"},
+		{"Indication": "Stop", "Aspect": "D_STOP"}
+	], 
+	"Aspects": [
+		"D_STOP", "D_CLEAR", "D_40KM"
 	]},
 	{"ID": "CH_TYPE_L_DWARF", "DefaultIndication": "Stop", "Rules": [
 		{"Indication": "Stop", "Aspect": "STOP"},
@@ -129,7 +139,7 @@
 		{"Indication": "Clear", "NextAspect": "STOP", "Aspect": "CAUTION"},
 		{"Indication": "Clear", "NextAspect": "CAUTION", "Aspect": "CLEAR"},
 		{"Indication": "Clear", "NextAspect": "CLEAR", "Aspect": "CLEAR"},
-		{"Indication": "ClearLOS", "Aspect": "CLEAR"}
+		{"Indication": "ClearMain", "Aspect": "CLEAR"}
 	], 
 	"Aspects": [
 		"STOP", "CAUTION", "CLEAR"

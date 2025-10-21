@@ -24,10 +24,13 @@ namespace ModularPanels.SignalLib
         readonly string _indication;
         readonly SignalHead? _nextSignal;
         readonly List<PointsRoute> _pointsRouting = [];
+        DetectorLatch? _detectorLatch;
 
         public string Indication { get { return _indication; } }
 
         public SignalHead? NextSignal { get { return _nextSignal; } }
+
+        public DetectorLatch? DetectorLatch { get { return _detectorLatch; } }
 
         public SignalRoute(string indication, SignalHead? nextSignal)
         {
@@ -40,11 +43,16 @@ namespace ModularPanels.SignalLib
             _pointsRouting.Add(pr);
         }
 
+        public void SetDetectorLatch(DetectorLatch latch)
+        {
+            _detectorLatch = latch;
+        }
+
         public bool IsRouteSet()
         {
             foreach (PointsRoute pr in _pointsRouting)
             {
-                if (pr.IsSet())
+                if (!pr.IsSet())
                     return false;
             }
 

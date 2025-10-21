@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace ModularPanels.JsonLib
         {
             readonly Dictionary<string, InternalKey<string,T>> _keys = [];
 
-            public InternalKey<string, T> GetInternalKey(string keyStr)
+            private InternalKey<string, T> GetInternalKey(string keyStr)
             {
                 if (_keys.TryGetValue(keyStr, out var iKey))
                 {
@@ -114,6 +115,18 @@ namespace ModularPanels.JsonLib
         {
             TypeBank<T> bank = GetType<T>();
             return bank.GetObjects();
+        }
+
+        public bool TryGetObject<T>(string keyStr, [NotNullWhen(true)] out T? obj) where T : class
+        {
+            obj = null;
+            TypeBank<T> bank = GetType<T>();
+            StringKey<T> key = bank.Get(keyStr);
+            if (key.IsNull)
+                return false;
+
+            obj = key.Object!;
+            return true;
         }
     }
 

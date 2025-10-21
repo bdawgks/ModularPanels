@@ -1,4 +1,5 @@
 using ModularPanels.SignalLib;
+using ModularPanels.TrackLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -57,7 +58,7 @@ namespace ModularPanels
         private void LoadLayout()
         {
 
-            string path = "C:\\Users\\Kyle\\source\\repos\\ModularPanels\\data\\layouts\\testlayout.json";
+            string path = Application.StartupPath + "data\\layouts\\testlayout.json";
             if (File.Exists(path))
             {
                 try
@@ -69,7 +70,24 @@ namespace ModularPanels
                     {
                         Layout layout = layoutData.Value.Initialize();
                         _drawings = layout.GetDrawings();
+                        drawPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
                         drawPanel1.Width = layout.Width;
+
+                        foreach (var m in layout.Modules)
+                        {
+                            ToolStripMenuItem item = new()
+                            {
+                                Text = m.Name,
+                            };
+                            item.Click += (obj, e) =>
+                            {
+                                CircuitMonitor monitor = new();
+                                monitor.SetModule(m);
+                                monitor.Show();
+                            };
+
+                            monitorCircuitsToolStripMenuItem.DropDownItems.Add(item);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -79,6 +97,21 @@ namespace ModularPanels
             }
 
             drawPanel1.SetMinWidth(drawPanel1.Width);
+        }
+
+        public void AddDetectorDebug(TrackDetector det)
+        {
+            ToolStripMenuItem item = new()
+            {
+                Text = det.ID
+            };
+            item.Click += (obj, e) =>
+            {
+                item.Checked = !item.Checked;
+                det.SetOccupied(item.Checked);
+                drawPanel1.Invalidate();
+            };
+            detectorsToolStripMenuItem.DropDownItems.Add(item);
         }
 
         private void OnResizeEnd(object? sender, EventArgs e)

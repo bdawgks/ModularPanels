@@ -43,7 +43,7 @@ namespace ModularPanels
         public int[] Pos { get; set; }
         public float? Angle { get; set; }
 
-        public readonly PanelLib.PanelText Load()
+        public readonly PanelText Load()
         {
             if (Pos.Length != 2)
                 throw new Exception("Invalid position for text " + Text);
@@ -60,7 +60,7 @@ namespace ModularPanels
             else
                 style = id.Object!;
 
-                PanelLib.PanelText text = new(Text, Pos[0], Pos[1], angle)
+                PanelText text = new(Text, Pos[0], Pos[1], angle)
                 {
                     Text = Text,
                     Style = style
@@ -74,10 +74,12 @@ namespace ModularPanels
         public int Width { get; set; }
         public int Height { get; set; }
         public ColorJS BackgroundColor { get; set; }
+        public StringKey<GridStyle>? GridStyle { get; set; }
         public List<JSON_Text> Texts { get; set; }
         public List<TrackStyleLoader> TrackStyles { get; set; }
         public List<PointsStyleLoader> PointsStyles { get; set; }
         public List<DetectorStyleLoader> DetectorStyles { get; set; }
+        public List<GridStyleLoader> GridStyles { get; set; }
     }
 
     public class JSON_StyleData
@@ -87,6 +89,7 @@ namespace ModularPanels
         public List<PointsStyleLoader>? PointsStyles { get; set; }
         public List<DetectorStyleLoader>? DetectorStyles { get; set; }
         public List<TextStyleLoader>? TextStyles { get; set; }
+        public List<GridStyleLoader>? GridStyles { get; set; }
     }
 
     public struct JSON_Module_Signal
@@ -101,6 +104,8 @@ namespace ModularPanels
     public struct JSON_Module_SignalData
     {
         public List<JSON_Module_Signal> Signals { get; set; }
+        public List<BoundarySignalLoader>? BoundarySignals { get; set; }
+        public List<SignalRouteLoader>? SignalRoutes { get; set; }
 
         public readonly void InitSignals(Module mod)
         {
@@ -123,8 +128,25 @@ namespace ModularPanels
                     sig.SetScale(signal.Scale.Value);
 
                 mod.Signals.Add(sig.Name, sig);
-                sig.InitSignal();
             }
+
+            if (BoundarySignals != null)
+            {
+                foreach (var boundarySig in BoundarySignals)
+                {
+                    boundarySig.Load(mod);
+                }
+            }
+
+            if (SignalRoutes != null)
+            {
+                foreach (var sr in SignalRoutes)
+                {
+                    sr.Load(mod.GetSignalComponent(), mod.ObjectBank);
+                }
+            }
+
+            mod.GetSignalComponent().InitSignals();
         }
     }
 
@@ -238,6 +260,17 @@ namespace ModularPanels
             }
         }
 
+        public static void LoadGridStyles(List<GridStyleLoader>? list)
+        {
+            if (list == null)
+                return;
+
+            foreach (GridStyleLoader styleData in list)
+            {
+                styleData.Load(GlobalBank.Instance);
+            }
+        }
+
         public static void LoadStyleFiles(string dir)
         {
             if (!Directory.Exists(dir))
@@ -265,6 +298,7 @@ namespace ModularPanels
                     LoadPointsStyles(styleData.PointsStyles);
                     LoadDetectorStyles(styleData.DetectorStyles);
                     LoadTextStyles(styleData.TextStyles);
+                    LoadGridStyles(styleData.GridStyles);
                 }
             }
         }

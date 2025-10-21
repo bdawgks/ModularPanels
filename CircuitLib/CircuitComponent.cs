@@ -4,31 +4,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ModularPanels.Components;
+using ModularPanels.JsonLib;
 using ModularPanels.SignalLib;
 
 namespace ModularPanels.CircuitLib
 {
+    public class CircuitChangeEventArgs(Circuit circuit, bool active) : EventArgs
+    {
+        public Circuit Circuit { get; } = circuit;
+        public bool Active { get; } = active;
+
+    }
+
     public class CircuitComponent : Component
     {
-        readonly Dictionary<string, Circuit> _circuits = [];
+        readonly ObjectBank _circuitBank = new();
+
+        public event EventHandler<CircuitChangeEventArgs>? CircuitChangeEvents;
 
         public CircuitComponent(IParent parent) : base(parent)
         {
         }
 
+        public void RegisterKey(StringKey<Circuit> key)
+        {
+            _circuitBank.RegisterKey(key);
+        }
+
         public bool TryGetCircuit(string circuitName, out Circuit? circuit)
         {
-            return _circuits.TryGetValue(circuitName, out circuit);
+            return _circuitBank.TryGetObject(circuitName, out circuit);
         }
 
-        private void AddCircuit(Circuit circuit)
+        private void OnCircuitChanged(object? sender, CircuitActivationArgs e)
         {
-            _circuits.Add(circuit.Name, circuit);
+            if (sender is Circuit circuit)
+                CircuitChangeEvents?.Invoke(this, new(circuit, e.Active));
         }
 
-        private CircuitCondition? CreateCircuitOperator(string id, string op)
+        public void AddCircuit(Circuit circuit)
         {
-            if (!_circuits.TryGetValue(id, out Circuit? circuit))
+            _circuitBank.DefineObject(circuit.Name, circuit);
+            circuit.ActivationEvents += OnCircuitChanged;
+        }
+
+        public void AddCircuit(StringKey<Circuit> key, Circuit circuit)
+        {
+            _circuitBank.RegisterKey(key);
+            _circuitBank.DefineObject(circuit.Name, circuit);
+            circuit.ActivationEvents += OnCircuitChanged;
+        }
+
+        public CircuitCondition? CreateCircuitOperator(string id, string op)
+        {
+            if (!_circuitBank.TryGetObject(id, out Circuit? circuit))
                 return null;
 
             CircuitCondition? condition = null;
@@ -40,6 +69,7 @@ namespace ModularPanels.CircuitLib
                 case "ANDNOT": condition = new CircuitAndNot(circuit); break;
                 case "NAND": condition = new CircuitNand(circuit); break;
                 case "OR": condition = new CircuitOr(circuit); break;
+                case "ORNOT": condition = new CircuitOrNot(circuit); break;
                 case "NOR": condition = new CircuitNor(circuit); break;
             }
 
@@ -48,100 +78,21 @@ namespace ModularPanels.CircuitLib
 
         public void UpdateCircuits()
         {
-            foreach (Circuit c in _circuits.Values)
+            foreach (Circuit c in _circuitBank.GetObjects<Circuit>().Values)
             {
                 if (c is LogicCircuit lc)
                     lc.Reevaluate();
             }
         }
 
-        public void InitCircuits(JSON_Module_RelayCircuits circuitData)
+        public void InitCircuits(CircuitDataLoader loader)
         {
-            if (circuitData.SimpleCircuits != null)
-            {
-                foreach (var sc in circuitData.SimpleCircuits)
-                {
-                    SimpleCircuit circuit = new(sc.ID);
-                    if (sc.Active)
-                        circuit.SetActive(true);
-                    AddCircuit(circuit);
-                }
-            }
-            if (circuitData.LogicCircuits != null)
-            {
-                foreach (var lc in circuitData.LogicCircuits)
-                {
-                    LogicCircuit circuit = new(lc.ID);
-                    AddCircuit(circuit);
-                }
+            loader.Load(this);
+        }
 
-                foreach (var lc in circuitData.LogicCircuits)
-                {
-                    Circuit circuit = _circuits[lc.ID];
-                    if (circuit is LogicCircuit logicCircuit)
-                    {
-                        if (lc.Condition != null)
-                        {
-                            foreach (var condData in lc.Condition)
-                            {
-                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
-                                if (cond == null)
-                                    continue;
-
-                                logicCircuit.AddOnCondition(cond);
-                                logicCircuit.AddOffCondition(cond);
-                            }
-                        }
-                        if (lc.ConditionOn != null)
-                        {
-                            foreach (var condData in lc.ConditionOn)
-                            {
-                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
-                                if (cond == null)
-                                    continue;
-
-                                logicCircuit.AddOnCondition(cond);
-                            }
-                        }
-                        if (lc.ConditionOff != null)
-                        {
-                            foreach (var condData in lc.ConditionOff)
-                            {
-                                CircuitCondition? cond = CreateCircuitOperator(condData.Circuit, condData.Op);
-                                if (cond == null)
-                                    continue;
-
-                                logicCircuit.AddOffCondition(cond);
-                            }
-                        }
-                    }
-                }
-            }
-            if (circuitData.SignalCircuits != null)
-            {
-                SignalComponent? signalComp = Parent.Components.GetComponent<SignalComponent>();
-                if (signalComp != null)
-                {
-                    foreach (var sc in circuitData.SignalCircuits)
-                    {
-                        if (!signalComp.SignalMap.TryGetValue(sc.SigID, out Signal? sig))
-                            continue;
-
-                        if (!_circuits.TryGetValue(sc.Circuit, out Circuit? circuit))
-                            continue;
-
-                        SignalHead? sigHead = sig.GetDefaultHead();
-                        if (sigHead == null)
-                            continue;
-
-                        circuit.ActivationEvents += (sender, e) =>
-                        {
-                            sigHead.SetIndication(sc.Indication);
-                        };
-                    }
-                }
-
-            }
+        public List<Circuit> GetCircuits()
+        {
+            return [.. _circuitBank.GetObjects<Circuit>().Values];
         }
     }
 }

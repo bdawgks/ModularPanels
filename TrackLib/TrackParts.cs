@@ -21,6 +21,12 @@ namespace ModularPanels.TrackLib
 
     public class TrackPoints(string id, TrackNode baseNode, TrackNode routeNormal, TrackNode routeReversed, bool useBaseColor = false)
     {
+        public class PointsStateChangeArgs(TrackPoints points, PointsState newState) : EventArgs
+        {
+            public TrackPoints Points { get; } = points;
+            public PointsState NewState { get; } = newState;
+        }
+
         public enum PointsState
         {
             Normal,
@@ -39,6 +45,8 @@ namespace ModularPanels.TrackLib
         private bool _showMoving = false;
         private PointsState _state = PointsState.Normal;
         private bool _locked = false;
+
+        public event EventHandler<PointsStateChangeArgs>? StateChangeEvents;
 
         public PointsStyle Style
         {
@@ -74,17 +82,28 @@ namespace ModularPanels.TrackLib
 
         public void SetState(PointsState state)
         {
+            if (_state == state)
+                return;
+
             _state = state;
+            StateChangeEvents?.Invoke(this, new PointsStateChangeArgs(this, state));
         }
     }
 
     public class TrackDetector
     {
+        public class DetectorStateArgs(bool occupied) : EventArgs 
+        {
+            public bool IsOccupied { get; } = occupied;
+        }
+
         readonly string _id;
         readonly HashSet<TrackSegment> _segments = [];
 
         DetectorStyle _style = new DetectorStyleRectangle();
         bool _isOccupied;
+
+        public event EventHandler<DetectorStateArgs>? StateChangedEvents;
 
         public TrackDetector(string id)
         {
@@ -105,7 +124,14 @@ namespace ModularPanels.TrackLib
         public bool IsOccupied
         {
             get => _isOccupied;
-            set => _isOccupied = value;
+            set => SetOccupied(value);
+        }
+
+        public void SetOccupied(bool occupied)
+        {
+            if (occupied != _isOccupied)
+                StateChangedEvents?.Invoke(this, new(occupied));
+            _isOccupied = occupied;
         }
 
         public bool AddSegment(TrackSegment seg) 

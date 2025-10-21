@@ -1,0 +1,58 @@
+{"Name": "Sarntal",
+"DrawingData": {
+	"Width": 250,
+	"Height": 120,
+	"BackgroundColor": "DominoBG",
+	"Texts": [
+	]
+},
+"TrackData": {
+	"Nodes": [
+		{"ID": "1A", "Pos": [0, 70]},
+		{"ID": "1B", "Pos": [50, 70]},
+		{"ID": "1C", "Pos": [200, 70]},
+		{"ID": "1D", "Pos": [250, 70]}
+	],
+	"Segments": [
+		{"ID": "A", "Style": "Mainline", "Nodes": ["1A","1B"]},
+		{"ID": "B", "Style": "Mainline", "Nodes": ["1B","1C"]},
+		{"ID": "C", "Style": "Mainline", "Nodes": ["1C","1D"]}
+	],
+	"Detectors": [
+		{"ID": "A", "Segments": ["A"], "Style": "Main"},
+		{"ID": "B", "Segments": ["B"], "Style": "Main"},
+		{"ID": "C", "Segments": ["C"], "Style": "Main"}
+	]
+},
+"SignalData": {
+	"Signals": [
+		{"ID": "A", "Type": "CH_TL_D", "Pos": [50, 80], "Angle": -90},
+		{"ID": "B", "Type": "CH_TL_D", "Pos": [200, 60], "Angle": 90}
+	],
+	"BoundarySignals": [
+		{"ID": "L0", "Type": "CH_TL_EndOfTrack", "Boundary": "Left", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Stop"}
+		]},
+		{"ID": "R0", "Type": "CH_TL_EndOfTrack", "Boundary": "Right", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Stop"}
+		]}
+	],
+	"SignalRoutes": [
+		{"SigID": "A", "NextSigID": "L0:Main", "Indication": "Distant", "DetectorLatch": {"ExitID": "B", "EntryID": "A"}},
+		{"SigID": "B", "NextSigID": "R0:Main", "Indication": "Distant", "DetectorLatch": {"ExitID": "B", "EntryID": "C"}}
+	]
+},
+"RelayCircuits": {
+	"SimpleCircuits": [
+		{"ID": "detector_A", "Desc": "Detector A occupied"},
+		{"ID": "detector_B", "Desc": "Detector B occupied"},
+		{"ID": "detector_C", "Desc": "Detector C occupied"}
+	]
+},
+"DetectorCircuits": [
+	{"DetectorID": "A", "Circuit": "detector_A"},
+	{"DetectorID": "B", "Circuit": "detector_B"},
+	{"DetectorID": "C", "Circuit": "detector_C"}
+]}
