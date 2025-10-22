@@ -179,42 +179,6 @@ namespace ModularPanels
         public List<JSON_Module_ControlRotarySwitch> RotarySwitches { get; set; }
     }
 
-    public struct JSON_Module_SimpleCircuit
-    {
-        public string ID { get; set; }
-        public string Desc { get; set; }
-        public bool Active { get; set; }
-    }
-
-    public struct JSON_Module_LogicOperator
-    {
-        public string Op { get; set; }
-        public string Circuit { get; set; }
-    }
-
-    public struct JSON_Module_LogicCircuit
-    {
-        public string ID { get; set; }
-        public List<JSON_Module_LogicOperator> Condition { get; set; }
-        public List<JSON_Module_LogicOperator> ConditionOn { get; set; }
-        public List<JSON_Module_LogicOperator> ConditionOff { get; set; }
-        public string Desc { get; set; }
-    }
-
-    public struct JSON_Module_SignalCircuit
-    {
-        public string SigID { get; set; }
-        public string Circuit { get; set; }
-        public string Indication { get; set; }
-    }
-
-    public struct JSON_Module_RelayCircuits
-    {
-        public List<JSON_Module_SimpleCircuit> SimpleCircuits { get; set; }
-        public List<JSON_Module_LogicCircuit> LogicCircuits { get; set; }
-        public List<JSON_Module_SignalCircuit> SignalCircuits { get; set; }
-    }
-
     public static class JSONLib
     {
         public static void LoadTrackStyles(List<TrackStyleLoader>? list)

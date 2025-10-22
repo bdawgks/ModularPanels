@@ -454,7 +454,10 @@
 		{"ID": "detector_1-1", "Desc": "Detector 1-1 occupied"},
 		{"ID": "detector_1-2", "Desc": "Detector 1-2 occupied"},
 		{"ID": "detector_2-1", "Desc": "Detector 2-1 occupied"},
-		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"}
+		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"},
+		
+		{"ID": "L0_ind_clear", "Desc": "Left main sig indication CLEAR", "Active": true},
+		{"ID": "L0_ind_40km", "Desc": "Left main sig indication 40KM"}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_opposingMoveB2", "Condition": [
@@ -719,14 +722,30 @@
 		], "Desc": "A main signal to OFF"},
 		
 		
+		
+		
+		{"ID": "B_allow_off", "Condition": [
+			{"Op": "EQ", "Circuit": "L0_ind_clear"},
+			{"Op": "OR", "Circuit": "L0_ind_40km"}
+		], "Desc": "Allow B1 or B2 to come off"},
+		
 		{"ID": "B1_off",
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_B1_off"},
 			{"Op": "AND", "Circuit": "B1'_off"},
+			{"Op": "AND", "Circuit": "B_allow_off"},
 			{"Op": "ANDNOT", "Circuit": "detector_11"}
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "B1_stop"}
 		], "Desc": "B1 main signal to OFF"},
+		{"ID": "B1_ind_clear", "Desc": "B1 sig indication CLEAR", "Condition": [
+			{"Op": "EQ", "Circuit": "B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		]},
+		{"ID": "B1_ind_40km", "Desc": "B1 sig indication 40KM", "Condition": [
+			{"Op": "EQ", "Circuit": "B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		]},
 		
 		
 		{"ID": "B2_off",
@@ -734,10 +753,19 @@
 			{"Op": "EQ", "Circuit": "sw_B2_off"},
 			{"Op": "AND", "Circuit": "B2'_off"},
 			{"Op": "AND", "Circuit": "points_3_N"},
+			{"Op": "AND", "Circuit": "B_allow_off"},
 			{"Op": "ANDNOT", "Circuit": "detector_11"}
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "B2_stop"}
 		], "Desc": "B2 main signal to OFF"},
+		{"ID": "B2_ind_clear", "Desc": "B2 sig indication CLEAR", "Condition": [
+			{"Op": "EQ", "Circuit": "B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		]},
+		{"ID": "B2_ind_40km", "Desc": "B2 sig indication 40KM", "Condition": [
+			{"Op": "EQ", "Circuit": "B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		]},
 		
 		
 		{"ID": "C1_off",
@@ -863,6 +891,10 @@
 		], "Desc": "Switch P4 interlocking"}
 	]
 },
+"BoundaryCircuits": [
+	{"Boundary": "Left", "ID": "MAIN_IND_CLEAR", "InCircuit": "L0_ind_clear"},
+	{"Boundary": "Left", "ID": "MAIN_IND_40KM", "InCircuit": "L0_ind_40km"}
+],
 "PointsCircuits": [
 	{"PointsID": "1",
 	"CircuitInPointsNormal": "P1_throw_N",
@@ -915,9 +947,11 @@
 	{"SignalID": "A:Dist", "InputCircuit": "A_off", "Indication": "Distant"},
 	{"SignalID": "A:Main", "InputCircuit": "A'_stop", "OutputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "A:Dist", "InputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B1", "InputCircuit": "B1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B1", "InputCircuit": "B1_ind_clear", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B1", "InputCircuit": "B1_ind_40km", "Indication": "40km", "Fixed": true, "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "B1", "InputCircuit": "B1'_stop", "OutputCircuit": "B1_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B2", "InputCircuit": "B2_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B2", "InputCircuit": "B2_ind_clear", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B2", "InputCircuit": "B2_ind_40km", "Indication": "40km", "Fixed": true, "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "B2", "InputCircuit": "B2'_stop", "OutputCircuit": "B2_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C1", "InputCircuit": "C1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "C1", "InputCircuit": "C1'_stop", "OutputCircuit": "C1_stop", "Indication": "Stop", "Fixed": true},

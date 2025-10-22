@@ -21,10 +21,43 @@ namespace ModularPanels.CircuitLib
     {
         readonly ObjectBank _circuitBank = new();
 
+        readonly Dictionary<string, BoundaryCircuit> _leftBoundaryCircuits = [];
+        readonly Dictionary<string, BoundaryCircuit> _rightBoundaryCircuits = [];
+
         public event EventHandler<CircuitChangeEventArgs>? CircuitChangeEvents;
 
         public CircuitComponent(IParent parent) : base(parent)
         {
+        }
+
+        public void InitModule(Module mod)
+        {
+            if (mod.LeftModule == null)
+                return;
+
+            CircuitComponent linkedComp = mod.LeftModule.GetCircuitComponent();
+
+            foreach (BoundaryCircuit bc in _leftBoundaryCircuits.Values)
+            {
+                if (!linkedComp.GetRightBoundaryCircuit(bc.ID, out BoundaryCircuit? circuit))
+                    continue;
+
+                circuit.PairedCircuit = bc;
+                bc.PairedCircuit = circuit;
+            }
+        }
+
+        public bool GetRightBoundaryCircuit(string id, [NotNullWhen(true)] out BoundaryCircuit? circuit)
+        {
+            return _rightBoundaryCircuits.TryGetValue(id, out circuit);
+        }
+
+        public bool AddBoundaryCircuit(BoundaryCircuit bc)
+        {
+            if (bc.Side == BoundaryCircuit.BoundarySide.Right)
+                return _rightBoundaryCircuits.TryAdd(bc.ID, bc);
+            else
+                return _leftBoundaryCircuits.TryAdd(bc.ID, bc);
         }
 
         public bool RegisterOrCreateInputCircuit(StringKey<Circuit> key, [NotNullWhen(true)] out InputCircuit? circuit)
@@ -58,9 +91,12 @@ namespace ModularPanels.CircuitLib
             return _circuitBank.TryGetObject(circuitName, out circuit);
         }
 
-        public bool TryGetCircuit<T>(string circuitName, [NotNullWhen(true)] out T? circuit) where T : Circuit
+        public bool TryGetCircuit<T>(string? circuitName, [NotNullWhen(true)] out T? circuit) where T : Circuit
         {
             circuit = null;
+            if (string.IsNullOrEmpty(circuitName))
+                return false;
+
             if (_circuitBank.TryGetObject(circuitName, out Circuit? untypedCircuit))
             {
                 if (untypedCircuit is T)

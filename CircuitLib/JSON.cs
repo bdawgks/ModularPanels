@@ -353,4 +353,57 @@ namespace ModularPanels.CircuitLib
             throw new NotImplementedException();
         }
     }
+
+    internal struct BoundaryCircuitJsonData
+    {
+        public string Boundary { get; set; }
+        public string ID { get; set; }
+        public string? OutCircuit { get; set; }
+        public string? InCircuit {  get; set; }
+    }
+
+    [JsonConverter(typeof(BoundaryCircuitJsonConverter))]
+    public class BoundaryCircuitLoader
+    {
+        internal BoundaryCircuitJsonData? Data { get; set; }
+
+        public BoundaryCircuit? Load(CircuitComponent comp)
+        {
+            if (Data == null)
+                return null;
+
+            if (!Enum.TryParse(Data.Value.Boundary, out BoundaryCircuit.BoundarySide side))
+                return null;
+
+            BoundaryCircuit circuit = new(Data.Value.ID, side);
+
+            if (comp.TryGetCircuit<Circuit>(Data.Value.OutCircuit, out Circuit? outCircuit))
+            {
+                circuit.SetOutCircuit(outCircuit);
+            }
+
+            if (comp.TryGetCircuit(Data.Value.InCircuit, out InputCircuit? inCircuit))
+            {
+                circuit.SetInCircuit(inCircuit);
+            }
+
+            comp.AddBoundaryCircuit(circuit);
+
+            return circuit;
+        }
+    }
+
+    internal class BoundaryCircuitJsonConverter : JsonConverter<BoundaryCircuitLoader>
+    {
+        public override BoundaryCircuitLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            BoundaryCircuitJsonData? data = JsonSerializer.Deserialize<BoundaryCircuitJsonData>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, BoundaryCircuitLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

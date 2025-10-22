@@ -25,6 +25,7 @@ namespace ModularPanels
                     layout.AddModule(mod);
 
                     mod.GetSignalComponent().InitPost();
+                    mod.GetCircuitComponent().InitModule(mod);
                 }
             }
 
