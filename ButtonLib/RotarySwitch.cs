@@ -82,7 +82,7 @@ namespace ModularPanels.ButtonLib
         readonly PanelLib.TextStyle _textStyle;
         string _text;
 
-        Circuit? _activatedCircuit;
+        InputCircuit? _activatedCircuit;
 
         public float Angle { get => _angle; }
         public float Size { get => _size; }
@@ -164,7 +164,7 @@ namespace ModularPanels.ButtonLib
             _activatedCircuit?.SetActive(false);
         }
 
-        public void SetActivatedCircuit(Circuit circuit)
+        public void SetActivatedCircuit(InputCircuit circuit)
         {
             _activatedCircuit = circuit;
         }
@@ -374,28 +374,20 @@ namespace ModularPanels.ButtonLib
                 };
         }
 
-        public void SetActivatedCircuit(int posIdx, string circuitName)
+        public void SetActivatedCircuit(int posIdx, InputCircuit circuit)
         {
-            CircuitComponent? circuits = _parent.Parent.GetComponent<CircuitComponent>();
-            if (circuits == null)
+            if (circuit == null) 
                 return;
 
-            if (!circuits.TryGetCircuit(circuitName, out Circuit? circuit))
-                return;
-
-            _positions[posIdx].SetActivatedCircuit(circuit!);
+            _positions[posIdx].SetActivatedCircuit(circuit);
         }
 
-        public void SetLampActivationCircuit(int posIdx, string circuitName)
+        public void SetLampActivationCircuit(int posIdx, Circuit circuit)
         {
-            CircuitComponent? circuits = _parent.Parent.GetComponent<CircuitComponent>();
-            if (circuits == null)
+            if (circuit == null)
                 return;
 
-            if (!circuits.TryGetCircuit(circuitName, out Circuit? circuit))
-                return;
-
-            _positions[posIdx].SetLampActivationCircuit(circuit!);
+            _positions[posIdx].SetLampActivationCircuit(circuit);
         }
 
         public void SetTextLabel(int posIdx, string text)
@@ -426,6 +418,11 @@ namespace ModularPanels.ButtonLib
                 _curPos += next;
             }
             UpdatePosition(startPos);
+        }
+
+        public void Init()
+        {
+            _positions[_curPos].EnterPostion();
         }
 
         private void UpdatePosition(int startPos)

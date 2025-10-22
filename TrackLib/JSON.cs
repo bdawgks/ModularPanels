@@ -1,6 +1,7 @@
 ﻿using ModularPanels.DrawLib;
 using ModularPanels.JsonLib;
 using ModularPanels.PanelLib;
+using ModularPanels.SignalLib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -247,6 +248,52 @@ namespace ModularPanels.TrackLib
         }
 
         public override void Write(Utf8JsonWriter writer, GridStyleLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal struct RoutePointsJsonData
+    {
+        public required StringKey<TrackPoints> PointsID { get; set; }
+        public required string Direction { get; set; }
+    }
+
+    [JsonConverter(typeof(RoutePointsLoaderJsonConverter))]
+    public class RoutePointsLoader
+    {
+        internal RoutePointsJsonData? Data { get; set; }
+
+        public PointsRoute? Load(ObjectBank bank)
+        {
+            if (Data == null)
+                return null;
+
+            bank.RegisterKey(Data.Value.PointsID);
+            if (Data.Value.PointsID.IsNull)
+                return null;
+
+            if (!Enum.TryParse(Data.Value.Direction, out TrackPoints.PointsState state))
+                return null;
+
+            PointsRoute route = new()
+            {
+                points = Data.Value.PointsID.Object!,
+                state = state
+            };
+            return route;
+        }
+    }
+
+    internal class RoutePointsLoaderJsonConverter : JsonConverter<RoutePointsLoader>
+    {
+        public override RoutePointsLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            RoutePointsJsonData? data = JsonSerializer.Deserialize<RoutePointsJsonData>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, RoutePointsLoader value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }

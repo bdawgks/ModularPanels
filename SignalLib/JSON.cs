@@ -5,12 +5,6 @@ using System.Text.Json.Serialization;
 
 namespace ModularPanels.SignalLib
 {
-    internal struct RoutePointsJsonData
-    {
-        public required StringKey<TrackPoints> PointsID { get; set; }
-        public required string Direction { get; set; }
-    }
-
     internal struct DetectorLatchJsonData
     {
         public required StringKey<TrackDetector> ExitID {  get; set; }
@@ -22,7 +16,7 @@ namespace ModularPanels.SignalLib
         public required SignalHeadId SigID { get; set; }
         public SignalHeadId? NextSigID { get; set; }
         public string Indication { get; set; }
-        public List<RoutePointsJsonData>? Route { get; set; }
+        public List<RoutePointsLoader>? Route { get; set; }
         public DetectorLatchJsonData? DetectorLatch { get; set; }
     }
 
@@ -49,17 +43,11 @@ namespace ModularPanels.SignalLib
             {
                 foreach (var rd in Data.Value.Route)
                 {
-                    PointsRoute pr = new();
-                    bank.RegisterKey(rd.PointsID);
-                    if (!rd.PointsID.TryGet(out TrackPoints? points))
+                    PointsRoute? pr = rd.Load(bank);
+                    if (pr == null) 
                         continue;
 
-                    pr.points = points;
-                    if (!Enum.TryParse(rd.Direction, out TrackPoints.PointsState state))
-                        continue;
-
-                    pr.state = state;
-                    route.AddPointsRoute(pr);
+                    route.AddPointsRoute(pr.Value);
                 }
             }
 

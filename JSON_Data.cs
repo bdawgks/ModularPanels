@@ -3,6 +3,7 @@ using ModularPanels.JsonLib;
 using ModularPanels.PanelLib;
 using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
+using ModularPanels.CircuitLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -153,7 +154,7 @@ namespace ModularPanels
     public struct JSON_Module_SwitchCircuit
     {
         public int Pos { get; set; }
-        public string Circuit { get; set; }
+        public StringKey<Circuit> Circuit { get; set; }
     }
 
     public struct JSON_Module_SwitchTextLabels

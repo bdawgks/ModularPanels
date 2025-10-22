@@ -1,6 +1,6 @@
 {"Name": "Sartnal Yard",
 "DrawingData": {
-	"Width": 350,
+	"Width": 400,
 	"Height": 130,
 	"BackgroundColor": "DominoBG",
 	"Texts": [
@@ -13,18 +13,18 @@
 		{"ID": "1B", "Pos": [40, 30]},
 		{"ID": "1C", "Pos": [50, 30]},
 		{"ID": "1D", "Pos": [90, 30]},
-		{"ID": "1E", "Pos": [280, 30]},
-		{"ID": "1F", "Pos": [290, 30]},
-		{"ID": "1G", "Pos": [300, 30]},
-		{"ID": "1H", "Pos": [340, 70]},
-		{"ID": "1I", "Pos": [350, 70]},
+		{"ID": "1E", "Pos": [270, 30]},
+		{"ID": "1F", "Pos": [320, 30]},
+		{"ID": "1G", "Pos": [330, 30]},
+		{"ID": "1H", "Pos": [390, 70]},
+		{"ID": "1I", "Pos": [400, 70]},
 		{"ID": "2A", "Pos": [90, 50]},
-		{"ID": "2B", "Pos": [100, 50]},
-		{"ID": "2C", "Pos": [190, 50]},
+		{"ID": "2B", "Pos": [120, 50]},
+		{"ID": "2C", "Pos": [180, 50]},
 		{"ID": "2D", "Pos": [200, 50]},
 		{"ID": "2E", "Pos": [210, 50]},
-		{"ID": "2F", "Pos": [240, 50]},
-		{"ID": "2G", "Pos": [250, 50]},
+		{"ID": "2F", "Pos": [270, 50]},
+		{"ID": "2G", "Pos": [280, 50]},
 		{"ID": "3XA", "Pos": [110, 60]},
 		{"ID": "3XB", "Pos": [150, 80]},
 		{"ID": "3A", "Pos": [10, 70], "Square": true},
@@ -46,7 +46,8 @@
 		{"ID": "11B", "Style": "Mainline", "Nodes": ["1B","1C"]},
 		{"ID": "1A", "Style": "Mainline", "Nodes": ["1C","1D"]},
 		{"ID": "1B", "Style": "Mainline", "Nodes": ["1D","1E"]},
-		{"ID": "1C", "Style": "Mainline", "Nodes": ["1F","1G"]},
+		{"ID": "1C", "Style": "Mainline", "Nodes": ["1E","1F"]},
+		{"ID": "1D", "Style": "Mainline", "Nodes": ["1F","1G"]},
 		{"ID": "21A", "Style": "Mainline", "Nodes": ["1G","1H"]},
 		{"ID": "21B", "Style": "Mainline", "Nodes": ["1H","1I"]},
 		{"ID": "2X1", "Style": "Mainline", "Nodes": ["1C","2A"]},
@@ -92,22 +93,25 @@
 		{"ID": "5", "PointsNode": "1F", "RouteNormal": "1E", "RouteReversed": "2G", "Style": "Main"}
 	],
 	"Detectors": [
-		{"ID": "11", "Segments": ["11A","11B"], "Style": "Main"},
-		{"ID": "1", "Segments": ["1A","1B","1C"], "Style": "Main"},
+		{"ID": "11", "Segments": ["11A"], "Style": "Main"},
+		{"ID": "1", "Segments": ["1B"], "Style": "Main"},
 		{"ID": "21", "Segments": ["21A","21B"], "Style": "Main"},
-		{"ID": "12", "Segments": ["12B"], "Style": "Main"}
+		{"ID": "12", "Segments": ["12B"], "Style": "Main"},
+		{"ID": "2", "Segments": ["2B"], "Style": "Main"},
+		{"ID": "P1", "Segments": ["11B","1A","2X1","12A"], "Style": "Main"},
+		{"ID": "P5", "Segments": ["1C","2C","2X2","1D"], "Style": "Main"}
 	]
 },
 "SignalData": {
 	"Signals": [
 		{"ID": "1A'", "Type": "CH_TL_Dw", "Pos": [40, 25], "Angle": 90},
 		{"ID": "1B'", "Type": "CH_TL_Dw", "Pos": [85, 35], "Angle": -90},
-		{"ID": "1C'", "Type": "CH_TL_Dw", "Pos": [250, 25], "Angle": 90},
-		{"ID": "1D'", "Type": "CH_TL_Dw", "Pos": [295, 35], "Angle": -90},
+		{"ID": "1C'", "Type": "CH_TL_Dw", "Pos": [270, 25], "Angle": 90},
+		{"ID": "1D'", "Type": "CH_TL_Dw", "Pos": [325, 35], "Angle": -90},
 		{"ID": "2B'", "Type": "CH_TL_Dw", "Pos": [120, 55], "Angle": -90},
 		{"ID": "21A'", "Type": "CH_TL_Dw", "Pos": [180, 45], "Angle": 90},
 		{"ID": "21B'", "Type": "CH_TL_Dw", "Pos": [210, 55], "Angle": -90},
-		{"ID": "2C'", "Type": "CH_TL_Dw", "Pos": [250, 45], "Angle": 90},
+		{"ID": "2C'", "Type": "CH_TL_Dw", "Pos": [270, 45], "Angle": 90},
 		{"ID": "3A'", "Type": "CH_TL_Dw", "Pos": [100, 65], "Angle": 90},
 		{"ID": "3B'", "Type": "CH_TL_Dw", "Pos": [180, 75], "Angle": -90},
 		{"ID": "4B'", "Type": "CH_TL_Dw", "Pos": [180, 95], "Angle": -90},
@@ -147,7 +151,7 @@
 			{"Pos": 0, "Text": "R"},
 			{"Pos": 1, "Text": "1"},
 			{"Pos": 2, "Text": "2"},
-			{"Pos": 3, "Text": "3"}
+			{"Pos": 3, "Text": "AnG"}
 		]},
 		{"ID": "P2", "Pos": [50,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P2_lock",
 		"SwitchCircuits": [
@@ -155,17 +159,17 @@
 			{"Pos": 1, "Circuit": "sw_P2_2"}
 		],
 		"TextLabels": [
-			{"Pos": 0, "Text": "1"},
-			{"Pos": 1, "Text": "2"}
+			{"Pos": 0, "Text": "G"},
+			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P3", "Pos": [280,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		{"ID": "P3", "Pos": [70,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P3_1"},
 			{"Pos": 1, "Circuit": "sw_P3_2"}
 		],
 		"TextLabels": [
-			{"Pos": 0, "Text": "1"},
-			{"Pos": 1, "Text": "2"}
+			{"Pos": 0, "Text": "G"},
+			{"Pos": 1, "Text": "A"}
 		]},
 		{"ID": "P4", "Pos": [300,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
@@ -202,6 +206,43 @@
 		{"ID": "sw_P3_2", "Desc": "Points 4 reversed"},
 		{"ID": "sw_P4_1", "Desc": "Points 5 normal"},
 		{"ID": "sw_P4_2", "Desc": "Points 5 reversed"}
+	],
+	"RouteCircuits": [
+		{"ID": "route_11_1", "Desc": "Route set track 11 to 1", "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		]},
+		{"ID": "route_11_12", "Desc": "Route set track 11 to 12", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Normal"}
+		]},
+		{"ID": "route_11_2", "Desc": "Route set track 11 to 2", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Reversed"},
+			{"PointsID": "4A", "Direction": "Reversed"}
+		]},
+		{"ID": "route_11_3", "Desc": "Route set track 11 to 3", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Reversed"},
+			{"PointsID": "4A", "Direction": "Normal"}
+		]},
+		{"ID": "route_11_4", "Desc": "Route set track 11 to 4", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Normal"}
+		]},
+		{"ID": "route_13_2", "Desc": "Route set track 13 to 2", "Route": [
+			{"PointsID": "3A", "Direction": "Normal"},
+			{"PointsID": "4A", "Direction": "Reversed"}
+		]},
+		{"ID": "route_13_3", "Desc": "Route set track 13 to 3", "Route": [
+			{"PointsID": "3A", "Direction": "Normal"},
+			{"PointsID": "4A", "Direction": "Normal"}
+		]},
+		{"ID": "route_13_4", "Desc": "Route set track 13 to 4", "Route": [
+			{"PointsID": "3A", "Direction": "Reversed"}
+		]}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_opposingMoveB2", "Condition": [

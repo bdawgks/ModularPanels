@@ -287,14 +287,18 @@ namespace ModularPanels
                         {
                             foreach (var scData in rsData.SwitchCircuits)
                             {
-                                rs.SetActivatedCircuit(scData.Pos, scData.Circuit);
+                                if (GetCircuitComponent().RegisterOrCreateInputCircuit(scData.Circuit, out var ic))
+                                    rs.SetActivatedCircuit(scData.Pos, ic);
                             }
                         }
                         if (rsData.LampCircuits != null)
                         {
                             foreach (var scData in rsData.LampCircuits)
                             {
-                                rs.SetLampActivationCircuit(scData.Pos, scData.Circuit);
+                                GetCircuitComponent().RegisterKey(scData.Circuit);
+                                if (scData.Circuit.IsNull)
+                                    continue;
+                                rs.SetLampActivationCircuit(scData.Pos, scData.Circuit.Object!);
                             }
                         }
                         if (rsData.TextLabels != null)
@@ -309,6 +313,7 @@ namespace ModularPanels
                             rs.SetInterlockingCircuit(rsData.InterlockCircuit);
                         }
                         _allControls.Add(rs);
+                        rs.Init();
                     }
                 }
             }

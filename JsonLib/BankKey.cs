@@ -13,7 +13,6 @@ namespace ModularPanels.JsonLib
 
         internal InternalKey<KType, OType>? InternalKey { get { return _iKey; } }
 
-
         public OType? Object
         {
             get => _iKey?.Get();

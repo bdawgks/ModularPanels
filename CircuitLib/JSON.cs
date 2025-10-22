@@ -1,8 +1,9 @@
 ﻿using ModularPanels.JsonLib;
-using ModularPanels.TrackLib;
 using ModularPanels.SignalLib;
+using ModularPanels.TrackLib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace ModularPanels.CircuitLib
 {
@@ -28,10 +29,18 @@ namespace ModularPanels.CircuitLib
         public string Desc { get; set; }
     }
 
+    internal struct RouteCircuitJsonData
+    {
+        public StringKey<Circuit> ID { get; set; }
+        public string Desc { get; set; }
+        public List<RoutePointsLoader> Route { get; set; }
+    }
+
     internal struct CircuitJsonData
     {
         public List<SimpleCircuitJsonData> SimpleCircuits { get; set; }
         public List<LogicCircuitJsonData> LogicCircuits { get; set; }
+        public List<RouteCircuitJsonData> RouteCircuits { get; set; }
     }
 
     [JsonConverter(typeof(CircuitDataLoaderJsonConverter))]
@@ -48,14 +57,7 @@ namespace ModularPanels.CircuitLib
             {
                 foreach (var sc in Data.Value.SimpleCircuits)
                 {
-                    SimpleCircuit circuit = new(sc.ID.Key);
-                    if (sc.Active)
-                        circuit.SetActive(true);
-
-                    if (!string.IsNullOrEmpty(sc.Desc))
-                        circuit.Description = sc.Desc;
-
-                    comp.AddCircuit(circuit);
+                    comp.AddOrUpdateInputCircuit(sc.ID, sc.Desc, sc.Active);
                 }
             }
             if (Data.Value.LogicCircuits != null)
@@ -125,6 +127,30 @@ namespace ModularPanels.CircuitLib
                     }
                 }
             }
+            if (Data.Value.RouteCircuits != null)
+            {
+                if (comp.Parent is Module mod)
+                {
+                    foreach (var rc in Data.Value.RouteCircuits)
+                    {
+                        comp.RegisterKey(rc.ID);
+                        RouteCircuit circuit = new(rc.ID.Key)
+                        {
+                            Description = rc.Desc ?? ""
+                        };
+
+                        foreach (var rl in rc.Route)
+                        {
+                            PointsRoute? route = rl.Load(mod.ObjectBank);
+                            if (route == null) 
+                                continue;
+
+                            circuit.AddRoute(route.Value);
+                        }
+                        comp.AddCircuit(circuit);
+                    }
+                }
+            }
         }
     }
 
@@ -181,9 +207,8 @@ namespace ModularPanels.CircuitLib
 
             if (Data.OutputCircuit != null)
             {
-                circuitComp.RegisterKey(Data.OutputCircuit);
-                if (Data.OutputCircuit.Object is SimpleCircuit)
-                    circuit.SetOutput(Data.OutputCircuit.Object as SimpleCircuit);
+                if (circuitComp.RegisterOrCreateInputCircuit(Data.OutputCircuit, out InputCircuit? inputCircuit))
+                    circuit.SetOutput(inputCircuit);
             }
 
             if (Data.DropIndication != null)
@@ -254,17 +279,15 @@ namespace ModularPanels.CircuitLib
             }
             circuit.SetInputs(cInNormal, cInReverse);
 
-            SimpleCircuit? cOutNormal = null;
+            InputCircuit? cOutNormal = null;
             if (Data.CircuitOutPointsNormal != null)
             {
-                comp.RegisterKey(Data.CircuitOutPointsNormal);
-                cOutNormal = (SimpleCircuit?)Data.CircuitOutPointsNormal.Object;
+                comp.RegisterOrCreateInputCircuit(Data.CircuitOutPointsNormal, out cOutNormal);
             }
-            SimpleCircuit? cOutReversed = null;
+            InputCircuit? cOutReversed = null;
             if (Data.CircuitOutPointsReversed != null)
             {
-                comp.RegisterKey(Data.CircuitOutPointsReversed);
-                cOutReversed = (SimpleCircuit?)Data.CircuitOutPointsReversed.Object;
+                comp.RegisterOrCreateInputCircuit(Data.CircuitOutPointsReversed, out cOutReversed);
             }
             circuit.SetOutputs(cOutNormal, cOutReversed);
 
@@ -303,15 +326,14 @@ namespace ModularPanels.CircuitLib
                 return null;
 
             bank.RegisterKey(Data.Value.DetectorID);
-            comp.RegisterKey(Data.Value.Circuit);
 
-            if (Data.Value.DetectorID.IsNull || Data.Value.Circuit.IsNull)
+            if (Data.Value.DetectorID.IsNull)
                 return null;
 
-            if (Data.Value.Circuit.Object is SimpleCircuit sc)
+            if (comp.RegisterOrCreateInputCircuit(Data.Value.Circuit, out InputCircuit? inputCircuit))
             {
                 DetectorCircuit circuit = new(Data.Value.DetectorID.Object!);
-                circuit.SetOutput(sc);
+                circuit.SetOutput(inputCircuit);
             }
 
             return null;
