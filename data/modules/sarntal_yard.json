@@ -116,9 +116,34 @@
 		{"ID": "3B'", "Type": "CH_TL_Dw", "Pos": [180, 75], "Angle": -90},
 		{"ID": "4B'", "Type": "CH_TL_Dw", "Pos": [180, 95], "Angle": -90},
 		{"ID": "A", "Type": "CH_TL_M3", "Pos": [20, 20], "Angle": 90},
-		{"ID": "B", "Type": "CH_TL_M3", "Pos": [100, 40], "Angle": -90}
+		{"ID": "B", "Type": "CH_TL_M3", "Pos": [100, 40], "Angle": -90},
+		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
 	],
 	"SignalRoutes": [
+		{"SigID": "1A'", "NextSigID": "1C'", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "1"}},
+		{"SigID": "1A'", "NextSigID": "12A'", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "12"}},
+		{"SigID": "1A'", "NextSigID": "2A'", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Reversed"},
+			{"PointsID": "4A", "Direction": "Reversed"}
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "2"}},
+		{"SigID": "1A'", "NextSigID": "EoT", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Reversed"},
+			{"PointsID": "4A", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "P1"}},
+		{"SigID": "1A'", "NextSigID": "EoT", "Indication": "Clear", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"},
+			{"PointsID": "2", "Direction": "Reversed"},
+			{"PointsID": "3A", "Direction": "Normal"}
+		], "DetectorLatch": {"ExitID": "11", "EntryID": "P1"}},
 		{"SigID": "1D'", "NextSigID": "1B'", "Indication": "Clear", "Route": [
 			{"PointsID": "1", "Direction": "Normal"}
 		], "DetectorLatch": {"ExitID": "21", "EntryID": "1"}},
@@ -165,6 +190,69 @@
 			{"Pos": 0, "Circuit": "1D'_stop"},
 			{"Pos": 2, "Circuit": "1D'_off"}
 		]},
+		{"ID": "12A'", "Pos": [180,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_12A'_stop"},
+			{"Pos": 2, "Circuit": "sw_12A'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "12A'_stop"},
+			{"Pos": 2, "Circuit": "12A'_off"}
+		]},
+		{"ID": "12B'", "Pos": [200,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_12B'_stop"},
+			{"Pos": 2, "Circuit": "sw_12B'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "12B'_stop"},
+			{"Pos": 2, "Circuit": "12B'_off"}
+		]},
+		{"ID": "2A'", "Pos": [220,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_2A'_stop"},
+			{"Pos": 2, "Circuit": "sw_2A'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "2A'_stop"},
+			{"Pos": 2, "Circuit": "2A'_off"}
+		]},
+		{"ID": "2B'", "Pos": [240,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_2B'_stop"},
+			{"Pos": 2, "Circuit": "sw_2B'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "2B'_stop"},
+			{"Pos": 2, "Circuit": "2B'_off"}
+		]},
+		{"ID": "3A'", "Pos": [260,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_3A'_stop"},
+			{"Pos": 2, "Circuit": "sw_3A'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "3A'_stop"},
+			{"Pos": 2, "Circuit": "3A'_off"}
+		]},
+		{"ID": "3B'", "Pos": [280,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_3B'_stop"},
+			{"Pos": 2, "Circuit": "sw_3B'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "3B'_stop"},
+			{"Pos": 2, "Circuit": "3B'_off"}
+		]},
+		{"ID": "4B'", "Pos": [300,120], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_4B'_stop"},
+			{"Pos": 2, "Circuit": "sw_4B'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "4B'_stop"},
+			{"Pos": 2, "Circuit": "4B'_off"}
+		]},
 		
 		{"ID": "P1", "Pos": [30,110], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
 		"SwitchCircuits": [
@@ -197,7 +285,7 @@
 			{"Pos": 0, "Text": "G"},
 			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P4", "Pos": [300,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		{"ID": "P4", "Pos": [340,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P4_R"},
 			{"Pos": 1, "Circuit": "sw_P4_1"},
@@ -220,13 +308,50 @@
 		{"ID": "sw_1C'_off", "Desc": "Switch 1C' to OFF"},
 		{"ID": "sw_1D'_stop", "Desc": "Switch 1D' to STOP"},
 		{"ID": "sw_1D'_off", "Desc": "Switch 1D' to OFF"},
+		{"ID": "sw_12A'_stop", "Desc": "Switch 12A' to STOP"},
+		{"ID": "sw_12A'_off", "Desc": "Switch 12A' to OFF"},
+		{"ID": "sw_12B'_stop", "Desc": "Switch 12B' to STOP"},
+		{"ID": "sw_12B'_off", "Desc": "Switch 12B' to OFF"},
+		{"ID": "sw_2A'_stop", "Desc": "Switch 2A' to STOP"},
+		{"ID": "sw_2A'_off", "Desc": "Switch 2A' to OFF"},
+		{"ID": "sw_2B'_stop", "Desc": "Switch 2B' to STOP"},
+		{"ID": "sw_2B'_off", "Desc": "Switch 2B' to OFF"},
+		{"ID": "sw_3A'_stop", "Desc": "Switch 3A' to STOP"},
+		{"ID": "sw_3A'_off", "Desc": "Switch 3A' to OFF"},
+		{"ID": "sw_3B'_stop", "Desc": "Switch 3B' to STOP"},
+		{"ID": "sw_3B'_off", "Desc": "Switch 3B' to OFF"},
+		{"ID": "sw_4B'_stop", "Desc": "Switch 4B' to STOP"},
+		{"ID": "sw_4B'_off", "Desc": "Switch 4B' to OFF"},
 		
 		{"ID": "1A'_stop", "Desc": "Signal 1A' indicates STOP", "Active": true},
 		{"ID": "1B'_stop", "Desc": "Signal 1B' indicates STOP", "Active": true},
 		{"ID": "1C'_stop", "Desc": "Signal 1C' indicates STOP", "Active": true},
 		{"ID": "1D'_stop", "Desc": "Signal 1D' indicates STOP", "Active": true},
+		{"ID": "12A'_stop", "Desc": "Signal 12A' indicates STOP", "Active": true},
+		{"ID": "12B'_stop", "Desc": "Signal 12B' indicates STOP", "Active": true},
+		{"ID": "2A'_stop", "Desc": "Signal 2A' indicates STOP", "Active": true},
+		{"ID": "2B'_stop", "Desc": "Signal 2B' indicates STOP", "Active": true},
+		{"ID": "3A'_stop", "Desc": "Signal 3A' indicates STOP", "Active": true},
+		{"ID": "3B'_stop", "Desc": "Signal 3B' indicates STOP", "Active": true},
+		{"ID": "4B'_stop", "Desc": "Signal 4B' indicates STOP", "Active": true},
+		
+		{"ID": "1A'_off", "Desc": "Signal 1A' is OFF"},
+		{"ID": "1B'_off", "Desc": "Signal 1B' is OFF"},
+		{"ID": "1C'_off", "Desc": "Signal 1C' is OFF"},
+		{"ID": "1D'_off", "Desc": "Signal 1D' is OFF"},
+		{"ID": "12A'_off", "Desc": "Signal 12A' is OFF"},
+		{"ID": "12B'_off", "Desc": "Signal 12B' is OFF"},
+		{"ID": "2A'_off", "Desc": "Signal 2A' is OFF"},
+		{"ID": "2B'_off", "Desc": "Signal 2B' is OFF"},
+		{"ID": "3A'_off", "Desc": "Signal 3A' is OFF"},
+		{"ID": "3B'_off", "Desc": "Signal 3B' is OFF"},
+		{"ID": "4B'_off", "Desc": "Signal 4B' is OFF"},
 		
 		{"ID": "detector_1", "Desc": "Detector 1 occupied"},
+		{"ID": "detector_11", "Desc": "Detector 11 occupied"},
+		{"ID": "detector_21", "Desc": "Detector 21 occupied"},
+		{"ID": "detector_12", "Desc": "Detector 12 occupied"},
+		{"ID": "detector_2", "Desc": "Detector 2 occupied"},
 		
 		{"ID": "sw_P1_R", "Desc": "Points 1 to remote operation"},
 		{"ID": "sw_P1_1", "Desc": "Points 1 to route 1"},
@@ -239,6 +364,22 @@
 		{"ID": "sw_P4_1", "Desc": "Points 5 normal"},
 		{"ID": "sw_P4_2", "Desc": "Points 5 reversed"},
 		
+		{"ID": "points_1_N", "Desc": "Points 1 normalized", "Active": true},
+		{"ID": "points_1_R", "Desc": "Points 1 reversed"},
+		{"ID": "points_2_N", "Desc": "Points 2 normalized", "Active": true},
+		{"ID": "points_2_R", "Desc": "Points 2 reversed"},
+		{"ID": "points_3A_N", "Desc": "Points 3A normalized", "Active": true},
+		{"ID": "points_3A_R", "Desc": "Points 3A reversed"},
+		{"ID": "points_3B_N", "Desc": "Points 3B normalized", "Active": true},
+		{"ID": "points_3B_R", "Desc": "Points 3B reversed"},
+		{"ID": "points_3C_N", "Desc": "Points 3C normalized", "Active": true},
+		{"ID": "points_3C_R", "Desc": "Points 3C reversed"},
+		{"ID": "points_3D_N", "Desc": "Points 3D normalized", "Active": true},
+		{"ID": "points_3D_R", "Desc": "Points 3D reversed"},
+		{"ID": "points_4A_N", "Desc": "Points 4A normalized", "Active": true},
+		{"ID": "points_4A_R", "Desc": "Points 4A reversed"},
+		{"ID": "points_4B_N", "Desc": "Points 4B normalized", "Active": true},
+		{"ID": "points_4B_R", "Desc": "Points 4B reversed"},
 		{"ID": "points_5_N", "Desc": "Points 5 normalized", "Active": true},
 		{"ID": "points_5_R", "Desc": "Points 5 reversed"}
 	],
@@ -280,45 +421,49 @@
 		]}
 	],
 	"LogicCircuits": [
-		{"ID": "A'_opposingMoveB2", "Condition": [
-			{"Op": "EQ", "Circuit": "points_3_N"},
-			{"Op": "ANDNOT", "Circuit": "B2'_stop"}
-		], "Desc": "C2' set in opposition to A'"},
-		{"ID": "A'_opposingMove1D", "Condition": [
-			{"Op": "EQ", "Circuit": "points_4_N"},
-			{"Op": "AND", "Circuit": "points_1_N"},
-			{"Op": "ANDNOT", "Circuit": "D'_stop"}
-		], "Desc": "D' set in opposition to A' into track 1"},
-		{"ID": "A'_opposingMove2D", "Condition": [
-			{"Op": "EQ", "Circuit": "points_4_R"},
-			{"Op": "AND", "Circuit": "points_1_R"},
-			{"Op": "AND", "Circuit": "points_2_N"},
-			{"Op": "ANDNOT", "Circuit": "D'_stop"}
-		], "Desc": "D' set in opposition to A' into track 2'"},
-		{"ID": "A'_off", "ConditionOn": [
-			{"Op": "EQ", "Circuit": "sw_A'_off"},
-			{"Op": "AND", "Circuit": "B'_stop"}
+		{"ID": "1A'_opposingMove2B", "Desc": "2B' set in opposition to 1A'", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_2"},
+			{"Op": "ANDNOT", "Circuit": "2B'_stop"}
+		]},
+		{"ID": "A'_opposingMove3B", "Desc": "3B' set in opposition to 1A'", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_3"},
+			{"Op": "ANDNOT", "Circuit": "3B'_stop"}
+		]},
+		{"ID": "A'_opposingMove4B", "Desc": "4B' set in opposition to 1A'", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_4"},
+			{"Op": "ANDNOT", "Circuit": "4B'_stop"}
+		]},
+		{"ID": "1A'_off", "Desc": "1A' dwarf signal to OFF", "ConditionOn": [
+			{"Op": "EQ", "Circuit": "sw_1A'_off"},
+			{"Op": "AND", "Circuit": "1B'_stop"},
+			{"Op": "AND", "Circuit": "12B'_stop"},
+			{"Op": "ANDNOT", "Circuit": "1A'_opposingMove2B"},
+			{"Op": "ANDNOT", "Circuit": "1A'_opposingMove3B"},
+			{"Op": "ANDNOT", "Circuit": "1A'_opposingMove4B"}
 		], "ConditionOff": [
-			{"Op": "EQ", "Circuit": "A'_stop"}
-		], "Desc": "A' dwarf signal to OFF"},
-		{"ID": "A'_ind_caut_1", "Condition": [
-			{"Op": "EQ", "Circuit": "A'_off"},
-			{"Op": "AND", "Circuit": "points_1_N"},
+			{"Op": "EQ", "Circuit": "1A'_stop"}
+		]},
+		{"ID": "1A'_ind_caut_1", "Desc": "1A' caution indication block 1", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_1"},
 			{"Op": "AND", "Circuit": "detector_1"}
-		], "Desc": "A' caution indication block 1"},
-		{"ID": "A'_ind_caut_2", "Condition": [
-			{"Op": "EQ", "Circuit": "A'_off"},
-			{"Op": "AND", "Circuit": "points_1_R"},
-			{"Op": "AND", "Circuit": "points_2_N"},
+		]},
+		{"ID": "1A'_ind_caut_12", "Desc": "1A' caution indication block 12", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_12"},
+			{"Op": "AND", "Circuit": "detector_12"}
+		]},
+		{"ID": "1A'_ind_caut_2", "Desc": "1A' caution indication block 2", "Condition": [
+			{"Op": "EQ", "Circuit": "route_11_2"},
 			{"Op": "AND", "Circuit": "detector_2"}
-		], "Desc": "A' caution indication block 2"},
-		{"ID": "A'_ind_caut", "Condition": [
-			{"Op": "EQ", "Circuit": "A'_ind_caut_1"}
-		], "Desc": "A' caution indication"},
-		{"ID": "A'_ind_clear", "Condition": [
-			{"Op": "EQ", "Circuit": "A'_off"},
-			{"Op": "ANDNOT", "Circuit": "A'_ind_caut"}
-		], "Desc": "A' clear indication"},
+		]},
+		{"ID": "A'_ind_caut", "Desc": "1A' caution indication", "Condition": [
+			{"Op": "EQ", "Circuit": "1A'_ind_caut_1"},
+			{"Op": "OR", "Circuit": "1A'_ind_caut_12"},
+			{"Op": "OR", "Circuit": "1A'_ind_caut_2"}
+		]},
+		{"ID": "1A'_ind_clear", "Desc": "1A' clear indication", "Condition": [
+			{"Op": "EQ", "Circuit": "1A'_off"},
+			{"Op": "ANDNOT", "Circuit": "1A'_ind_caut"}
+		]},
 		
 		
 		{"ID": "1D'_off", "ConditionOn": [
@@ -337,6 +482,67 @@
 		"Condition": [
 			{"Op": "EQ", "Circuit": "1D'_off"},
 			{"Op": "AND", "Circuit": "points_5_R"}
+		]},
+		
+		
+		{"ID": "P1_lock_r11_2", "Desc": "P1 locked from route 11-2", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "route_11_2"},
+			{"Op": "AND", "Circuit": "2B'_off"}
+		]},
+		{"ID": "P1_lock_r11_3", "Desc": "P1 locked from route 11-3", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "route_11_3"},
+			{"Op": "AND", "Circuit": "3B'_off"}
+		]},
+		{"ID": "P1_lock_r11_4", "Desc": "P1 locked from route 11-4", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "route_11_4"},
+			{"Op": "AND", "Circuit": "4B'_off"}
+		]},
+		{"ID": "P1_lock", "Desc": "P1 points interlock", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "1A'_off"},
+			{"Op": "OR", "Circuit": "1B'_off"},
+			{"Op": "OR", "Circuit": "12B'_off"},
+			{"Op": "OR", "Circuit": "P1_lock_r11_2"},
+			{"Op": "OR", "Circuit": "P1_lock_r11_3"},
+			{"Op": "OR", "Circuit": "P1_lock_r11_4"}
+		]},
+		
+		{"ID": "P2_lock_1A", "Desc": "P2 locked from 1A'", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "points_2_R"},
+			{"Op": "AND", "Circuit": "1A'_off"}
+		]},
+		{"ID": "P2_lock_2B", "Desc": "P2 locked from 2B'", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "points_4A_R"},
+			{"Op": "AND", "Circuit": "2B'_off"}
+		]},
+		{"ID": "P2_lock", "Desc": "P2 points interlock", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "3A'_off"},
+			{"Op": "OR", "Circuit": "3B'_off"},
+			{"Op": "OR", "Circuit": "4B'_off"},
+			{"Op": "OR", "Circuit": "P2_lock_1A"},
+			{"Op": "OR", "Circuit": "P2_lock_2B"}
+		]},
+		
+		{"ID": "P3_lock", "Desc": "P3 points interlock", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "12A'_off"},
+			{"Op": "OR", "Circuit": "2B'_off"},
+			{"Op": "OR", "Circuit": "3A'_off"},
+			{"Op": "OR", "Circuit": "3B'_off"},
+			{"Op": "OR", "Circuit": "P2_lock_1A"}
+		]},
+		
+		{"ID": "P4_lock", "Desc": "P4 points interlock", 
+		"Condition": [
+			{"Op": "EQ", "Circuit": "1C'_off"},
+			{"Op": "OR", "Circuit": "1D'_off"},
+			{"Op": "OR", "Circuit": "2A'_off"}
 		]},
 		
 		
@@ -436,9 +642,9 @@
 	"CircuitOutPointsReversed": "points_5_R"}
 ],
 "SignalCircuits": [
-	{"SignalID": "A'", "InputCircuit": "A'_ind_clear", "Indication": "Clear", "DropIndication": "Stop"},
-	{"SignalID": "A'", "InputCircuit": "A'_ind_caut", "Indication": "Caution", "Fixed": true, "DropIndication": "Stop"},
-	{"SignalID": "A'", "InputCircuit": "sw_A'_stop", "OutputCircuit": "A'_stop", "Indication": "Stop", "Fixed": true, "ResetLatch": true},
+	{"SignalID": "1A'", "InputCircuit": "1A'_ind_clear", "Indication": "Clear", "DropIndication": "Stop"},
+	{"SignalID": "1A'", "InputCircuit": "1A'_ind_caut", "Indication": "Caution", "Fixed": true, "DropIndication": "Stop"},
+	{"SignalID": "1A'", "InputCircuit": "sw_1A'_stop", "OutputCircuit": "1A'_stop", "Indication": "Stop", "Fixed": true, "ResetLatch": true},
 	
 	
 	{"SignalID": "1D'", "InputCircuit": "1D'_off", "Indication": "Clear", "DropIndication": "Stop"},
