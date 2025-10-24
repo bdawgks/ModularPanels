@@ -8,6 +8,7 @@ using ModularPanels.DrawLib;
 using ModularPanels.SignalLib;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
+using ModularPanels.BlockController;
 
 namespace ModularPanels
 {
@@ -25,6 +26,7 @@ namespace ModularPanels
         public List<SignalCircuitLoader>? SignalCircuits { get;set;}
         public List<DetectorCircuitLoader>? DetectorCircuits { get;set;}
         public List<BoundaryCircuitLoader>? BoundaryCircuits { get;set;}
+        public BlockControllerLoader? BlockController { get;set;}
 
         public Module Initialize()
         {
@@ -111,6 +113,11 @@ namespace ModularPanels
                 {
                     bc.Load(module.GetCircuitComponent());
                 }
+            }
+
+            if (BlockController != null)
+            {
+                BlockController.Load(module);
             }
 
             return module;

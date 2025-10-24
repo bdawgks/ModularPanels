@@ -8,17 +8,6 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.SignalLib
 {
-    public struct PointsRoute
-    {
-        public TrackPoints points;
-        public TrackPoints.PointsState state;
-
-        public readonly bool IsSet()
-        {
-            return state == points.State;
-        }
-    }
-
     public class SignalRoute
     {
         readonly string _indication;

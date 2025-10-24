@@ -298,4 +298,24 @@ namespace ModularPanels.TrackLib
             throw new NotImplementedException();
         }
     }
+
+    internal class PointsStateJsonConverter : JsonConverter<TrackPoints.PointsState>
+    {
+        public override TrackPoints.PointsState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            string? str = reader.GetString();
+            if (string.IsNullOrEmpty(str))
+                return TrackPoints.PointsState.Normal;
+
+            if (!Enum.TryParse(str, out TrackPoints.PointsState state))
+                return TrackPoints.PointsState.Normal;
+
+            return state;
+        }
+
+        public override void Write(Utf8JsonWriter writer, TrackPoints.PointsState value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

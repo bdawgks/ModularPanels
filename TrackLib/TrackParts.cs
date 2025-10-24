@@ -1,4 +1,5 @@
 ﻿using ModularPanels.DrawLib;
+using System.Text.Json.Serialization;
 
 namespace ModularPanels.TrackLib
 {
@@ -27,6 +28,7 @@ namespace ModularPanels.TrackLib
             public PointsState NewState { get; } = newState;
         }
 
+        [JsonConverter(typeof(PointsStateJsonConverter))]
         public enum PointsState
         {
             Normal,
@@ -146,6 +148,40 @@ namespace ModularPanels.TrackLib
         public List<TrackSegment> GetSegments()
         {
             return [.. _segments];
+        }
+    }
+    public struct PointsRoute
+    {
+        public TrackPoints points;
+        public TrackPoints.PointsState state;
+
+        public readonly bool IsSet()
+        {
+            return state == points.State;
+        }
+    }
+
+    public class TrackRoute
+    {
+        private readonly List<PointsRoute> _route = [];
+
+        public bool IsSet
+        {
+            get
+            {
+                foreach (PointsRoute pr in _route)
+                {
+                    if (!pr.IsSet())
+                        return false;
+                }
+
+                return true;
+            }
+        }
+
+        public void AddPoints(PointsRoute pr)
+        {
+            _route.Add(pr);
         }
     }
 }
