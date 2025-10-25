@@ -17,9 +17,18 @@ namespace ModularPanels.SignalLib
             get { return _bank; }
         }
 
+        public override string? ToString()
+        {
+            if (Parent is Module mod)
+            {
+                return string.Format("Signals:{0}", mod.Name);
+            }
+            return base.ToString();
+        }
+
         public Signal? CreateSignal(string id, string type)
         {
-            Signal? sig = _bank.CreateSignal(id, type);
+            Signal? sig = _bank.CreateSignal(this, id, type);
 
             if (sig != null)
                 _signalMap.Add(id, sig);

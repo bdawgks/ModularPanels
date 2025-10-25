@@ -47,7 +47,6 @@ namespace ModularPanels.SignalLib
 
         public virtual void ResetLatch() { }
         public virtual void SetIndicationFixed(string indication) { }
-        //public virtual void SetIndicationLatched(string indication) { }
         public virtual void SetRouteIndication(string indication) { }
         public virtual void SetAutoDropIndication(string _indication) { }
 
@@ -85,7 +84,7 @@ namespace ModularPanels.SignalLib
 
         public override string ToString()
         {
-            return string.Format("{0}:{1}", _parent.Name, _id);
+            return string.Format("{0}:{1}", _parent.ToString(), _id);
         }
     }
 
@@ -191,10 +190,7 @@ namespace ModularPanels.SignalLib
                 SetAspect(newAspect);
             }
 
-            if (_precedingSignal != null)
-            {
-                _precedingSignal.UpdateIndication();
-            }
+            _precedingSignal?.UpdateIndication();
         }
 
         private void SetAspect(string? newAspect)

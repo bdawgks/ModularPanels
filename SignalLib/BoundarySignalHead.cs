@@ -6,75 +6,121 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.SignalLib
 {
-    public class BoundarySignalHead : SignalHead
+    public abstract class BoundarySignalHead : SignalHead
     {
-        SignalHead? _repeatedHeadNext;
-        SignalHead? _repeatedHeadPrev;
-        readonly BoundarySignal.BoundaryDir _dir;
-        readonly string _defaultIndication;
-        readonly string _defaultAspect;
+        protected readonly string _defaultIndication;
+        protected readonly string _defaultAspect;
 
-        public override string Aspect 
-        { 
-            get 
-            {
-                if (_repeatedHeadNext == null)
-                {
-                    if (_activeRoute != null && _activeRoute.NextSignal != null)
-                        return _activeRoute.NextSignal.Aspect;
-                    else
-                        return _defaultAspect;
-                }
-
-                return _repeatedHeadNext.Aspect; 
-            } 
-            set { } 
-        }
-
-        public BoundarySignalHead(string id
-        , Signal parent
-        , BoundarySignal.BoundaryDir dir
-        , string defaultIndication)
-        : base(id, parent)
+        public BoundarySignalHead(string id, Signal parent, string defaultIndication) : base(id, parent)
         {
-            _dir = dir;
             _defaultIndication = defaultIndication;
 
             SignalRuleset? ruleset = _parent.GetRuleset(_id);
             string? defAspect = ruleset?.GetAspect(_defaultIndication);
             _defaultAspect = defAspect ?? string.Empty;
         }
+    }
 
-        internal void SetRepeatedHeadNext(SignalHead? repeatedHead)
+    public class BoundarySignalHeadOut : BoundarySignalHead
+    {
+        BoundarySignalHeadIn? _linkedHead;
+
+        internal override SignalHead? PrecedingSignal
         {
-            _repeatedHeadNext = repeatedHead;
+            set { SetPrecedingSignal(value); }
         }
 
-        internal void SetRepeatedHeadPrev(SignalHead? repeatedHead)
+        public override string Aspect
         {
-            _repeatedHeadPrev = repeatedHead;
+            get
+            {
+                if (_linkedHead == null)
+                {
+                    return _defaultAspect;
+                }
+
+                return _linkedHead.Aspect;
+            }
+            set { }
         }
+
+        public BoundarySignalHeadOut(string id, Signal parent, string defaultIndication)
+        : base(id, parent, defaultIndication) { }
 
         public override string ToString()
         {
-            return string.Format("{0}:{1} [{2}]", _parent.Name, _id, _dir.ToString());
+            return string.Format("{0}:{1} [Out]", _parent.ToString(), _id);
+        }
+
+        public void SetLinkedSignal(BoundarySignalHeadIn sig)
+        {
+            _linkedHead = sig;
+            sig.UpdateRoute();
+            sig.SetPrecedingSignal(_precedingSignal);
         }
 
         internal override void UpdateRoute()
         {
-            if (_repeatedHeadPrev != null)
+            if (_linkedHead != null)
             {
-                base.UpdateRoute();
+                _linkedHead.UpdateRoute();
+                _advancedSignal = _linkedHead.AdvancedSignal;
             }
+        }
 
-            _repeatedHeadNext?.UpdateRoute();
+        private void SetPrecedingSignal(SignalHead? head)
+        {
+            _precedingSignal = head;
+            if (_linkedHead == null)
+                return;
+
+            _linkedHead.SetPrecedingSignal(head);
+        }
+    }
+
+    public class BoundarySignalHeadIn : BoundarySignalHead
+    {
+        //BoundarySignalHeadOut? _linkedHead;
+
+        public override string Aspect
+        {
+            get
+            {
+                UpdateRoute();
+                if (_advancedSignal == null)
+                {
+                    return _defaultAspect;
+                }
+
+                return _advancedSignal.Aspect;
+            }
+            set { }
+        }
+
+        public BoundarySignalHeadIn(string id, Signal parent, string defaultIndication)
+        : base(id, parent, defaultIndication) { }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1} [In]", _parent.ToString(), _id);
+        }
+
+        internal override void UpdateRoute()
+        {
+            base.UpdateRoute();
+        }
+
+        public void SetPrecedingSignal(SignalHead? head)
+        {
+            _precedingSignal = head;
+            if (_advancedSignal == null)
+                return;
+
+            _advancedSignal.PrecedingSignal = _precedingSignal;
         }
         protected override SignalHead? GetRoutePrecedingHead()
         {
-            if (_repeatedHeadPrev == null)
-                return null;
-
-            return _repeatedHeadPrev.PrecedingSignal;
+            return _precedingSignal;
         }
     }
 }

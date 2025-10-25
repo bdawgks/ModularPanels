@@ -112,11 +112,11 @@ namespace ModularPanels.SignalLib
             if (type == null)
                 return;
 
-            BoundarySignal sig = new(Data.Value.ID, type, boundary, Data.Value.Index);
+            BoundarySignal sig = new(module.GetSignalComponent(), Data.Value.ID, type, boundary, Data.Value.Index);
             foreach (var headData in Data.Value.Heads)
             {
-                BoundarySignalHead headIn = new(headData.ID, sig, BoundarySignal.BoundaryDir.In, headData.DefaultIndication);
-                BoundarySignalHead headOut = new(headData.ID, sig, BoundarySignal.BoundaryDir.Out, headData.DefaultIndication);
+                BoundarySignalHeadIn headIn = new(headData.ID, sig, headData.DefaultIndication);
+                BoundarySignalHeadOut headOut = new(headData.ID, sig, headData.DefaultIndication);
                 sig.AddHead(BoundarySignal.BoundaryDir.In, headIn);
                 sig.AddHead(BoundarySignal.BoundaryDir.Out, headOut);
             }

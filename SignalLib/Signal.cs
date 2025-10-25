@@ -11,7 +11,8 @@ namespace ModularPanels.SignalLib
         protected readonly string _name;
         protected readonly SignalType _type;
         protected readonly Dictionary<string, SignalHead> _heads = [];
-        SignalHead? _defaultHead;
+        readonly SignalHead? _defaultHead;
+        readonly SignalComponent _component;
 
         Point _pos = new();
         float _angle = 0.0f;
@@ -23,10 +24,11 @@ namespace ModularPanels.SignalLib
         public float Angle { get { return _angle; } }
         public float Scale { get { return _scale; } }
 
-        public Signal(string name, SignalType type)
+        public Signal(SignalComponent comp, string name, SignalType type)
         {
             _name = name;
             _type = type;
+            _component = comp;
 
             List<string> headNames = type.GetHeadNames();
             if (headNames.Count < 1)
@@ -42,10 +44,16 @@ namespace ModularPanels.SignalLib
             }
         }
 
-        protected Signal(string name, SignalType type, bool _)
+        protected Signal(SignalComponent comp, string name, SignalType type, bool _)
         {
             _name = name;
             _type = type;
+            _component = comp;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0}){1}", _component.ToString(), _name);
         }
 
         public void SetPos(int[] pos)
