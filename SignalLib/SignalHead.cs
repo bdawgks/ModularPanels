@@ -46,10 +46,10 @@ namespace ModularPanels.SignalLib
         }
 
         public virtual void ResetLatch() { }
-        public virtual void SetIndicationFixed(string _) { }
-        public virtual void SetIndicationLatched(string _) { }
-        public virtual void SetRouteIndication(string _) { }
-        public virtual void SetAutoDropIndication(string _) { }
+        public virtual void SetIndicationFixed(string indication) { }
+        //public virtual void SetIndicationLatched(string indication) { }
+        public virtual void SetRouteIndication(string indication) { }
+        public virtual void SetAutoDropIndication(string _indication) { }
 
         public void AddRoute(SignalRoute route)
         {
@@ -141,11 +141,11 @@ namespace ModularPanels.SignalLib
             SetIndicationFixed(routeIndicaiton);
         }
 
-        public override void SetIndicationLatched(string indication)
-        {
-            if (_latchIndication != null && _latchIndication.IsLatched)
-                return;
-        }
+        //public override void SetIndicationLatched(string indication)
+        //{
+        //    if (_latchIndication != null && _latchIndication.IsLatched)
+        //        return;
+        //}
 
         public override void SetIndicationFixed(string indication)
         {

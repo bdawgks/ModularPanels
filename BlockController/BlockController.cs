@@ -14,11 +14,12 @@ namespace ModularPanels.BlockController
         public struct SignalSetParams
         {
             public SignalHead signal;
-            public string route;
+            public string? route;
             public string[] blocks;
             public string indicationClear;
             public string indicationOccupied;
             public string indicationUnset;
+            public bool autoUnset;
         }
 
         private class Block(string name)
@@ -34,10 +35,10 @@ namespace ModularPanels.BlockController
             public void SetDetector(TrackDetector detector) { _detector = detector; }
         }
 
-        private class SignalSet(SignalHead signal, TrackRoute trackRoute, List<Block> blocks, string indClear, string indOccupied, string indUnset)
+        private class SignalSet(SignalHead signal, TrackRoute? trackRoute, List<Block> blocks, string indClear, string indOccupied, string indUnset)
         {
             readonly SignalHead _signal = signal;
-            readonly TrackRoute _trackRoute = trackRoute;
+            readonly TrackRoute? _trackRoute = trackRoute;
             readonly List<Block> _blocks = blocks;
             readonly string _indicationClear = indClear;
             readonly string _indicationOccupied = indOccupied;
@@ -47,10 +48,8 @@ namespace ModularPanels.BlockController
             bool _set = false;
 
             public SignalHead Signal { get => _signal; }
-
             public bool BlockOccupied { get { UpdateBlock(); return _blockOccupied; } }
-
-            public bool IsRouteSet { get => _trackRoute.IsSet; }
+            public bool IsRouteSet { get => _trackRoute == null || _trackRoute.IsSet; }
 
             private void UpdateBlock()
             {
@@ -81,7 +80,8 @@ namespace ModularPanels.BlockController
                 _set = true;
                 SetBlocks(true);
                 string ind = BlockOccupied ? _indicationOccupied : _indicationClear;
-                _signal.SetRouteIndication(ind);
+                _signal.SetAutoDropIndication(_indicationUnset);
+                _signal.SetIndicationFixed(ind);
             }
 
             public void UnSet()
@@ -91,6 +91,7 @@ namespace ModularPanels.BlockController
 
                 _set = false;
                 SetBlocks(false);
+                _signal.ResetLatch();
                 _signal.SetIndicationFixed(_indicationUnset);
             }
 
@@ -105,6 +106,17 @@ namespace ModularPanels.BlockController
                         return false;
                 }
                 return true;
+            }
+
+            public void SetAutoUnset()
+            {
+                _signal.StateChangedEvents += (obj, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Indication) && e.Indication == _indicationUnset)
+                    {
+                        UnSet();
+                    }
+                };
             }
         }
 
@@ -131,8 +143,9 @@ namespace ModularPanels.BlockController
 
         public bool AddSignalSet(SignalSetParams pars, Circuit? circuitSet, Circuit? circuitUnset)
         {
-            if (!_routes.TryGetValue(pars.route, out var route))
-                return false;
+            TrackRoute? route = null;
+            if (!string.IsNullOrEmpty(pars.route))
+                _routes.TryGetValue(pars.route, out route);
 
             List<Block> blockList = [];
             foreach (var block in pars.blocks)
@@ -163,6 +176,9 @@ namespace ModularPanels.BlockController
                         set.UnSet();
                 };
             }
+
+            if (pars.autoUnset)
+                set.SetAutoUnset();
 
             return true;
         }

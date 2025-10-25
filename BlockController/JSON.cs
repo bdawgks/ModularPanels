@@ -33,13 +33,14 @@ namespace ModularPanels.BlockController
     internal struct SignalSetJsonData
     {
         public string SigID { get; set; }
-        public string Route { get; set; }
+        public string? Route { get; set; }
         public List<string> Blocks { get; set; }
         public string IndicationClear { get; set; }
         public string IndicationOccupied { get; set; }
         public string IndicationUnset { get; set; }
         public StringKey<Circuit> CircuitSet { get; set; }
         public StringKey<Circuit> CircuitUnset { get; set; }
+        public bool? AutoUnset { get; set; }
     }
 
     internal struct BlockControllerJsonData
@@ -100,10 +101,11 @@ namespace ModularPanels.BlockController
                 {
                     signal = sig,
                     route = ss.Route,
-                    blocks = ss.Blocks.ToArray(),
+                    blocks = [.. ss.Blocks],
                     indicationClear = ss.IndicationClear,
                     indicationOccupied = ss.IndicationOccupied,
-                    indicationUnset = ss.IndicationUnset
+                    indicationUnset = ss.IndicationUnset,
+                    autoUnset = ss.AutoUnset ?? false
                 };
 
                 mod.GetCircuitComponent().RegisterKey(ss.CircuitSet);
