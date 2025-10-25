@@ -2,6 +2,7 @@
 using ModularPanels.TrackLib;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static ModularPanels.TrackLib.TrackRoute;
 
 namespace ModularPanels.SignalLib
 {
@@ -16,7 +17,7 @@ namespace ModularPanels.SignalLib
         public required SignalHeadId SigID { get; set; }
         public SignalHeadId? NextSigID { get; set; }
         public string Indication { get; set; }
-        public List<RoutePointsLoader>? Route { get; set; }
+        public TrackRouteLoader? Route { get; set; }
         public DetectorLatchJsonData? DetectorLatch { get; set; }
     }
 
@@ -37,19 +38,16 @@ namespace ModularPanels.SignalLib
             SignalHead? nextSig = null;
             if (Data.Value.NextSigID != null)
                 nextSig = comp.GetRouteSignalHead(Data.Value.NextSigID.Value, true);
-            SignalRoute route = new(Data.Value.Indication, nextSig);
 
+            TrackRoute? trackRoute = null;
             if (Data.Value.Route != null)
             {
-                foreach (var rd in Data.Value.Route)
-                {
-                    PointsRoute? pr = rd.Load(bank);
-                    if (pr == null) 
-                        continue;
-
-                    route.AddPointsRoute(pr.Value);
-                }
+                trackRoute = Data.Value.Route.Load(bank);
             }
+                
+            trackRoute ??= new();
+
+            SignalRoute route = new(Data.Value.Indication, nextSig, trackRoute);
 
             if (Data.Value.DetectorLatch != null)
             {

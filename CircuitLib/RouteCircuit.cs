@@ -11,17 +11,12 @@ namespace ModularPanels.CircuitLib
 {
     public class RouteCircuit : Circuit
     {
-        readonly List<PointsRoute> _route = [];
+        readonly TrackRoute _route;
 
-        public RouteCircuit(string name) : base(name)
+        public RouteCircuit(string name, TrackRoute route) : base(name)
         {
             Description = "undescribed route circuit";
-        }
-
-        public void AddRoute(PointsRoute route)
-        {
-            _route.Add(route);
-            route.points.StateChangeEvents += OnPointsChanged;
+            _route = route;
         }
 
         public override void Init()
@@ -36,16 +31,7 @@ namespace ModularPanels.CircuitLib
 
         private void Update()
         {
-            foreach (PointsRoute route in _route)
-            {
-                if (!route.IsSet())
-                {
-                    SetActive(false);
-                    return;
-                }
-            }
-
-            SetActive(true);
+            SetActive(_route.IsSet);
         }
     }
 }

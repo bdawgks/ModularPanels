@@ -33,6 +33,11 @@ namespace ModularPanels.BlockController
             public bool IsOccupied { get { return _detector != null && _detector.IsOccupied; } }
 
             public void SetDetector(TrackDetector detector) { _detector = detector; }
+
+            public override string ToString()
+            {
+                return _name;
+            }
         }
 
         private class SignalSet(SignalHead signal, TrackRoute? trackRoute, List<Block> blocks, string indClear, string indOccupied, string indUnset)

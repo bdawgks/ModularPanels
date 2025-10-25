@@ -33,7 +33,7 @@ namespace ModularPanels.CircuitLib
     {
         public StringKey<Circuit> ID { get; set; }
         public string Desc { get; set; }
-        public List<RoutePointsLoader> Route { get; set; }
+        public TrackRouteLoader Route { get; set; }
     }
 
     internal struct CircuitJsonData
@@ -134,19 +134,14 @@ namespace ModularPanels.CircuitLib
                     foreach (var rc in Data.Value.RouteCircuits)
                     {
                         comp.RegisterKey(rc.ID);
-                        RouteCircuit circuit = new(rc.ID.Key)
+                        TrackRoute? route = rc.Route.Load(mod.ObjectBank);
+                        if (route == null)
+                            continue;
+
+                        RouteCircuit circuit = new(rc.ID.Key, route)
                         {
                             Description = rc.Desc ?? ""
                         };
-
-                        foreach (var rl in rc.Route)
-                        {
-                            PointsRoute? route = rl.Load(mod.ObjectBank);
-                            if (route == null) 
-                                continue;
-
-                            circuit.AddRoute(route.Value);
-                        }
                         comp.AddCircuit(circuit);
                     }
                 }

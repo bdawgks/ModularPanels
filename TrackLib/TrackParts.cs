@@ -92,25 +92,20 @@ namespace ModularPanels.TrackLib
         }
     }
 
-    public class TrackDetector
+    public class TrackDetector(string id)
     {
         public class DetectorStateArgs(bool occupied) : EventArgs 
         {
             public bool IsOccupied { get; } = occupied;
         }
 
-        readonly string _id;
+        readonly string _id = id;
         readonly HashSet<TrackSegment> _segments = [];
 
         DetectorStyle _style = new DetectorStyleRectangle();
         bool _isOccupied;
 
         public event EventHandler<DetectorStateArgs>? StateChangedEvents;
-
-        public TrackDetector(string id)
-        {
-            _id = id;
-        }
 
         public string ID
         {
@@ -150,19 +145,20 @@ namespace ModularPanels.TrackLib
             return [.. _segments];
         }
     }
-    public struct PointsRoute
-    {
-        public TrackPoints points;
-        public TrackPoints.PointsState state;
-
-        public readonly bool IsSet()
-        {
-            return state == points.State;
-        }
-    }
 
     public class TrackRoute
-    {
+    { 
+        public struct PointsRoute
+        {
+            public TrackPoints points;
+            public TrackPoints.PointsState state;
+
+            public readonly bool IsSet()
+            {
+                return state == points.State;
+            }
+        }
+
         private readonly List<PointsRoute> _route = [];
 
         public bool IsSet
@@ -177,6 +173,11 @@ namespace ModularPanels.TrackLib
 
                 return true;
             }
+        }
+
+        public void AddPoints(TrackPoints points, TrackPoints.PointsState state)
+        {
+            _route.Add(new() { points = points, state = state });
         }
 
         public void AddPoints(PointsRoute pr)

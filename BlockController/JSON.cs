@@ -72,8 +72,7 @@ namespace ModularPanels.BlockController
                     if (!pd.PointsID.TryGet(out TrackPoints? points))
                         continue;
 
-                    PointsRoute pr = new() { points = points, state = pd.Direction };
-                    route.AddPoints(pr);
+                    route.AddPoints(points, pd.Direction);
                 }
 
                 controller.AddRoute(rd.ID, route);
