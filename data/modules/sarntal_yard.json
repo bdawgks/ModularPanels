@@ -117,6 +117,8 @@
 		{"ID": "4B'", "Type": "CH_TL_Dw", "Pos": [180, 95], "Angle": -90},
 		{"ID": "A", "Type": "CH_TL_M3", "Pos": [20, 20], "Angle": 90},
 		{"ID": "B", "Type": "CH_TL_M3", "Pos": [100, 40], "Angle": -90},
+		{"ID": "B*", "Type": "CH_TL_D", "Pos": [345, 50], "Angle": -55},
+		{"ID": "C*", "Type": "CH_TL_D", "Pos": [325, 20], "Angle": 90},
 		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
 	],
 	"BoundarySignals": [
@@ -207,6 +209,8 @@
 			{"PointsID": "1", "Direction": "Reversed"}
 		], "DetectorLatch": {"ExitID": "11", "EntryID": "P1"}},
 		{"SigID": "B", "Indication": "Clear", "DetectorLatch": {"ExitID": "1", "EntryID": "11"}},
+		{"SigID": "B*", "NextSigID": "B", "Indication": "Distant"},
+		{"SigID": "C*", "NextSigID": "R0:Main", "Indication": "Distant"},
 		
 		{"SigID": "L0:Zw", "NextSigID": "1A'", "Indication": "Clear"},
 		{"SigID": "R0:Zw", "NextSigID": "1D'", "Indication": "Clear"}
