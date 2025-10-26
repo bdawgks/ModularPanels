@@ -174,9 +174,25 @@ namespace ModularPanels
         public string? InterlockCircuit { get; set; }
     }
 
+    public struct JSON_Module_ControlStateButtonState
+    {
+        public int State { get; set; }
+        public StringKey<Circuit>? CircuitSwitch { get; set; }
+        public StringKey<Circuit>? CircuitActivated { get; set; }
+    }
+
+    public struct JSON_Module_ControlStateButton
+    {
+        public string ID { set; get; }
+        public GridPos Pos { get; set; }
+        public string Template { get; set; }
+        public List<JSON_Module_ControlStateButtonState> States { get; set; }
+    }
+
     public struct JSON_Module_Controls
     {
         public List<JSON_Module_ControlRotarySwitch> RotarySwitches { get; set; }
+        public List<JSON_Module_ControlStateButton> StateButtons { get; set; }
     }
 
     public static class JSONLib

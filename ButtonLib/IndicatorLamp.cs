@@ -3,7 +3,7 @@ using ModularPanels.PanelLib;
 
 namespace ModularPanels.ButtonLib
 {
-    public struct IndicatorLampTemplate(JSON_Control_Lamp template)
+    internal struct IndicatorLampTemplate(ControlLampJsonData template)
     {
         public readonly Color colorOn = template.ColorOn;
         public readonly Color colorOff = template.ColorOff;
@@ -13,7 +13,7 @@ namespace ModularPanels.ButtonLib
 
     public class IndicatorLamp : DrawTransform
     {
-        readonly DrawLib.DrawingPos _pos;
+        readonly DrawingPos _pos;
         readonly IndicatorLampTemplate _template;
 
         bool _lampOn;
@@ -24,7 +24,7 @@ namespace ModularPanels.ButtonLib
             set => _lampOn = value;
         }
 
-        public IndicatorLamp(DrawLib.DrawingPos pos, IndicatorLampTemplate template)
+        internal IndicatorLamp(DrawingPos pos, IndicatorLampTemplate template)
         {
             _pos = pos;
             _template = template;

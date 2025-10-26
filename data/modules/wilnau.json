@@ -382,6 +382,32 @@
 			{"Pos": 1, "Text": "1"},
 			{"Pos": 2, "Text": "2"}
 		]}
+	],
+	"StateButtons": [
+		{"ID": "A", "Pos": [20,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_A_stop", "CircuitSwitch": "A_off"},
+			{"State": 1, "CircuitActivated": "sw_A_off", "CircuitSwitch": "A_stop"}
+		]},
+		{"ID": "B1", "Pos": [110,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_B1_stop", "CircuitSwitch": "B1_off"},
+			{"State": 1, "CircuitActivated": "sw_B1_off", "CircuitSwitch": "B1_stop"}
+		]},
+		{"ID": "B2", "Pos": [160,50], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_B2_stop", "CircuitSwitch": "B2_off"},
+			{"State": 1, "CircuitActivated": "sw_B2_off", "CircuitSwitch": "B2_stop"}
+		]},
+		{"ID": "C1", "Pos": [230,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_C1_stop", "CircuitSwitch": "C1_off"},
+			{"State": 1, "CircuitActivated": "sw_C1_off", "CircuitSwitch": "C1_stop"}
+		]},
+		{"ID": "C2", "Pos": [230,50], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_C2_stop", "CircuitSwitch": "C2_off"},
+			{"State": 1, "CircuitActivated": "sw_C2_off", "CircuitSwitch": "C2_stop"}
+		]},
+		{"ID": "D", "Pos": [330,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_D_stop", "CircuitSwitch": "D_off"},
+			{"State": 1, "CircuitActivated": "sw_D_off", "CircuitSwitch": "D_stop"}
+		]}
 	]
 },
 "RelayCircuits": {

@@ -1,14 +1,15 @@
-﻿using ModularPanels.ButtonLib;
+﻿using ModularPanels.BlockController;
+using ModularPanels.ButtonLib;
 using ModularPanels.CircuitLib;
 using ModularPanels.Components;
-using ModularPanels.JsonLib;
-using ModularPanels.TrackLib;
-using ModularPanels.PanelLib;
 using ModularPanels.DrawLib;
+using ModularPanels.JsonLib;
+using ModularPanels.PanelLib;
 using ModularPanels.SignalLib;
-using System.Text.Json;
+using ModularPanels.TrackLib;
 using System.Diagnostics.CodeAnalysis;
-using ModularPanels.BlockController;
+using System.Text.Json;
+using System.Xml.Linq;
 
 namespace ModularPanels
 {
@@ -330,6 +331,34 @@ namespace ModularPanels
                         }
                         _allControls.Add(rs);
                         rs.Init();
+                    }
+                }
+            }
+            if (_controlsData.Value.StateButtons != null)
+            {
+                foreach (var sbData in _controlsData.Value.StateButtons)
+                {
+                    if (TemplateBank<StateButtonTemplate>.Instance.TryGetValue(sbData.Template, out StateButtonTemplate? template))
+                    {
+                        StateButton sb = new(GetInteractionComponent(), sbData.Pos, template);
+
+                        foreach (var sData in sbData.States)
+                        {
+                            if (sData.CircuitSwitch != null)
+                            {
+                                GetCircuitComponent().RegisterKey(sData.CircuitSwitch);
+                                if (sData.CircuitSwitch.TryGet(out Circuit? circuit))
+                                    sb.SetActivationCircuit(sData.State, circuit);
+                            }
+                            if (sData.CircuitActivated != null)
+                            {
+                                GetCircuitComponent().RegisterKey(sData.CircuitActivated);
+                                if (sData.CircuitActivated.TryGet(out Circuit? circuit) && circuit is InputCircuit ic)
+                                    sb.SetActivatedCircuit(sData.State, ic);
+                            }
+                        }
+
+                        _allControls.Add(sb);
                     }
                 }
             }

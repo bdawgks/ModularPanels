@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ModularPanels.ButtonLib
 {
-    public class CircularVolume(DrawLib.DrawingPos center, float radius) : DrawTransform, IClickable
+    public class CircularVolume(DrawingPos center, float radius) : DrawTransform, IClickable
     {
-        readonly DrawLib.DrawingPos _center = center;
+        readonly DrawingPos _center = center;
         readonly float _radius = radius;
 
         Func<Point, DrawingPos, bool>? _canClickFunc;
@@ -18,7 +18,7 @@ namespace ModularPanels.ButtonLib
         public event EventHandler<ClickEventArgs>? MouseDownEvents;
         public event EventHandler<ClickEventArgs>? MouseUpEvents;
 
-        public DrawLib.DrawingPos Center { get { return _center; } }
+        public DrawingPos Center { get { return _center; } }
         public float Radius { get { return _radius; } }
         public Func<Point, DrawingPos, bool> CanClickFunc
         {

@@ -14,12 +14,12 @@ namespace ModularPanels.ButtonLib
             public readonly float angle;
             public readonly float size;
             public readonly bool latching;
-            public readonly IndicatorLampTemplate? lamp;
+            internal readonly IndicatorLampTemplate? lamp;
 
             public readonly string text = string.Empty;
-            public readonly PanelLib.TextStyle textStyle = new();
+            public readonly TextStyle textStyle = new();
 
-            public PositionTemplate(JSON_Control_RotarySwitchPosition template)
+            internal PositionTemplate(RotarySwitchPositionJsonData template)
             {
                 angle = template.Angle;
                 size = template.Size;
@@ -54,7 +54,7 @@ namespace ModularPanels.ButtonLib
         public Color SecondaryColor { get => _secondaryColor; }
         public int CenterPos { get => _centerPos; }
 
-        public RotarySwitchTemplate(JSON_Control_RotarySwitch templateData)
+        internal RotarySwitchTemplate(RotarySwitchTemplateJsonData templateData)
         {
             _name = templateData.Name;
             _centerPos = templateData.CenterPos;
@@ -79,7 +79,7 @@ namespace ModularPanels.ButtonLib
         readonly CircularVolume _clickVolume;
 
         readonly IndicatorLamp? _lamp;
-        readonly PanelLib.TextStyle _textStyle;
+        readonly TextStyle _textStyle;
         string _text;
 
         InputCircuit? _activatedCircuit;
@@ -135,14 +135,6 @@ namespace ModularPanels.ButtonLib
             {
                 context.drawing.DrawText(context.graphics, _text, context.drawing.Transform(_clickVolume.Center), _textStyle);
             }
-
-            /*
-            g.TranslateTransform(_clickVolume.Center.X, _clickVolume.Center.Y);
-            RectangleF rect = new(-_clickVolume.Radius, -_clickVolume.Radius, _clickVolume.Radius * 2f, _clickVolume.Radius * 2f);
-            Pen p = new Pen(Color.Black, 2f);
-            g.DrawEllipse(p, rect);
-            g.ResetTransform();
-            p.Dispose();*/
         }
 
         public List<DrawTransform> GetTransforms()
@@ -187,7 +179,7 @@ namespace ModularPanels.ButtonLib
         }
     }
 
-    public class RotarySwitch : DrawTransform, IControl, IDrawTransformable
+    public class RotarySwitch : DrawTransform, IControl
     {
         readonly InteractionComponent _parent;
 
