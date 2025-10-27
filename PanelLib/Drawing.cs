@@ -488,7 +488,7 @@ namespace ModularPanels.PanelLib
             Point activePoint = p.IsReversed ? reversedPoint : normalPoint;
 
             Brush inactiveBrush = new SolidBrush(p.Style.colorInactive);
-            Pen inactivePen = new(inactiveBrush, p.baseNode.style.width);
+            Pen inactivePen = new(inactiveBrush, p.baseNode.style.width + 1f);
             g.DrawLine(inactivePen, basePoint, inactivePoint);
 
             Brush lockBrush = new SolidBrush(p.Style.colorLock);

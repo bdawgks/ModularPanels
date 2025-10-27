@@ -32,9 +32,10 @@ namespace ModularPanels.BlockController
 
     internal struct SignalSetJsonData
     {
-        public string SigID { get; set; }
+        public SignalHeadId SigID { get; set; }
         public string? Route { get; set; }
         public List<string> Blocks { get; set; }
+        public List<SignalHeadId>? SetWith { get; set; }
         public string IndicationClear { get; set; }
         public string IndicationOccupied { get; set; }
         public string IndicationUnset { get; set; }
@@ -97,6 +98,17 @@ namespace ModularPanels.BlockController
                 if (sig == null)
                     continue;
 
+                List<SignalHead> setWith = [];
+                if (ss.SetWith != null)
+                {
+                    foreach (var sws in ss.SetWith)
+                    {
+                        SignalHead? setWithSig = mod.GetSignalComponent().GetSignalHead(sws);
+                        if (setWithSig != null)
+                            setWith.Add(setWithSig);
+                    }
+                }
+
                 BlockController.SignalSetParams pars = new()
                 {
                     signal = sig,
@@ -105,7 +117,8 @@ namespace ModularPanels.BlockController
                     indicationClear = ss.IndicationClear,
                     indicationOccupied = ss.IndicationOccupied,
                     indicationUnset = ss.IndicationUnset,
-                    autoUnset = ss.AutoUnset ?? false
+                    autoUnset = ss.AutoUnset ?? false,
+                    setWith = [.. setWith]
                 };
 
                 mod.GetCircuitComponent().RegisterKey(ss.CircuitSet);
