@@ -34,7 +34,17 @@
 		{"Text": "2B", "Style": "Control1", "Pos": [240,110]},
 		{"Text": "13A", "Style": "Control1", "Pos": [260,110]},
 		{"Text": "3B", "Style": "Control1", "Pos": [280,110]},
-		{"Text": "4B", "Style": "Control1", "Pos": [300,110]}
+		{"Text": "4B", "Style": "Control1", "Pos": [300,110]},
+		{"Text": "Zwergsignalen", "Style": "Control2", "Pos": [125,100]},
+		{"Text": "1 / 2", "Style": "Control2", "Pos": [30,103]},
+		{"Text": "3", "Style": "Control2", "Pos": [50,103]},
+		{"Text": "4", "Style": "Control2", "Pos": [70,103]},
+		{"Text": "W 5", "Style": "Control2", "Pos": [340,103]},
+		{"Text": "Weichen", "Style": "Control2", "Pos": [50,93]}
+	],
+	"Rectangles": [
+		{"TopLeft": [90, 105], "BottomRight": [310, 128], "BorderColor": "Black", "BorderSize": 3.0},
+		{"TopLeft": [15, 98], "BottomRight": [85, 128], "BorderColor": "Black", "BorderSize": 3.0}
 	]
 },
 "TrackData": {
@@ -348,7 +358,7 @@
 			{"Pos": 2, "Circuit": "4B'_off"}
 		]},
 		
-		{"ID": "P1", "Pos": [30,110], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
+		{"ID": "P1", "Pos": [30,118], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P1_R"},
 			{"Pos": 1, "Circuit": "sw_P1_1"},
@@ -361,7 +371,7 @@
 			{"Pos": 2, "Text": "2"},
 			{"Pos": 3, "Text": "AnG"}
 		]},
-		{"ID": "P2", "Pos": [50,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P2_lock",
+		{"ID": "P2", "Pos": [50,118], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P2_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P2_1"},
 			{"Pos": 1, "Circuit": "sw_P2_2"}
@@ -370,7 +380,7 @@
 			{"Pos": 0, "Text": "G"},
 			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P3", "Pos": [70,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		{"ID": "P3", "Pos": [70,118], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P3_1"},
 			{"Pos": 1, "Circuit": "sw_P3_2"}
@@ -379,7 +389,7 @@
 			{"Pos": 0, "Text": "G"},
 			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P4", "Pos": [340,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		{"ID": "P4", "Pos": [340,118], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P4_R"},
 			{"Pos": 1, "Circuit": "sw_P4_1"},

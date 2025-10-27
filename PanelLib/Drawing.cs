@@ -201,55 +201,6 @@ namespace ModularPanels.PanelLib
         public float textSize = 15f;
     }
 
-    public class TextStyle
-    {
-        public string font = "Calibri";
-        public Color color = Color.Black;
-        public int size = 30;
-        public bool bold = false;
-    }
-
-    public class PanelText
-    {
-        readonly string _id;
-        readonly int _x;
-        readonly int _y;
-        readonly float _angle = 0f;
-
-        string _text = "";
-        TextStyle _style = new();
-
-        public string Text
-        {
-            get => _text; 
-            set => _text = value;
-        }
-
-        public float Angle
-        {
-            get => _angle;
-        }
-
-        public TextStyle Style
-        {
-            get => _style;
-            set => _style = value;
-        }
-
-        public PanelText(string id, int x, int y, float angle)
-        {
-            _id = id;
-            _x = x;
-            _y = y;
-            _angle = angle;
-        }
-
-        public Point GetPoint(int gridSize)
-        {
-            return new(_x * gridSize, _y * gridSize);
-        }
-    }
-
     public struct DrawingContext
     {
         public Drawing drawing;
@@ -278,7 +229,6 @@ namespace ModularPanels.PanelLib
         readonly List<TrackNode> _nodes = [];
         readonly List<TrackDetector> _detectors = [];
         readonly List<Signal> _signals = [];
-        readonly List<PanelText> _texts = [];
         readonly List<IDrawable> _drawables = [];
 
         public int GridSize
@@ -336,10 +286,6 @@ namespace ModularPanels.PanelLib
             _signals.Add(signal);
         }
 
-        public void AddText(PanelText text)
-        {
-            _texts.Add(text);
-        }
         public void AddDrawable(IDrawable drawable)
         {
             _drawables.Add(drawable);
@@ -377,10 +323,6 @@ namespace ModularPanels.PanelLib
             foreach (Signal sig in _signals)
             {
                 DrawSignal(g, sig);
-            }
-            foreach (PanelText t in _texts)
-            {
-                DrawText(g, t);
             }
 
             DrawingContext context = new()
@@ -551,7 +493,7 @@ namespace ModularPanels.PanelLib
             FontStyle fontStyle = FontStyle.Regular;
             if (style.bold)
                 fontStyle = FontStyle.Bold;
-            Font font = new("Times New Roman", style.size, fontStyle);
+            Font font = new(style.font, style.size, fontStyle);
 
             g.TranslateTransform(pos.X, pos.Y);
             g.RotateTransform(angle);
@@ -568,14 +510,6 @@ namespace ModularPanels.PanelLib
             format.Dispose();
             font.Dispose();
             textBrush.Dispose();
-        }
-
-        private void DrawText(Graphics g, PanelText text)
-        {
-            Point p = text.GetPoint(_gridSize);
-            Transform(ref p);
-
-            DrawText(g, text.Text, p, text.Style, text.Angle);
         }
 
         private void DrawDetector(Graphics g, TrackDetector detector)
