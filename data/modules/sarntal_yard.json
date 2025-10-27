@@ -974,6 +974,18 @@
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_B_off", "CircuitUnset": "sw_B_stop",
 			"AutoUnset": true
+		},
+		{
+			"SigID": "R0:Main:In", "Route": "R_21_1", "Blocks": ["m_T21","m_P5","m_T1"], "SetWith": ["1D'"],
+			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "R0:Main:In", "Route": "R_21_2", "Blocks": ["m_T21","m_P5","m_T2"], "SetWith": ["1D'"],
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
+			"AutoUnset": true
 		}
 	]
 }}

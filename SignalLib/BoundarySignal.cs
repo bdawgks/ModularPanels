@@ -46,6 +46,14 @@ namespace ModularPanels.SignalLib
             return null;
         }
 
+        public override SignalHead? GetHead(SignalHeadId id)
+        {
+            if (id.boundaryDir == null || id.head == null)
+                return null;
+
+            return GetHead(id.head, id.boundaryDir.Value);
+        }
+
         public override void InitSignal()
         {
             foreach (var head in _headsOut.Values)

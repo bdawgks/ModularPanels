@@ -14,17 +14,25 @@ namespace ModularPanels.SignalLib
     {
         public readonly string id;
         public readonly string? head = null;
+        public readonly BoundarySignal.BoundaryDir? boundaryDir = null;
 
         public SignalHeadId(string idStr)
         {
             if (idStr.Contains(':'))
             {
                 string[] split = idStr.Split(':');
-                if (split.Length != 2)
+                if (split.Length < 2 || split.Length > 3)
                     throw new Exception(string.Format("Signal ID could not be parsed, invalid delimiters [{0}]", idStr));
 
                 id = split[0];
                 head = split[1];
+                if (split.Length > 2)
+                {
+                    if (Enum.TryParse(split[2], out BoundarySignal.BoundaryDir dir))
+                    {
+                        boundaryDir = dir;
+                    }
+                }
 
                 if (string.IsNullOrEmpty(head))
                     throw new Exception(string.Format("Signal ID could not be parsed, head name must not be empty [{0}]", idStr));

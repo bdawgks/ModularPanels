@@ -62,7 +62,7 @@ namespace ModularPanels.BlockController
             if (Data == null)
                 return null;
 
-            BlockController controller = new();
+            BlockController controller = new(mod);
 
             foreach (var rd in Data.Value.Routes)
             {

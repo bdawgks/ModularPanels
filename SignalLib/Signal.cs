@@ -56,6 +56,8 @@ namespace ModularPanels.SignalLib
             return string.Format("({0}){1}", _component.ToString(), _name);
         }
 
+        public SignalComponent GetParentComponent() { return _component; }
+
         public void SetPos(int[] pos)
         {
             if (pos.Length == 2)
@@ -72,6 +74,11 @@ namespace ModularPanels.SignalLib
         public void SetScale(float scale)
         {
             _scale = scale;
+        }
+
+        public virtual SignalHead? GetHead(SignalHeadId id)
+        {
+            return GetHead(id.head);
         }
 
         public SignalHead? GetHead(string? id)

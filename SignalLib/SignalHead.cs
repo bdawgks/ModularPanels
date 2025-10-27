@@ -86,6 +86,11 @@ namespace ModularPanels.SignalLib
         {
             return string.Format("{0}:{1}", _parent.ToString(), _id);
         }
+
+        public SignalComponent GetParentComponent()
+        {
+            return _parent.GetParentComponent();
+        }
     }
 
     public class SignalHeadImpl : SignalHead

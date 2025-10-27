@@ -1,15 +1,12 @@
 ﻿using ModularPanels.CircuitLib;
 using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ModularPanels.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModularPanels.BlockController
 {
-    public class BlockController
+    public class BlockController(IParent parent) : Component(parent)
     {
         public struct SignalSetParams
         {
@@ -85,8 +82,41 @@ namespace ModularPanels.BlockController
                 }
             }
 
+            private bool TryGetLinked([NotNullWhen(true)] out BlockController? linkedController, [NotNullWhen(true)] out SignalHead? linkedSignal)
+            {
+                linkedSignal = null;
+                linkedController = null;
+                if (!TryGetLinkedSignal(out linkedSignal))
+                    return false;
+
+                SignalComponent linkedComponent = linkedSignal.GetParentComponent();
+                if (!linkedComponent.Parent.TryGetComponent(out linkedController))
+                    return false;
+
+                return true;
+            }
+
+            private bool TryGetLinkedSignal([NotNullWhen(true)] out SignalHead? linked)
+            {
+                linked = null;
+                if (_signal is not BoundarySignalHeadOut outSig)
+                    return false;
+
+                linked = outSig.Linked;
+                if (linked == null)
+                    return false;
+
+                return true;
+            }
+
             public void Set()
             {
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    linkedController.TrySetSignal(linkedSig);
+                    return;
+                }
+
                 if (_set || !CanSet())
                     return;
 
@@ -130,6 +160,11 @@ namespace ModularPanels.BlockController
 
             public bool CanSet()
             {
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    return linkedController.CanSetSignal(linkedSig);
+                }
+
                 if (_lockedBy != null)
                     return false;
 
