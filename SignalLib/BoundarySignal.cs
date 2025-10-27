@@ -7,7 +7,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ModularPanels.SignalLib
 {
-    public class BoundarySignal(string name, SignalType type, BoundarySignal.BoundarySide boundary, int index) : Signal(name, type, true)
+    public class BoundarySignal(SignalComponent comp, string name, SignalType type, BoundarySignal.BoundarySide boundary, int index) : Signal(comp, name, type, true)
     {
         public enum BoundarySide
         {
@@ -66,20 +66,18 @@ namespace ModularPanels.SignalLib
                     foreach (var headIn in _heads.Values)
                     {
                         SignalHead? otherHeadOut = otherSig.GetHead(headIn.ID, BoundaryDir.Out);
-                        if (otherHeadOut != null && otherHeadOut is BoundarySignalHead otherHeadB && headIn is BoundarySignalHead headB)
+                        if (otherHeadOut != null && otherHeadOut is BoundarySignalHeadOut otherHeadB && headIn is BoundarySignalHeadIn headB)
                         {
-                            otherHeadB.SetRepeatedHeadNext(headB);
-                            headB.SetRepeatedHeadPrev(otherHeadB);
+                            otherHeadB.SetLinkedSignal(headB);
                         }
                     }
 
                     foreach (var headOut in _headsOut.Values)
                     {
                         SignalHead? otherHeadIn = otherSig.GetHead(headOut.ID, BoundaryDir.In);
-                        if (otherHeadIn != null && otherHeadIn is BoundarySignalHead otherHeadB && headOut is BoundarySignalHead headB)
+                        if (otherHeadIn != null && otherHeadIn is BoundarySignalHeadIn otherHeadB && headOut is BoundarySignalHeadOut headB)
                         {
-                            headB.SetRepeatedHeadNext(otherHeadB);
-                            otherHeadB.SetRepeatedHeadPrev(headB);
+                            headB.SetLinkedSignal(otherHeadB);
                         }
                     }
 

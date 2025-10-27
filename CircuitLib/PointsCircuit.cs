@@ -12,8 +12,8 @@ namespace ModularPanels.CircuitLib
     {
         readonly TrackPoints _points;
 
-        SimpleCircuit? _outputPointsNormalized;
-        SimpleCircuit? _outputPointsReversed;
+        InputCircuit? _outputPointsNormalized;
+        InputCircuit? _outputPointsReversed;
         Circuit? _inputPointsNormal;
         Circuit? _inputPointsReverse;
 
@@ -25,12 +25,14 @@ namespace ModularPanels.CircuitLib
 
         private void OnInputNormal(object? sender, CircuitActivationArgs args)
         {
-            _points.SetState(TrackPoints.PointsState.Normal);
+            if (args.Active)
+                _points.SetState(TrackPoints.PointsState.Normal);
         }
 
         private void OnInputReverse(object? sender, CircuitActivationArgs args)
         {
-            _points.SetState(TrackPoints.PointsState.Reversed);
+            if (args.Active)
+                _points.SetState(TrackPoints.PointsState.Reversed);
         }
 
         private static bool AssignInputCircuit([NotNullWhen(true)] ref Circuit? member, Circuit? value)
@@ -45,7 +47,7 @@ namespace ModularPanels.CircuitLib
             return true;
         }
 
-        private static void AssignOutputCircuit(ref SimpleCircuit? member, SimpleCircuit? value)
+        private static void AssignOutputCircuit(ref InputCircuit? member, InputCircuit? value)
         {
             if (value == null)
                 return;
@@ -68,7 +70,7 @@ namespace ModularPanels.CircuitLib
             }
         }
 
-        public void SetOutputs(SimpleCircuit? outputNormalized, SimpleCircuit? outputReversed)
+        public void SetOutputs(InputCircuit? outputNormalized, InputCircuit? outputReversed)
         {
             AssignOutputCircuit(ref _outputPointsNormalized, outputNormalized);
             AssignOutputCircuit(ref _outputPointsReversed, outputReversed);

@@ -41,10 +41,10 @@ namespace ModularPanels.SignalLib
             }
         }
 
-        public Signal? CreateSignal(string id, string type)
+        public Signal? CreateSignal(SignalComponent comp, string id, string type)
         {
             if (_types.TryGetValue(type, out SignalType? value))
-                return new(id, value);
+                return new(comp, id, value);
 
             return null;
         }

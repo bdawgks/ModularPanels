@@ -3,6 +3,7 @@ using ModularPanels.JsonLib;
 using ModularPanels.PanelLib;
 using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
+using ModularPanels.CircuitLib;
 using System.Text.Json;
 
 namespace ModularPanels
@@ -153,7 +154,7 @@ namespace ModularPanels
     public struct JSON_Module_SwitchCircuit
     {
         public int Pos { get; set; }
-        public string Circuit { get; set; }
+        public StringKey<Circuit> Circuit { get; set; }
     }
 
     public struct JSON_Module_SwitchTextLabels
@@ -173,45 +174,25 @@ namespace ModularPanels
         public string? InterlockCircuit { get; set; }
     }
 
+    public struct JSON_Module_ControlStateButtonState
+    {
+        public int State { get; set; }
+        public StringKey<Circuit>? CircuitSwitch { get; set; }
+        public StringKey<Circuit>? CircuitActivated { get; set; }
+    }
+
+    public struct JSON_Module_ControlStateButton
+    {
+        public string ID { set; get; }
+        public GridPos Pos { get; set; }
+        public string Template { get; set; }
+        public List<JSON_Module_ControlStateButtonState> States { get; set; }
+    }
+
     public struct JSON_Module_Controls
     {
         public List<JSON_Module_ControlRotarySwitch> RotarySwitches { get; set; }
-    }
-
-    public struct JSON_Module_SimpleCircuit
-    {
-        public string ID { get; set; }
-        public string Desc { get; set; }
-        public bool Active { get; set; }
-    }
-
-    public struct JSON_Module_LogicOperator
-    {
-        public string Op { get; set; }
-        public string Circuit { get; set; }
-    }
-
-    public struct JSON_Module_LogicCircuit
-    {
-        public string ID { get; set; }
-        public List<JSON_Module_LogicOperator> Condition { get; set; }
-        public List<JSON_Module_LogicOperator> ConditionOn { get; set; }
-        public List<JSON_Module_LogicOperator> ConditionOff { get; set; }
-        public string Desc { get; set; }
-    }
-
-    public struct JSON_Module_SignalCircuit
-    {
-        public string SigID { get; set; }
-        public string Circuit { get; set; }
-        public string Indication { get; set; }
-    }
-
-    public struct JSON_Module_RelayCircuits
-    {
-        public List<JSON_Module_SimpleCircuit> SimpleCircuits { get; set; }
-        public List<JSON_Module_LogicCircuit> LogicCircuits { get; set; }
-        public List<JSON_Module_SignalCircuit> SignalCircuits { get; set; }
+        public List<JSON_Module_ControlStateButton> StateButtons { get; set; }
     }
 
     public static class JSONLib

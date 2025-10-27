@@ -1,4 +1,5 @@
 ﻿using ModularPanels.DrawLib;
+using System.Text.Json.Serialization;
 
 namespace ModularPanels.TrackLib
 {
@@ -27,6 +28,7 @@ namespace ModularPanels.TrackLib
             public PointsState NewState { get; } = newState;
         }
 
+        [JsonConverter(typeof(PointsStateJsonConverter))]
         public enum PointsState
         {
             Normal,
@@ -90,25 +92,20 @@ namespace ModularPanels.TrackLib
         }
     }
 
-    public class TrackDetector
+    public class TrackDetector(string id)
     {
         public class DetectorStateArgs(bool occupied) : EventArgs 
         {
             public bool IsOccupied { get; } = occupied;
         }
 
-        readonly string _id;
+        readonly string _id = id;
         readonly HashSet<TrackSegment> _segments = [];
 
         DetectorStyle _style = new DetectorStyleRectangle();
         bool _isOccupied;
 
         public event EventHandler<DetectorStateArgs>? StateChangedEvents;
-
-        public TrackDetector(string id)
-        {
-            _id = id;
-        }
 
         public string ID
         {
@@ -146,6 +143,46 @@ namespace ModularPanels.TrackLib
         public List<TrackSegment> GetSegments()
         {
             return [.. _segments];
+        }
+    }
+
+    public class TrackRoute
+    { 
+        public struct PointsRoute
+        {
+            public TrackPoints points;
+            public TrackPoints.PointsState state;
+
+            public readonly bool IsSet()
+            {
+                return state == points.State;
+            }
+        }
+
+        private readonly List<PointsRoute> _route = [];
+
+        public bool IsSet
+        {
+            get
+            {
+                foreach (PointsRoute pr in _route)
+                {
+                    if (!pr.IsSet())
+                        return false;
+                }
+
+                return true;
+            }
+        }
+
+        public void AddPoints(TrackPoints points, TrackPoints.PointsState state)
+        {
+            _route.Add(new() { points = points, state = state });
+        }
+
+        public void AddPoints(PointsRoute pr)
+        {
+            _route.Add(pr);
         }
     }
 }

@@ -211,62 +211,6 @@
 },
 "Controls": {
 	"RotarySwitches": [
-	
-		{"ID": "A", "Pos": [30,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_A_stop"},
-			{"Pos": 2, "Circuit": "sw_A_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "A_stop"},
-			{"Pos": 2, "Circuit": "A_off"}
-		]},
-		{"ID": "C1", "Pos": [45,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_C1_stop"},
-			{"Pos": 2, "Circuit": "sw_C1_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "C1_stop"},
-			{"Pos": 2, "Circuit": "C1_off"}
-		]},
-		{"ID": "C2", "Pos": [60,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_C2_stop"},
-			{"Pos": 2, "Circuit": "sw_C2_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "C2_stop"},
-			{"Pos": 2, "Circuit": "C2_off"}
-		]},
-		{"ID": "B1", "Pos": [115,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_B1_stop"},
-			{"Pos": 2, "Circuit": "sw_B1_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "B1_stop"},
-			{"Pos": 2, "Circuit": "B1_off"}
-		]},
-		{"ID": "B2", "Pos": [130,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_B2_stop"},
-			{"Pos": 2, "Circuit": "sw_B2_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "B2_stop"},
-			{"Pos": 2, "Circuit": "B2_off"}
-		]},
-		{"ID": "D", "Pos": [145,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_D_stop"},
-			{"Pos": 2, "Circuit": "sw_D_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "D_stop"},
-			{"Pos": 2, "Circuit": "D_off"}
-		]},
-	
 		{"ID": "A'", "Pos": [100,110], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_A'_stop"},
@@ -382,6 +326,32 @@
 			{"Pos": 1, "Text": "1"},
 			{"Pos": 2, "Text": "2"}
 		]}
+	],
+	"StateButtons": [
+		{"ID": "A", "Pos": [20,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_A_stop", "CircuitSwitch": "A_off"},
+			{"State": 1, "CircuitActivated": "sw_A_off", "CircuitSwitch": "A_stop"}
+		]},
+		{"ID": "B1", "Pos": [110,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_B1_stop", "CircuitSwitch": "B1_off"},
+			{"State": 1, "CircuitActivated": "sw_B1_off", "CircuitSwitch": "B1_stop"}
+		]},
+		{"ID": "B2", "Pos": [160,50], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_B2_stop", "CircuitSwitch": "B2_off"},
+			{"State": 1, "CircuitActivated": "sw_B2_off", "CircuitSwitch": "B2_stop"}
+		]},
+		{"ID": "C1", "Pos": [230,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_C1_stop", "CircuitSwitch": "C1_off"},
+			{"State": 1, "CircuitActivated": "sw_C1_off", "CircuitSwitch": "C1_stop"}
+		]},
+		{"ID": "C2", "Pos": [230,50], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_C2_stop", "CircuitSwitch": "C2_off"},
+			{"State": 1, "CircuitActivated": "sw_C2_off", "CircuitSwitch": "C2_stop"}
+		]},
+		{"ID": "D", "Pos": [330,70], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_D_stop", "CircuitSwitch": "D_off"},
+			{"State": 1, "CircuitActivated": "sw_D_off", "CircuitSwitch": "D_stop"}
+		]}
 	]
 },
 "RelayCircuits": {
@@ -454,7 +424,10 @@
 		{"ID": "detector_1-1", "Desc": "Detector 1-1 occupied"},
 		{"ID": "detector_1-2", "Desc": "Detector 1-2 occupied"},
 		{"ID": "detector_2-1", "Desc": "Detector 2-1 occupied"},
-		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"}
+		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"},
+		
+		{"ID": "L0_ind_clear", "Desc": "Left main sig indication CLEAR", "Active": true},
+		{"ID": "L0_ind_40km", "Desc": "Left main sig indication 40KM"}
 	],
 	"LogicCircuits": [
 		{"ID": "A'_opposingMoveB2", "Condition": [
@@ -719,14 +692,30 @@
 		], "Desc": "A main signal to OFF"},
 		
 		
+		
+		
+		{"ID": "B_allow_off", "Condition": [
+			{"Op": "EQ", "Circuit": "L0_ind_clear"},
+			{"Op": "OR", "Circuit": "L0_ind_40km"}
+		], "Desc": "Allow B1 or B2 to come off"},
+		
 		{"ID": "B1_off",
 		"ConditionOn": [
 			{"Op": "EQ", "Circuit": "sw_B1_off"},
 			{"Op": "AND", "Circuit": "B1'_off"},
+			{"Op": "AND", "Circuit": "B_allow_off"},
 			{"Op": "ANDNOT", "Circuit": "detector_11"}
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "B1_stop"}
 		], "Desc": "B1 main signal to OFF"},
+		{"ID": "B1_ind_clear", "Desc": "B1 sig indication CLEAR", "Condition": [
+			{"Op": "EQ", "Circuit": "B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		]},
+		{"ID": "B1_ind_40km", "Desc": "B1 sig indication 40KM", "Condition": [
+			{"Op": "EQ", "Circuit": "B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		]},
 		
 		
 		{"ID": "B2_off",
@@ -734,10 +723,19 @@
 			{"Op": "EQ", "Circuit": "sw_B2_off"},
 			{"Op": "AND", "Circuit": "B2'_off"},
 			{"Op": "AND", "Circuit": "points_3_N"},
+			{"Op": "AND", "Circuit": "B_allow_off"},
 			{"Op": "ANDNOT", "Circuit": "detector_11"}
 		], "ConditionOff": [
 			{"Op": "EQ", "Circuit": "B2_stop"}
 		], "Desc": "B2 main signal to OFF"},
+		{"ID": "B2_ind_clear", "Desc": "B2 sig indication CLEAR", "Condition": [
+			{"Op": "EQ", "Circuit": "B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		]},
+		{"ID": "B2_ind_40km", "Desc": "B2 sig indication 40KM", "Condition": [
+			{"Op": "EQ", "Circuit": "B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		]},
 		
 		
 		{"ID": "C1_off",
@@ -863,6 +861,10 @@
 		], "Desc": "Switch P4 interlocking"}
 	]
 },
+"BoundaryCircuits": [
+	{"Boundary": "Left", "ID": "MAIN_IND_CLEAR", "InCircuit": "L0_ind_clear"},
+	{"Boundary": "Left", "ID": "MAIN_IND_40KM", "InCircuit": "L0_ind_40km"}
+],
 "PointsCircuits": [
 	{"PointsID": "1",
 	"CircuitInPointsNormal": "P1_throw_N",
@@ -913,11 +915,13 @@
 	
 	{"SignalID": "A:Main", "InputCircuit": "A_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "A:Dist", "InputCircuit": "A_off", "Indication": "Distant"},
-	{"SignalID": "A:Main", "InputCircuit": "A'_stop", "OutputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
+	{"SignalID": "A:Main", "InputCircuit": "sw_A_stop", "OutputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "A:Dist", "InputCircuit": "A_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B1", "InputCircuit": "B1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B1", "InputCircuit": "B1_ind_clear", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B1", "InputCircuit": "B1_ind_40km", "Indication": "40km", "Fixed": true, "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "B1", "InputCircuit": "B1'_stop", "OutputCircuit": "B1_stop", "Indication": "Stop", "Fixed": true},
-	{"SignalID": "B2", "InputCircuit": "B2_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B2", "InputCircuit": "B2_ind_clear", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
+	{"SignalID": "B2", "InputCircuit": "B2_ind_40km", "Indication": "40km", "Fixed": true, "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "B2", "InputCircuit": "B2'_stop", "OutputCircuit": "B2_stop", "Indication": "Stop", "Fixed": true},
 	{"SignalID": "C1", "InputCircuit": "C1_off", "Indication": "Clear", "DropIndication": "Stop", "ResetLatch": true},
 	{"SignalID": "C1", "InputCircuit": "C1'_stop", "OutputCircuit": "C1_stop", "Indication": "Stop", "Fixed": true},

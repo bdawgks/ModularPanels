@@ -13,7 +13,7 @@ namespace ModularPanels.CircuitLib
         readonly string _indication = indication;
         readonly bool _fixedIndication = fixedIndication;
         Circuit? _input;
-        SimpleCircuit? _output;
+        InputCircuit? _output;
         string? _dropIndication;
         bool _resetLatch = false;
 
@@ -29,7 +29,7 @@ namespace ModularPanels.CircuitLib
             _input.ActivationEvents += OnInputChange;
         }
 
-        public void SetOutput(SimpleCircuit? output)
+        public void SetOutput(InputCircuit? output)
         {
             if (_output != null)
                 return;

@@ -2,7 +2,7 @@
 
 namespace ModularPanels.ButtonLib
 {
-    public interface IControl : DrawLib.IDrawable, IDrawTransformable
+    public interface IControl : IDrawable, IDrawTransformable
     {
         public IClickable[] GetClickables();
     }

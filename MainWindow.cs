@@ -51,7 +51,7 @@ namespace ModularPanels
                 if (Path.GetExtension(file) != ".json")
                     continue;
 
-                ButtonLib.JSON_Control_Templates.LoadTemplateFile(file);
+                ButtonLib.ControlTemplatesLoader.LoadTemplateFile(file);
             }
         }
 
