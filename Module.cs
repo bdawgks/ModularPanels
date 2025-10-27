@@ -10,6 +10,7 @@ using ModularPanels.TrackLib;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Xml.Linq;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace ModularPanels
 {
@@ -85,6 +86,14 @@ namespace ModularPanels
             }
 
             TrackData?.Load(module.ObjectBank);
+
+            // TEMPORARY
+            //==========
+            foreach (var d in module.ObjectBank.GetObjects<TrackDetector>().Values)
+            {
+                MainWindow.Instance?.AddDetectorDebug(module, d);
+            }
+            //==========
 
             SignalData.InitSignals(module);
 
