@@ -41,14 +41,11 @@ namespace ModularPanels
     {
         public string Text { get; set; }
         public string Style { get; set; }
-        public int[] Pos { get; set; }
+        public GridPos Pos { get; set; }
         public float? Angle { get; set; }
 
         public readonly PanelText Load()
         {
-            if (Pos.Length != 2)
-                throw new Exception("Invalid position for text " + Text);
-
             float angle = 0f;
             if (Angle != null)
                 angle = Angle.Value;
@@ -61,7 +58,7 @@ namespace ModularPanels
             else
                 style = id.Object!;
 
-                PanelText text = new(Text, Pos[0], Pos[1], angle)
+                PanelText text = new(Pos, angle)
                 {
                     Text = Text,
                     Style = style
@@ -77,6 +74,7 @@ namespace ModularPanels
         public ColorJS BackgroundColor { get; set; }
         public StringKey<GridStyle>? GridStyle { get; set; }
         public List<JSON_Text> Texts { get; set; }
+        public List<PanelRectLoader> Rectangles { get; set; }
         public List<TrackStyleLoader> TrackStyles { get; set; }
         public List<PointsStyleLoader> PointsStyles { get; set; }
         public List<DetectorStyleLoader> DetectorStyles { get; set; }

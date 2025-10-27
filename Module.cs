@@ -10,6 +10,7 @@ using ModularPanels.TrackLib;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Xml.Linq;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace ModularPanels
 {
@@ -61,6 +62,18 @@ namespace ModularPanels
                 }
             }
 
+            if (DrawingData.Rectangles != null)
+            {
+                foreach (var r in DrawingData.Rectangles)
+                {
+                    PanelRect? rect = r.Load();
+                    if (rect == null)
+                        continue;
+
+                    module.Rectangles.Add(rect);
+                }
+            }
+
             JSONLib.LoadTrackStyles(DrawingData.TrackStyles);
             JSONLib.LoadPointsStyles(DrawingData.PointsStyles);
             JSONLib.LoadDetectorStyles(DrawingData.DetectorStyles);
@@ -73,6 +86,14 @@ namespace ModularPanels
             }
 
             TrackData?.Load(module.ObjectBank);
+
+            // TEMPORARY
+            //==========
+            foreach (var d in module.ObjectBank.GetObjects<TrackDetector>().Values)
+            {
+                MainWindow.Instance?.AddDetectorDebug(module, d);
+            }
+            //==========
 
             SignalData.InitSignals(module);
 
@@ -144,6 +165,7 @@ namespace ModularPanels
         readonly ObjectBank _objBank = new();
         readonly Dictionary<string, Signal> _signals = [];
         readonly List<PanelText> _texts = [];
+        readonly List<PanelRect> _rectangles = [];
         readonly List<IControl> _allControls = [];
 
         public string Name
@@ -158,6 +180,7 @@ namespace ModularPanels
         public Dictionary<string, TrackDetector> TrackDetectors { get { return _objBank.GetObjects<TrackDetector>(); } }
         public Dictionary<string, Signal> Signals { get { return _signals; } }
         public List<PanelText> Texts { get { return _texts; } }
+        public List<PanelRect> Rectangles { get { return _rectangles; } }
 
         public Module? LeftModule
         {
@@ -235,9 +258,15 @@ namespace ModularPanels
             {
                 drawing.AddSignal(s);
             }
+            foreach (PanelRect r in _rectangles)
+            {
+                drawing.AddDrawable(r);
+                drawing.AddTransformable(r);
+            }
             foreach (PanelText t in _texts)
             {
-                drawing.AddText(t);
+                drawing.AddDrawable(t);
+                drawing.AddTransformable(t);
             }
             InitControls();
             foreach (IControl c in _allControls)

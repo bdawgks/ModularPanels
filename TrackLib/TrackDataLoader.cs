@@ -118,8 +118,6 @@ namespace ModularPanels.TrackLib
                     }
 
                     bank.DefineObject(detector.ID, detector);
-                    
-                    MainWindow.Instance?.AddDetectorDebug(detector);
                 }
             }
         }
