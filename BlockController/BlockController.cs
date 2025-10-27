@@ -51,6 +51,7 @@ namespace ModularPanels.BlockController
 
             bool _blockOccupied = false;
             bool _set = false;
+            InputCircuit? _lockCircuit;
 
             public SignalHead Signal { get => _signal; }
             public bool BlockOccupied { get { UpdateBlock(); return _blockOccupied; } }
@@ -84,6 +85,7 @@ namespace ModularPanels.BlockController
 
                 _set = true;
                 SetBlocks(true);
+                _lockCircuit?.SetActive(true);
                 string ind = BlockOccupied ? _indicationOccupied : _indicationClear;
                 _signal.SetAutoDropIndication(_indicationUnset);
                 _signal.SetIndicationFixed(ind);
@@ -96,6 +98,7 @@ namespace ModularPanels.BlockController
 
                 _set = false;
                 SetBlocks(false);
+                _lockCircuit?.SetActive(false);
                 _signal.ResetLatch();
                 _signal.SetIndicationFixed(_indicationUnset);
             }
@@ -123,6 +126,11 @@ namespace ModularPanels.BlockController
                     }
                 };
             }
+
+            public void SetLockCircuit(InputCircuit lockCircuit)
+            {
+                _lockCircuit = lockCircuit;
+            }
         }
 
         readonly Dictionary<string, Block> _blocks = [];
@@ -146,7 +154,7 @@ namespace ModularPanels.BlockController
             return true;
         }
 
-        public bool AddSignalSet(SignalSetParams pars, Circuit? circuitSet, Circuit? circuitUnset)
+        public bool AddSignalSet(SignalSetParams pars, Circuit? circuitSet, Circuit? circuitUnset, InputCircuit? circuitLocked)
         {
             TrackRoute? route = null;
             if (!string.IsNullOrEmpty(pars.route))
@@ -181,6 +189,9 @@ namespace ModularPanels.BlockController
                         set.UnSet();
                 };
             }
+
+            if (circuitLocked != null)
+                set.SetLockCircuit(circuitLocked);
 
             if (pars.autoUnset)
                 set.SetAutoUnset();

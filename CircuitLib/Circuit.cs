@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ModularPanels.CircuitLib
 {
@@ -47,6 +48,11 @@ namespace ModularPanels.CircuitLib
             }
         }
 
+        public override string ToString()
+        {
+            return string.Format("Circuit: {0}", Name);
+        }
+
         public void AddToLogicCircuit(LogicCircuit logic)
         {
             _affectedCircuits.Add(logic);
@@ -58,6 +64,11 @@ namespace ModularPanels.CircuitLib
         public new void SetActive(bool active)
         {
             base.SetActive(active);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Input Circuit: {0}", Name);
         }
     }
 }

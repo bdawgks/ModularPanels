@@ -40,6 +40,7 @@ namespace ModularPanels.BlockController
         public string IndicationUnset { get; set; }
         public StringKey<Circuit> CircuitSet { get; set; }
         public StringKey<Circuit> CircuitUnset { get; set; }
+        public StringKey<Circuit> CircuitLocked { get; set; }
         public bool? AutoUnset { get; set; }
     }
 
@@ -110,7 +111,10 @@ namespace ModularPanels.BlockController
                 mod.GetCircuitComponent().RegisterKey(ss.CircuitSet);
                 mod.GetCircuitComponent().RegisterKey(ss.CircuitUnset);
 
-                controller.AddSignalSet(pars, ss.CircuitSet.Object, ss.CircuitUnset.Object);
+                InputCircuit? lockCircuit = null;
+                if (ss.CircuitLocked != null)
+                    mod.GetCircuitComponent().TryGetCircuit(ss.CircuitLocked.Key, out lockCircuit);
+                controller.AddSignalSet(pars, ss.CircuitSet.Object, ss.CircuitUnset.Object, lockCircuit);
             }
 
             return controller;

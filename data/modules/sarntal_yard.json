@@ -217,26 +217,7 @@
 	]
 },
 "Controls": {
-	"RotarySwitches": [
-		{"ID": "A", "Pos": [30,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_A_stop"},
-			{"Pos": 2, "Circuit": "sw_A_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "A_stop"},
-			{"Pos": 2, "Circuit": "A_off"}
-		]},
-		{"ID": "B", "Pos": [50,10], "Template": "STB_DwarfSwitch",
-		"SwitchCircuits": [
-			{"Pos": 0, "Circuit": "sw_B_stop"},
-			{"Pos": 2, "Circuit": "sw_B_off"}
-		],
-		"LampCircuits": [
-			{"Pos": 0, "Circuit": "B_stop"},
-			{"Pos": 2, "Circuit": "B_off"}
-		]},
-	
+	"RotarySwitches": [	
 		{"ID": "1A'", "Pos": [100,120], "Template": "STB_DwarfSwitch",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_1A'_stop"},
@@ -430,6 +411,11 @@
 		{"ID": "A_stop", "Desc": "Signal A indicates STOP", "Active": true},
 		{"ID": "B_stop", "Desc": "Signal B indicates STOP", "Active": true},
 		
+		{"ID": "1A'_R_11_1_set", "Desc": "Route 11 to 1 set for 1A'"},
+		{"ID": "1A'_R_11_12_set", "Desc": "Route 11 to 12 set for 1A'"},
+		{"ID": "1C'_R_21_1_set", "Desc": "Route 21 to 1 set for 1C'"},
+		{"ID": "12A'_R_12_2_set", "Desc": "Route 12 to 2 set for 12A'"},
+		
 		{"ID": "1A'_off", "Desc": "Signal 1A' is OFF"},
 		{"ID": "1B'_off", "Desc": "Signal 1B' is OFF"},
 		{"ID": "1C'_off", "Desc": "Signal 1C' is OFF"},
@@ -518,6 +504,30 @@
 		]}
 	],
 	"LogicCircuits": [
+		{"ID": "A_off", "Condition": [
+			{"Op": "NOT", "Circuit": "A_stop"}
+		], "Desc": "A main signal to OFF"},
+		{"ID": "B_off", "Condition": [
+			{"Op": "NOT", "Circuit": "B_stop"}
+		], "Desc": "B main signal to OFF"},
+		{"ID": "cond_A_route_clear_1", "Desc": "Sig A clear for track 1", "Condition": [
+			{"Op": "EQ", "Circuit": "1A'_R_11_1_set"},
+			{"Op": "AND", "Circuit": "1C'_R_21_1_set"}
+		]},
+		{"ID": "cond_A_route_clear_2", "Desc": "Sig A clear for track 2", "Condition": [
+			{"Op": "EQ", "Circuit": "1A'_R_11_12_set"},
+			{"Op": "AND", "Circuit": "12A'_R_12_2_set"}
+		]},
+		{"ID": "cond_A_set_off", "Desc": "Condition to set main sig A off", "Condition": [
+			{"Op": "EQ", "Circuit": "cond_A_route_clear_1"},
+			{"Op": "OR", "Circuit": "cond_A_route_clear_2"}
+		]},
+		{"ID": "A_set_off", "Desc": "Set main sig A off", "Condition": [
+			{"Op": "EQ", "Circuit": "sw_A_off"},
+			{"Op": "AND", "Circuit": "cond_A_set_off"}
+		]},
+		
+		
 		{"ID": "1A'_off", "Condition": [
 			{"Op": "NOT", "Circuit": "1A'_stop"}
 		], "Desc": "1A' dwarf signal to OFF"},
@@ -551,13 +561,6 @@
 		{"ID": "4B'_off", "Condition": [
 			{"Op": "NOT", "Circuit": "4B'_stop"}
 		], "Desc": "4B' dwarf signal to OFF"},
-		
-		{"ID": "A_off", "Condition": [
-			{"Op": "NOT", "Circuit": "A_stop"}
-		], "Desc": "A main signal to OFF"},
-		{"ID": "B_off", "Condition": [
-			{"Op": "NOT", "Circuit": "B_stop"}
-		], "Desc": "B main signal to OFF"},
 		
 		
 		{"ID": "R0_ind_clear", "Desc": "Route from R0 should show indication CLEAR",
@@ -815,12 +818,14 @@
 		{
 			"SigID": "1A'", "Route": "R_11_1", "Blocks": ["P1","T1"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "AutoUnset": true
+			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "CircuitLocked": "1A'_R_11_1_set", 
+			"AutoUnset": true
 		},
 		{
 			"SigID": "1A'", "Route": "R_11_12", "Blocks": ["P1","P2","T12"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "AutoUnset": true
+			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "CircuitLocked": "1A'_R_11_12_set",
+			"AutoUnset": true
 		},
 		{
 			"SigID": "1A'", "Route": "R_11_2", "Blocks": ["P1","P2","P3","T2"], 
@@ -845,12 +850,14 @@
 		{
 			"SigID": "1C'", "Route": "R_21_1", "Blocks": ["P5","T21"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1C'_off", "CircuitUnset": "sw_1C'_stop", "AutoUnset": true
+			"CircuitSet": "sw_1C'_off", "CircuitUnset": "sw_1C'_stop", "CircuitLocked": "1C'_R_21_1_set",
+			"AutoUnset": true
 		},
 		{
 			"SigID": "1D'", "Route": "R_21_1", "Blocks": ["T21","P5","T1"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1D'_off", "CircuitUnset": "sw_1D'_stop", "AutoUnset": true
+			"CircuitSet": "sw_1D'_off", "CircuitUnset": "sw_1D'_stop",
+			"AutoUnset": true
 		},
 		{
 			"SigID": "1D'", "Route": "R_21_2", "Blocks": ["T21","P5","T2"], 
@@ -860,7 +867,8 @@
 		{
 			"SigID": "12A'", "Route": "R_12_2", "Blocks": ["P4","T2"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_12A'_off", "CircuitUnset": "sw_12A'_stop", "AutoUnset": true
+			"CircuitSet": "sw_12A'_off", "CircuitUnset": "sw_12A'_stop", "CircuitLocked": "12A'_R_12_2_set",
+			"AutoUnset": true
 		},
 		{
 			"SigID": "12B'", "Route": "R_11_12", "Blocks": ["P2","P1"], 
@@ -923,9 +931,16 @@
 			"CircuitSet": "sw_4B'_off", "CircuitUnset": "sw_4B'_stop", "AutoUnset": true
 		},
 		{
-			"SigID": "A", "Route": "R_11_1", "Blocks": ["P1","T1"], 
+			"SigID": "A", "Route": "R_11_1", "Blocks": [], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_A_off", "CircuitUnset": "sw_A_stop", "AutoUnset": true
+			"CircuitSet": "A_set_off", "CircuitUnset": "sw_A_stop", "CircuitLocked": "A_R_11_1_set",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "A", "Route": "R_11_12", "Blocks": [], 
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "A_set_off", "CircuitUnset": "sw_A_stop", "CircuitLocked": "A_R_11_12_set",
+			"AutoUnset": true
 		}
 	]
 }}
