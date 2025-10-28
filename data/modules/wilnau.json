@@ -429,6 +429,11 @@
 		{"ID": "detector_2-1", "Desc": "Detector 2-1 occupied"},
 		{"ID": "detector_2-2", "Desc": "Detector 2-2 occupied"},
 		
+		{"ID": "set_B1_clear", "Desc": "Set B1 signal route to clear"},
+		{"ID": "set_B1_40km", "Desc": "Set B1 signal route to 40km"},
+		{"ID": "set_B2_clear", "Desc": "Set B2 signal route to clear"},
+		{"ID": "set_B2_40km", "Desc": "Set B2 signal route to 40km"},
+		
 		{"ID": "L0_ind_clear", "Desc": "Left main sig indication CLEAR", "Active": true},
 		{"ID": "L0_ind_40km", "Desc": "Left main sig indication 40KM"}
 	],
@@ -477,6 +482,29 @@
 			{"Op": "NOT", "Circuit": "D_stop"}
 		], "Desc": "D main signal to OFF"},
 		
+		
+		{"ID": "set_B1_clear", "Condition":
+		[
+			{"Op": "EQ", "Circuit": "sw_B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		], "Desc": "Set B1 clear route upon switch activation"},
+		{"ID": "set_B1_40km", "Condition":
+		[
+			{"Op": "EQ", "Circuit": "sw_B1_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		], "Desc": "Set B1 40km route upon switch activation"},
+		
+		{"ID": "set_B2_clear", "Condition":
+		[
+			{"Op": "EQ", "Circuit": "sw_B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_clear"}
+		], "Desc": "Set B2 clear route upon switch activation"},
+		{"ID": "set_B2_40km", "Condition":
+		[
+			{"Op": "EQ", "Circuit": "sw_B2_off"},
+			{"Op": "AND", "Circuit": "L0_ind_40km"}
+		], "Desc": "Set B2 40km route upon switch activation"},
+			
 		
 		{"ID": "P1_lock", 
 		"ConditionOn": [
@@ -743,13 +771,25 @@
 		{
 			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'", "L0:Main:Out"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_B1_off", "CircuitUnset": "sw_B1_stop",
+			"CircuitSet": "set_B1_clear", "CircuitUnset": "sw_B1_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'"],
+			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'", "L0:Main:Out"],
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "set_B1_40km", "CircuitUnset": "sw_B1_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'", "L0:Main:Out"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_B2_off", "CircuitUnset": "sw_B2_stop",
+			"CircuitSet": "set_B2_clear", "CircuitUnset": "sw_B2_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'", "L0:Main:Out"],
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "set_B2_40km", "CircuitUnset": "sw_B2_stop",
 			"AutoUnset": true
 		},
 		{
@@ -772,7 +812,7 @@
 		},
 		{
 			"SigID": "D:Main", "Route": "R_21_2", "Blocks": ["m_P4", "m_T2"], "SetWith": ["D'"],
-			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_D_off", "CircuitUnset": "sw_D_stop",
 			"AutoUnset": true
 		},
