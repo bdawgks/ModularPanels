@@ -14,8 +14,8 @@ namespace ModularPanels.SignalLib
 
     internal struct SignalRouteJsonData
     {
-        public required SignalHeadId SigID { get; set; }
-        public SignalHeadId? NextSigID { get; set; }
+        public required SignalHeadIdInOnly SigID { get; set; }
+        public SignalHeadIdOutOnly? NextSigID { get; set; }
         public string Indication { get; set; }
         public TrackRouteLoader? Route { get; set; }
         public DetectorLatchJsonData? DetectorLatch { get; set; }

@@ -111,22 +111,5 @@ namespace ModularPanels.SignalLib
         {
             return Type.GetRuleset(headId);
         }
-
-        public static bool ParseSignalID(string id, out string name, out string? head)
-        {
-            int delimIndex = id.IndexOf(":");
-            if (delimIndex > 0)
-            {
-                name = id.Substring(0, delimIndex);
-                head = id.Substring(delimIndex + 1);
-
-                return true;
-            }
-
-            name = id;
-            head = null;
-
-            return false;
-        }
     }
 }

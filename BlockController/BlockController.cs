@@ -84,7 +84,6 @@ namespace ModularPanels.BlockController
 
             private bool TryGetLinked([NotNullWhen(true)] out BlockController? linkedController, [NotNullWhen(true)] out SignalHead? linkedSignal)
             {
-                linkedSignal = null;
                 linkedController = null;
                 if (!TryGetLinkedSignal(out linkedSignal))
                     return false;
@@ -113,7 +112,7 @@ namespace ModularPanels.BlockController
             {
                 if (TryGetLinked(out var linkedController, out var linkedSig))
                 {
-                    linkedController.TrySetSignal(linkedSig);
+                    linkedController.SetSignal(linkedSig);
                     return;
                 }
 
@@ -139,9 +138,15 @@ namespace ModularPanels.BlockController
                 _signal.SetIndicationFixed(ind);
             }
 
-            public void UnSet(bool forced = false)
+            public void UnSet(bool auto = false)
             {
-                if (!forced && (!_set || !CanUnset()))
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    linkedController.UnsetSignal(linkedSig);
+                    return;
+                }
+
+                if (!auto && (!_set || !CanUnset()))
                     return;
 
                 _set = false;
@@ -152,6 +157,8 @@ namespace ModularPanels.BlockController
                 {
                     SignalSet? sigSet = _controller.FindSignalSet(sig);
                     sigSet?.Unlock(this);
+                    if (!auto)
+                        sigSet?.UnSet();
                 }
 
                 _signal.ResetLatch();
@@ -323,17 +330,13 @@ namespace ModularPanels.BlockController
             return set.CanSet();
         }
 
-        public bool TrySetSignal(SignalHead head)
+        public void SetSignal(SignalHead head)
         {
             SignalSet? set = FindSignalSet(head);
             if (set == null)
-                return false;
-
-            if (!CanSetSignal(head))
-                return false;
+                return;
 
             set.Set();
-            return true;
         }
 
         public void UnsetSignal(SignalHead head)

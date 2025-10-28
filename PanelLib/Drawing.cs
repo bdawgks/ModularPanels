@@ -48,7 +48,7 @@ namespace ModularPanels.PanelLib
 
     public class PolygonShape : Shape
     {
-        readonly List<Vector2> _verts = new();
+        readonly List<Vector2> _verts = [];
 
         public PolygonShape(int[][] verts, Color fillColor, Outline outline) : base(fillColor, outline)
         {
@@ -117,14 +117,14 @@ namespace ModularPanels.PanelLib
         {
             Brush fillBrush = new SolidBrush(_fillColor);
             Brush outlineBrush = new SolidBrush(_outline.color);
-            Pen outlinePen = new Pen(outlineBrush, _outline.width);
+            Pen outlinePen = new(outlineBrush, _outline.width);
 
             Vector2 pos = origin.ToVector2() + offset;
             g.TranslateTransform(pos.X, pos.Y);
             g.RotateTransform(angle);
 
-            Vector2 corner = new Vector2(-_size.Width / 2, -_size.Height / 2);
-            RectangleF rect = new RectangleF(new(corner * scale), _size * scale);
+            Vector2 corner = new(-_size.Width / 2, -_size.Height / 2);
+            RectangleF rect = new(new(corner * scale), _size * scale);
             g.FillEllipse(fillBrush, rect);
             g.DrawEllipse(outlinePen, rect);
 
@@ -152,14 +152,14 @@ namespace ModularPanels.PanelLib
         {
             Brush fillBrush = new SolidBrush(_fillColor);
             Brush outlineBrush = new SolidBrush(_outline.color);
-            Pen outlinePen = new Pen(outlineBrush, _outline.width);
+            Pen outlinePen = new(outlineBrush, _outline.width);
 
             Vector2 pos = origin.ToVector2() + offset;
             g.TranslateTransform(pos.X, pos.Y);
             g.RotateTransform(angle);
 
             PointF cornerScaled = new(_corner.X * scale, _corner.Y * scale);
-            RectangleF rect = new RectangleF(cornerScaled, _size * scale);
+            RectangleF rect = new(cornerScaled, _size * scale);
             g.FillRectangle(fillBrush, rect);
             g.DrawRectangles(outlinePen, [rect]);
 

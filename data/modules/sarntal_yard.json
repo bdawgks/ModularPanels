@@ -1,4 +1,4 @@
-{"Name": "Sartnal Yard",
+{"Name": "Sartnal RB",
 "DrawingData": {
 	"Width": 400,
 	"Height": 130,
@@ -839,7 +839,9 @@
 		{"ID": "m_T1", "Detector": "1"},
 		{"ID": "m_T2", "Detector": "2"},
 		{"ID": "m_T12", "Detector": "12"},
-		{"ID": "m_T21", "Detector": "21"}
+		{"ID": "m_T21", "Detector": "21"},
+		{"ID": "m_P1"},
+		{"ID": "m_P5"}
 	],
 	"Signals": [
 		{
@@ -958,19 +960,19 @@
 			"CircuitSet": "sw_4B'_off", "CircuitUnset": "sw_4B'_stop", "AutoUnset": true
 		},
 		{
-			"SigID": "A", "Route": "R_11_1", "Blocks": ["m_T1", "m_T21"], "SetWith": ["1A'", "1C'"],
+			"SigID": "A", "Route": "R_11_1", "Blocks": ["m_P1","m_T1", "m_T21"], "SetWith": ["1A'", "1C'"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_A_off", "CircuitUnset": "sw_A_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "A", "Route": "R_11_12", "Blocks": ["m_T12", "m_T2"], "SetWith": ["1A'", "12A'"],
+			"SigID": "A", "Route": "R_11_12", "Blocks": ["m_P1","m_T12", "m_T2"], "SetWith": ["1A'", "12A'"],
 			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_A_off", "CircuitUnset": "sw_A_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B", "Route": "R_11_1", "Blocks": ["m_T1", "m_T21"], "SetWith": ["1B'"],
+			"SigID": "B", "Route": "R_11_1", "Blocks": ["m_P1","m_T11"], "SetWith": ["1B'"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_B_off", "CircuitUnset": "sw_B_stop",
 			"AutoUnset": true

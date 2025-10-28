@@ -22,13 +22,16 @@
 		{"Text": "D", "Style": "Control1", "Pos": [200,100]},
 		{"Text": "E", "Style": "Control1", "Pos": [220,100]},
 		{"Text": "F", "Style": "Control1", "Pos": [240,100]},
-		{"Text": "W 1/2", "Style": "Control2", "Pos": [40,95]},
+		{"Text": "W 1 / 2", "Style": "Control2", "Pos": [40,95]},
 		{"Text": "W 3", "Style": "Control2", "Pos": [60,95]},
 		{"Text": "W 4", "Style": "Control2", "Pos": [280,95]},
 		{"Text": "Gleis 1", "Style": "TrackNumber", "Pos": [170,75]},
 		{"Text": "Gleis 2", "Style": "TrackNumber", "Pos": [170,55]},
 		{"Text": "Gleis 3", "Style": "TrackNumber", "Pos": [170,35]},
 		{"Text": "Gleis 4", "Style": "TrackNumber", "Pos": [60,35]}
+	],
+	"Rectangles": [
+		{"TopLeft": [90, 95], "BottomRight": [250, 118], "BorderColor": "Black", "BorderSize": 3.0}
 	]
 },
 "TrackData": {

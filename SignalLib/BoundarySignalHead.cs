@@ -85,8 +85,6 @@ namespace ModularPanels.SignalLib
 
     public class BoundarySignalHeadIn : BoundarySignalHead
     {
-        //BoundarySignalHeadOut? _linkedHead;
-
         public override string Aspect
         {
             get

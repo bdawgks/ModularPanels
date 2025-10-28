@@ -137,10 +137,7 @@ namespace ModularPanels
                 }
             }
 
-            if (BlockController != null)
-            {
-                BlockController.Load(module);
-            }
+            BlockController?.Load(module);
 
             return module;
         }
