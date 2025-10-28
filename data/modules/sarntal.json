@@ -27,7 +27,8 @@
 "SignalData": {
 	"Signals": [
 		{"ID": "A", "Type": "CH_TL_D", "Pos": [50, 80], "Angle": -90},
-		{"ID": "B", "Type": "CH_TL_D", "Pos": [200, 60], "Angle": 90}
+		{"ID": "B", "Type": "CH_TL_D", "Pos": [200, 60], "Angle": 90},
+		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
 	],
 	"BoundarySignals": [
 		{"ID": "L0", "Type": "CH_TL_EndOfTrack", "Boundary": "Left", "Index": 0, "Heads": [
@@ -41,7 +42,8 @@
 	],
 	"SignalRoutes": [
 		{"SigID": "A", "NextSigID": "L0:Main", "Indication": "Distant", "DetectorLatch": {"ExitID": "B", "EntryID": "A"}},
-		{"SigID": "B", "NextSigID": "R0:Main", "Indication": "Distant", "DetectorLatch": {"ExitID": "B", "EntryID": "C"}}
+		{"SigID": "B", "NextSigID": "R0:Main", "Indication": "Distant", "DetectorLatch": {"ExitID": "B", "EntryID": "C"}},
+		{"SigID": "L0:Zw", "NextSigID": "EoT", "Indication": "ClearMain"}
 	]
 },
 "RelayCircuits": {
@@ -55,4 +57,20 @@
 	{"DetectorID": "A", "Circuit": "detector_A"},
 	{"DetectorID": "B", "Circuit": "detector_B"},
 	{"DetectorID": "C", "Circuit": "detector_C"}
-]}
+],
+"BlockController": {
+	"Signals": [
+		{
+			"SigID": "L0:Zw:In", "Route": "", "Blocks": [], "SetWith": ["EoT"],
+			"IndicationClear": "ClearMain", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_L0_off", "CircuitUnset": "sw_L0_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "EoT", "Route": "", "Blocks": [],
+			"IndicationClear": "ClearMain", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_L0_off", "CircuitUnset": "sw_L0_stop",
+			"AutoUnset": true
+		}
+	]
+}}

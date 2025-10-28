@@ -824,7 +824,7 @@
 		},
 		{
 			"SigID": "R0:Zw:Out", "Route": "", "Blocks": [],
-			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"IndicationClear": "ClearMain", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
 			"AutoUnset": true
 		}
