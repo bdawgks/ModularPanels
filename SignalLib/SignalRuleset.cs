@@ -35,8 +35,8 @@ namespace ModularPanels.SignalLib
             if (nextAspect == null)
                 return _defaultAspect;
 
-            if (_aspects.ContainsKey(nextAspect))
-                return _aspects[nextAspect];
+            if (_aspects.TryGetValue(nextAspect, out string? value))
+                return value;
 
             return _defaultAspect;
         }
