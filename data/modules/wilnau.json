@@ -769,37 +769,37 @@
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'", "L0:Main:Out"],
+			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'","L0:Main"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "set_B1_clear", "CircuitUnset": "sw_B1_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'", "L0:Main:Out"],
+			"SigID": "B1", "Route": "R_11_1", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B1'","L0:Main"],
 			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "set_B1_40km", "CircuitUnset": "sw_B1_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'", "L0:Main:Out"],
+			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'","L0:Main"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "set_B2_clear", "CircuitUnset": "sw_B2_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'", "L0:Main:Out"],
+			"SigID": "B2", "Route": "R_11_2", "Blocks": ["m_P1", "m_T11"], "SetWith": ["B2'","L0:Main"],
 			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "set_B2_40km", "CircuitUnset": "sw_B2_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "C1", "Route": "R_21_1", "Blocks": ["m_P4", "m_T21"], "SetWith": ["C1'"],
+			"SigID": "C1", "Route": "R_21_1", "Blocks": ["m_P4", "m_T21"], "SetWith": ["C1'","R0:Zw"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_C1_off", "CircuitUnset": "sw_C1_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "C2", "Route": "R_21_2", "Blocks": ["m_P4", "m_T21"], "SetWith": ["C2'"],
+			"SigID": "C2", "Route": "R_21_2", "Blocks": ["m_P4", "m_T21"], "SetWith": ["C2'","R0:Zw"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_C2_off", "CircuitUnset": "sw_C2_stop",
 			"AutoUnset": true
@@ -820,6 +820,12 @@
 			"SigID": "L0:Main:Out", "Route": "", "Blocks": [],
 			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
 			"CircuitSet": "sw_L0_off", "CircuitUnset": "sw_L0_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "R0:Zw:Out", "Route": "", "Blocks": [],
+			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
 			"AutoUnset": true
 		}
 	]

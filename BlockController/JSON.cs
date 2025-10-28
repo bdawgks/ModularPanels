@@ -35,7 +35,7 @@ namespace ModularPanels.BlockController
         public SignalHeadId SigID { get; set; }
         public string? Route { get; set; }
         public List<string> Blocks { get; set; }
-        public List<SignalHeadId>? SetWith { get; set; }
+        public List<SignalHeadIdOutOnly>? SetWith { get; set; }
         public string IndicationClear { get; set; }
         public string IndicationOccupied { get; set; }
         public string IndicationUnset { get; set; }

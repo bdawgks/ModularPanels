@@ -32,11 +32,11 @@
 	"BoundarySignals": [
 		{"ID": "L0", "Type": "CH_TL_EndOfTrack", "Boundary": "Left", "Index": 0, "Heads": [
 			{"ID": "Main", "DefaultIndication": "Stop"},
-			{"ID": "Zw", "DefaultIndication": "Stop"}
+			{"ID": "Zw", "DefaultIndication": "Clear"}
 		]},
 		{"ID": "R0", "Type": "CH_TL_EndOfTrack", "Boundary": "Right", "Index": 0, "Heads": [
 			{"ID": "Main", "DefaultIndication": "Stop"},
-			{"ID": "Zw", "DefaultIndication": "Stop"}
+			{"ID": "Zw", "DefaultIndication": "Clear"}
 		]}
 	],
 	"SignalRoutes": [
