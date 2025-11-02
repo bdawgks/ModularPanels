@@ -32,6 +32,11 @@ namespace ModularPanels.DrawLib
                 y = pos.y * _gridSize
             };
         }
+
+        public int Scale(int value)
+        {
+            return _gridSize * value;
+        }
     }
     
     /// <summary>

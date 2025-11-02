@@ -31,9 +31,10 @@
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             monitorCircuitsToolStripMenuItem = new ToolStripMenuItem();
+            detectorsToolStripMenuItem = new ToolStripMenuItem();
             hScrollBar1 = new HScrollBar();
             drawPanel1 = new DrawPanel();
-            detectorsToolStripMenuItem = new ToolStripMenuItem();
+            mapPanel = new DrawPanel();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -59,6 +60,12 @@
             monitorCircuitsToolStripMenuItem.Size = new Size(105, 20);
             monitorCircuitsToolStripMenuItem.Text = "Monitor Circuits";
             // 
+            // detectorsToolStripMenuItem
+            // 
+            detectorsToolStripMenuItem.Name = "detectorsToolStripMenuItem";
+            detectorsToolStripMenuItem.Size = new Size(69, 20);
+            detectorsToolStripMenuItem.Text = "Detectors";
+            // 
             // hScrollBar1
             // 
             hScrollBar1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -72,20 +79,23 @@
             drawPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             drawPanel1.Location = new Point(9, 27);
             drawPanel1.Name = "drawPanel1";
-            drawPanel1.Size = new Size(782, 388);
+            drawPanel1.Size = new Size(782, 307);
             drawPanel1.TabIndex = 2;
             // 
-            // detectorsToolStripMenuItem
+            // mapPanel
             // 
-            detectorsToolStripMenuItem.Name = "detectorsToolStripMenuItem";
-            detectorsToolStripMenuItem.Size = new Size(69, 20);
-            detectorsToolStripMenuItem.Text = "Detectors";
+            mapPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            mapPanel.Location = new Point(9, 340);
+            mapPanel.Name = "mapPanel";
+            mapPanel.Size = new Size(782, 75);
+            mapPanel.TabIndex = 3;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(mapPanel);
             Controls.Add(drawPanel1);
             Controls.Add(hScrollBar1);
             Controls.Add(menuStrip1);
@@ -106,5 +116,6 @@
         private DrawPanel drawPanel1;
         private ToolStripMenuItem monitorCircuitsToolStripMenuItem;
         private ToolStripMenuItem detectorsToolStripMenuItem;
+        private DrawPanel mapPanel;
     }
 }

@@ -11,6 +11,7 @@ namespace ModularPanels
         static SignalBank? _signalBank;
 
         List<PanelLib.Drawing> _drawings = [];
+        ScrollMap? _map;
 
         public static SignalBank SignalBank { get { _signalBank??= new SignalBank(); return _signalBank; } }
 
@@ -22,6 +23,7 @@ namespace ModularPanels
             InitializeComponent();
 
             drawPanel1.Paint += OnPaint;
+            mapPanel.Paint += OnPaintMap;
 
             MouseWheel += OnMouseWheel;
             SizeChanged += OnResizeEnd;
@@ -88,6 +90,8 @@ namespace ModularPanels
 
                             monitorCircuitsToolStripMenuItem.DropDownItems.Add(item);
                         }
+                        _map = new(layout, mapPanel, drawPanel1, this);
+                        _map.Init();
                     }
                 }
                 catch (Exception e)
@@ -145,6 +149,7 @@ namespace ModularPanels
         {
             drawPanel1.Invalidate();
             drawPanel1.UpdateScrollbar();
+            mapPanel.Invalidate();
         }
 
         private void OnMouseWheel(object? sender, MouseEventArgs e)
@@ -158,6 +163,11 @@ namespace ModularPanels
             {
                 drawing.Draw(e.Graphics);
             }
+        }
+
+        private void OnPaintMap(object? sender, PaintEventArgs e)
+        {
+            _map?.Draw(e.Graphics);
         }
     }
 }
