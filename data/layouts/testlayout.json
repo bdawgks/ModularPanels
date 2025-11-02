@@ -1,5 +1,6 @@
 {"Name": "Test",
 "Modules": [
+	"quarry",
 	"sarntal_yard",
 	"wilnau",
 	"sarntal"

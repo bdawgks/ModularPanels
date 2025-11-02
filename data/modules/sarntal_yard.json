@@ -252,6 +252,7 @@
 		{"SigID": "B*", "NextSigID": "B", "Indication": "Distant"},
 		{"SigID": "C*", "NextSigID": "R0:Main", "Indication": "Distant"},
 		
+		{"SigID": "L0:Main", "NextSigID": "A", "Indication": "Distant"},
 		{"SigID": "L0:Zw", "NextSigID": "1A'", "Indication": "Clear"},
 		{"SigID": "R0:Zw", "NextSigID": "1D'", "Indication": "Clear"}
 	]

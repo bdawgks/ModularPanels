@@ -1,0 +1,234 @@
+{"Name": "Quarry",
+"DrawingData": {
+	"Width": 250,
+	"Height": 120,
+	"BackgroundColor": "DominoBG",
+	"Texts": [
+		{"Text": "Kieswerk", "Style": "Title", "Pos": [125,10]}
+	]
+},
+"TrackData": {
+	"Nodes": [
+		{"ID": "1A", "Pos": [0, 30]},
+		{"ID": "1B", "Pos": [180, 30]},
+		{"ID": "1C", "Pos": [200, 30]},
+		{"ID": "1D", "Pos": [210, 30]},
+		{"ID": "1E", "Pos": [250, 30]},
+		{"ID": "2A", "Pos": [30, 60]},
+		{"ID": "2B", "Pos": [90, 60], "Square": true},
+		{"ID": "2C", "Pos": [140, 60]},
+		{"ID": "2D", "Pos": [160, 60]},
+		{"ID": "2E", "Pos": [220, 60]},
+		{"ID": "3A", "Pos": [30, 90]},
+		{"ID": "3B", "Pos": [70, 90], "Square": true},
+		{"ID": "3C", "Pos": [80, 90]},
+		{"ID": "P2", "Pos": [120, 70]}
+	],
+	"Segments": [
+		{"ID": "A", "Style": "Mainline", "Nodes": ["1A","1B"]},
+		{"ID": "P1A", "Style": "Mainline", "Nodes": ["1B","1C"]},
+		{"ID": "P1B", "Style": "Mainline", "Nodes": ["1C","1D"]},
+		{"ID": "B", "Style": "Mainline", "Nodes": ["1D","1E"]},
+		{"ID": "Y1", "Style": "Mainline", "Nodes": ["2C","1C"]},
+		{"ID": "2A", "Style": "Yard", "Nodes": ["2A","2B"]},
+		{"ID": "2B", "Style": "Mainline", "Nodes": ["2B","2C"]},
+		{"ID": "2C", "Style": "Mainline", "Nodes": ["2C","2D"]},
+		{"ID": "2D", "Style": "Mainline", "Nodes": ["2D","2E"]},
+		{"ID": "Y2", "Style": "Mainline", "Nodes": ["3C","2C"]},
+		{"ID": "3A", "Style": "Yard", "Nodes": ["3A","3B"]},
+		{"ID": "3B", "Style": "Mainline", "Nodes": ["3B","3C"]},
+		{"ID": "P2", "Style": "Mainline", "Nodes": ["P2","2D"]}
+	],
+	"Points": [
+		{"ID": "1", "PointsNode": "1C", "RouteNormal": "1B", "RouteReversed": "2C", "Style": "Main"},
+		{"ID": "2", "PointsNode": "P2", "RouteNormal": "2D", "RouteReversed": "1C", "Style": "Slip"}
+	],
+	"Detectors": [
+		{"ID": "A", "Segments": ["A"], "Style": "Main"},
+		{"ID": "B", "Segments": ["B"], "Style": "Main"}
+	]
+},
+"SignalData": {
+	"Signals": [
+		{"ID": "A'", "Type": "CH_TL_Dw", "Pos": [170, 25], "Angle": 90},
+		{"ID": "B'", "Type": "CH_TL_Dw", "Pos": [210, 35], "Angle": -90},
+		{"ID": "C'", "Type": "CH_TL_Dw", "Pos": [165, 40], "Angle": 60},
+		{"ID": "A*", "Type": "CH_TL_D", "Pos": [150, 20], "Angle": 90},
+		{"ID": "EoT", "Type": "CH_TL_EndOfTrack", "Pos": [0,0]}
+	],
+	"BoundarySignals": [
+		{"ID": "L0", "Type": "CH_TL_EndOfTrack", "Boundary": "Left", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Clear"}
+		]},
+		{"ID": "R0", "Type": "CH_TL_EndOfTrack", "Boundary": "Right", "Index": 0, "Heads": [
+			{"ID": "Main", "DefaultIndication": "Stop"},
+			{"ID": "Zw", "DefaultIndication": "Clear"}
+		]}
+	],
+	"SignalRoutes": [
+		{"SigID": "A'", "NextSigID": "R0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "A", "EntryID": "B"}},
+		{"SigID": "B'", "NextSigID": "L0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "B", "EntryID": "A"}, "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		]},
+		{"SigID": "B'", "NextSigID": "EoT", "Indication": "Clear", "DetectorLatch": {"ExitID": "B", "EntryID": "P1"}, "Route": [
+			{"PointsID": "1", "Direction": "Reversed"}
+		]},
+		{"SigID": "C'", "NextSigID": "R0:Zw", "Indication": "Clear", "DetectorLatch": {"ExitID": "P1", "EntryID": "B"}},
+		{"SigID": "A*", "NextSigID": "R0:Main", "Indication": "Distant"},
+		{"SigID": "L0:Zw", "NextSigID": "EoT", "Indication": "ClearMain"}
+	]
+},
+"Controls": {
+	"RotarySwitches": [	
+		{"ID": "A'", "Pos": [130,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_A'_stop"},
+			{"Pos": 2, "Circuit": "sw_A'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "A'_stop"},
+			{"Pos": 2, "Circuit": "A'_off"}
+		]},
+		{"ID": "B'", "Pos": [150,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_B'_stop"},
+			{"Pos": 2, "Circuit": "sw_B'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "B'_stop"},
+			{"Pos": 2, "Circuit": "B'_off"}
+		]},
+		{"ID": "C'", "Pos": [170,110], "Template": "STB_DwarfSwitch",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_C'_stop"},
+			{"Pos": 2, "Circuit": "sw_C'_off"}
+		],
+		"LampCircuits": [
+			{"Pos": 0, "Circuit": "C'_stop"},
+			{"Pos": 2, "Circuit": "C'_off"}
+		]},
+		
+		{"ID": "P1", "Pos": [220,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P1_lock",
+		"SwitchCircuits": [
+			{"Pos": 0, "Circuit": "sw_P1_N"},
+			{"Pos": 1, "Circuit": "sw_P1_R"}
+		],
+		"TextLabels": [
+			{"Pos": 0, "Text": "H"},
+			{"Pos": 1, "Text": "AnG"}
+		]}
+	]
+},
+"RelayCircuits": {
+	"SimpleCircuits": [
+		{"ID": "sw_P1_N", "Desc": "Switch P1 to normal"},
+		{"ID": "sw_P1_R", "Desc": "Switch P1 to reversed"},
+		
+		{"ID": "sw_A'_stop", "Desc": "Switch dwarf A' to STOP"},
+		{"ID": "sw_A'_off", "Desc": "Switch dwarf A' to OFF"},
+		{"ID": "sw_B'_stop", "Desc": "Switch dwarf B' to STOP"},
+		{"ID": "sw_B'_off", "Desc": "Switch dwarf B' to OFF"},
+		{"ID": "sw_C'_stop", "Desc": "Switch dwarf C' to STOP"},
+		{"ID": "sw_C'_off", "Desc": "Switch dwarf C' to OFF"},
+		
+		{"ID": "A'_stop", "Desc": "Dwarf A' showing STOP", "Active": true},
+		{"ID": "B'_stop", "Desc": "Dwarf B' showing STOP", "Active": true},
+		{"ID": "C'_stop", "Desc": "Dwarf C' showing STOP", "Active": true},
+		
+		{"ID": "detector_A", "Desc": "Detector A occupied"},
+		{"ID": "detector_B", "Desc": "Detector B occupied"},
+		{"ID": "detector_C", "Desc": "Detector C occupied"}
+	],
+	"LogicCircuits": [
+		{"ID": "A'_off", "Condition": [
+			{"Op": "NOT", "Circuit": "A'_stop"}
+		], "Desc": "Dwarf A' showing OFF indication"},
+		{"ID": "B'_off", "Condition": [
+			{"Op": "NOT", "Circuit": "B'_stop"}
+		], "Desc": "Dwarf B' showing OFF indication"},
+		{"ID": "C'_off", "Condition": [
+			{"Op": "NOT", "Circuit": "C'_stop"}
+		], "Desc": "Dwarf C' showing OFF indication"},
+		
+		{"ID": "P1_lock", "Condition": [
+			{"Op": "EQ", "Circuit": "A'_off"},
+			{"Op": "OR", "Circuit": "B'_off"},
+			{"Op": "OR", "Circuit": "C'off"}
+		], "Desc": "Switch P1 locked"}
+	]
+},
+"SignalCircuits": [
+	{"SignalID": "A'", "Indication": "Stop", "OutputCircuit": "A'_stop"},
+	{"SignalID": "B'", "Indication": "Stop", "OutputCircuit": "B'_stop"},
+	{"SignalID": "C'", "Indication": "Stop", "OutputCircuit": "C'_stop"}
+],
+"PointsCircuits": [
+	{"PointsID": "1",
+	"CircuitInPointsNormal": "sw_P1_N",
+	"CircuitInPointsReverse": "sw_P1_R",
+	"CircuitOutPointsNormal": "points_1_N",
+	"CircuitOutPointsReversed": "points_1_R"},
+	{"PointsID": "2",
+	"CircuitInPointsNormal": "sw_P1_N",
+	"CircuitInPointsReverse": "sw_P1_R",
+	"CircuitOutPointsNormal": "points_2_N",
+	"CircuitOutPointsReversed": "points_2_R"}
+],
+"DetectorCircuits": [
+	{"DetectorID": "A", "Circuit": "detector_A"},
+	{"DetectorID": "B", "Circuit": "detector_B"}
+],
+"BlockController": {
+	"Routes": [
+		{"ID": "R_1_N", "Route": [
+			{"PointsID": "1", "Direction": "Normal"}
+		]},
+		{"ID": "R_1_R", "Route": [
+			{"PointsID": "1", "Direction": "Reversed"}
+		]}
+	],
+	"Blocks": [
+		{"ID": "P1", "Detector": "P1"},
+		{"ID": "1A", "Detector": "A"},
+		{"ID": "1B", "Detector": "B"}
+	],
+	"Signals": [
+		{
+			"SigID": "A'", "Route": "R_1_N", "Blocks": ["P1","1B"], 
+			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_A'_off", "CircuitUnset": "sw_A'_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "B'", "Route": "R_1_N", "Blocks": ["P1","1A"], 
+			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_B'_off", "CircuitUnset": "sw_B'_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "B'", "Route": "R_1_R", "Blocks": ["P1"], 
+			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_B'_off", "CircuitUnset": "sw_B'_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "C'", "Route": "R_1_R", "Blocks": ["P1","1A"], 
+			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_C'_off", "CircuitUnset": "sw_C'_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "L0:Zw:In", "Route": "", "Blocks": [], "SetWith": ["EoT"],
+			"IndicationClear": "ClearMain", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_L0_off", "CircuitUnset": "sw_L0_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "EoT", "Route": "", "Blocks": [],
+			"IndicationClear": "ClearMain", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_L0_off", "CircuitUnset": "sw_L0_stop",
+			"AutoUnset": true
+		}
+	]
+}}
