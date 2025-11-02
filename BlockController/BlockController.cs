@@ -1,15 +1,12 @@
 ﻿using ModularPanels.CircuitLib;
 using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ModularPanels.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModularPanels.BlockController
 {
-    public class BlockController
+    public class BlockController(IParent parent) : Component(parent)
     {
         public struct SignalSetParams
         {
@@ -20,6 +17,7 @@ namespace ModularPanels.BlockController
             public string indicationOccupied;
             public string indicationUnset;
             public bool autoUnset;
+            public SignalHead[] setWith;
         }
 
         private class Block(string name)
@@ -40,22 +38,28 @@ namespace ModularPanels.BlockController
             }
         }
 
-        private class SignalSet(SignalHead signal, TrackRoute? trackRoute, List<Block> blocks, string indClear, string indOccupied, string indUnset)
+        private class SignalSet(BlockController controller, SignalHead signal, TrackRoute? trackRoute, List<Block> blocks, string indClear, string indOccupied, string indUnset)
         {
+            readonly BlockController _controller = controller;
             readonly SignalHead _signal = signal;
             readonly TrackRoute? _trackRoute = trackRoute;
             readonly List<Block> _blocks = blocks;
             readonly string _indicationClear = indClear;
             readonly string _indicationOccupied = indOccupied;
             readonly string _indicationUnset = indUnset;
+            readonly HashSet<SignalHead> _setWithSignals = [];
 
             bool _blockOccupied = false;
             bool _set = false;
+            bool _autoUnset = false;
             InputCircuit? _lockCircuit;
+            SignalSet? _lockedBy = null;
 
             public SignalHead Signal { get => _signal; }
             public bool BlockOccupied { get { UpdateBlock(); return _blockOccupied; } }
             public bool IsRouteSet { get => _trackRoute == null || _trackRoute.IsSet; }
+
+            public bool IsSet { get => _set; }
 
             private void UpdateBlock()
             {
@@ -78,33 +82,99 @@ namespace ModularPanels.BlockController
                 }
             }
 
+            private bool TryGetLinked([NotNullWhen(true)] out BlockController? linkedController, [NotNullWhen(true)] out SignalHead? linkedSignal)
+            {
+                linkedController = null;
+                if (!TryGetLinkedSignal(out linkedSignal))
+                    return false;
+
+                SignalComponent linkedComponent = linkedSignal.GetParentComponent();
+                if (!linkedComponent.Parent.TryGetComponent(out linkedController))
+                    return false;
+
+                return true;
+            }
+
+            private bool TryGetLinkedSignal([NotNullWhen(true)] out SignalHead? linked)
+            {
+                linked = null;
+                if (_signal is not BoundarySignalHeadOut outSig)
+                    return false;
+
+                linked = outSig.Linked;
+                if (linked == null)
+                    return false;
+
+                return true;
+            }
+
             public void Set()
             {
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    linkedController.SetSignal(linkedSig);
+                    return;
+                }
+
                 if (_set || !CanSet())
+                    return;
+
+                string ind = BlockOccupied ? _indicationOccupied : _indicationClear;
+                if (ind == _indicationUnset && _autoUnset)
                     return;
 
                 _set = true;
                 SetBlocks(true);
                 _lockCircuit?.SetActive(true);
-                string ind = BlockOccupied ? _indicationOccupied : _indicationClear;
+
+                foreach (var sig in _setWithSignals)
+                {
+                    SignalSet? sigSet = _controller.FindSignalSet(sig);
+                    sigSet?.Set();
+                    sigSet?.Lock(this);
+                }
+
                 _signal.SetAutoDropIndication(_indicationUnset);
                 _signal.SetIndicationFixed(ind);
             }
 
-            public void UnSet()
+            public void UnSet(bool auto = false)
             {
-                if (!_set)
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    linkedController.UnsetSignal(linkedSig);
+                    return;
+                }
+
+                if (!auto && (!_set || !CanUnset()))
                     return;
 
                 _set = false;
                 SetBlocks(false);
                 _lockCircuit?.SetActive(false);
+
+                foreach (var sig in _setWithSignals)
+                {
+                    SignalSet? sigSet = _controller.FindSignalSet(sig);
+                    sigSet?.Unlock(this);
+                    if (!auto)
+                        sigSet?.UnSet();
+                }
+
                 _signal.ResetLatch();
                 _signal.SetIndicationFixed(_indicationUnset);
             }
 
             public bool CanSet()
             {
+                if (TryGetLinked(out var linkedController, out var linkedSig))
+                {
+                    return linkedController.CanSetSignal(linkedSig);
+                }
+
+                if (_lockedBy != null)
+                    return false;
+
                 if (!IsRouteSet)
                     return false;
 
@@ -113,23 +183,59 @@ namespace ModularPanels.BlockController
                     if (b.InUse)
                         return false;
                 }
+
+                foreach (SignalHead sig in _setWithSignals)
+                {
+                    SignalSet? sigSet = _controller.FindSignalSet(sig);
+                    if (sigSet == null)
+                        return false;
+
+                    if (sigSet.IsSet)
+                        continue;
+
+                    if (!sigSet.CanSet())
+                        return false;
+                }
+
                 return true;
+            }
+
+            public bool CanUnset()
+            {
+                return _lockedBy == null;
             }
 
             public void SetAutoUnset()
             {
+                _autoUnset = true;
                 _signal.StateChangedEvents += (obj, e) =>
                 {
-                    if (!string.IsNullOrEmpty(e.Indication) && e.Indication == _indicationUnset)
+                    if (!string.IsNullOrEmpty(e.Indication) && e.Indication == _indicationUnset && IsSet)
                     {
-                        UnSet();
+                        UnSet(true);
                     }
                 };
+            }
+
+            public void AddSetWith(SignalHead head)
+            {
+                _setWithSignals.Add(head);
             }
 
             public void SetLockCircuit(InputCircuit lockCircuit)
             {
                 _lockCircuit = lockCircuit;
+            }
+
+            private void Lock(SignalSet lockedBy)
+            {
+                _lockedBy = lockedBy;
+            }
+
+            private void Unlock(SignalSet lockedBy)
+            {
+                if (_lockedBy == lockedBy)
+                    _lockedBy = null;
             }
         }
 
@@ -169,7 +275,7 @@ namespace ModularPanels.BlockController
                 blockList.Add(b);
             }
 
-            SignalSet set = new(pars.signal, route, blockList, pars.indicationClear, pars.indicationOccupied, pars.indicationUnset);
+            SignalSet set = new(this, pars.signal, route, blockList, pars.indicationClear, pars.indicationOccupied, pars.indicationUnset);
             _signalSets.Add(set);
 
             if (circuitSet != null)
@@ -196,6 +302,11 @@ namespace ModularPanels.BlockController
             if (pars.autoUnset)
                 set.SetAutoUnset();
 
+            foreach (var sig in pars.setWith)
+            {
+                set.AddSetWith(sig);
+            }
+
             return true;
         }
 
@@ -219,17 +330,13 @@ namespace ModularPanels.BlockController
             return set.CanSet();
         }
 
-        public bool TrySetSignal(SignalHead head)
+        public void SetSignal(SignalHead head)
         {
             SignalSet? set = FindSignalSet(head);
             if (set == null)
-                return false;
-
-            if (!CanSetSignal(head))
-                return false;
+                return;
 
             set.Set();
-            return true;
         }
 
         public void UnsetSignal(SignalHead head)

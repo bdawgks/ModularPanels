@@ -3,7 +3,7 @@ using ModularPanels.PanelLib;
 
 namespace ModularPanels.ButtonLib
 {
-    internal struct IndicatorLampTemplate(ControlLampJsonData template)
+    internal readonly struct IndicatorLampTemplate(ControlLampJsonData template)
     {
         public readonly Color colorOn = template.ColorOn;
         public readonly Color colorOff = template.ColorOff;

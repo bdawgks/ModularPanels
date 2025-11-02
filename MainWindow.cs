@@ -99,8 +99,22 @@ namespace ModularPanels
             drawPanel1.SetMinWidth(drawPanel1.Width);
         }
 
-        public void AddDetectorDebug(TrackDetector det)
+        public void AddDetectorDebug(Module mod, TrackDetector det)
         {
+            ToolStripMenuItem? parent = null;
+            if (detectorsToolStripMenuItem.DropDownItems.ContainsKey(mod.Name))
+            {
+                int i = detectorsToolStripMenuItem.DropDownItems.IndexOfKey(mod.Name);
+                if (i >= 0 && detectorsToolStripMenuItem.DropDownItems[i] is ToolStripMenuItem parentMenu)
+                    parent = parentMenu;
+            }
+            if (parent == null)
+            {
+                parent = new ToolStripMenuItem() { Text = mod.Name };
+                detectorsToolStripMenuItem.DropDownItems.Add(parent);
+                parent.Name = mod.Name;
+            }
+
             ToolStripMenuItem item = new()
             {
                 Text = det.ID
@@ -111,7 +125,8 @@ namespace ModularPanels
                 det.SetOccupied(item.Checked);
                 drawPanel1.Invalidate();
             };
-            detectorsToolStripMenuItem.DropDownItems.Add(item);
+
+            parent.DropDownItems.Add(item);
         }
 
         private void OnResizeEnd(object? sender, EventArgs e)

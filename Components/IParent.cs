@@ -31,5 +31,9 @@ namespace ModularPanels.Components
             return Components.GetComponent<CType>();
         }
 
+        public bool TryGetComponent<CType>([NotNullWhen(true)] out CType? component) where CType: Component
+        {
+            return Components.TryGetComponent(out component);
+        }
     }
 }

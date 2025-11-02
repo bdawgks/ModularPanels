@@ -56,6 +56,8 @@ namespace ModularPanels.SignalLib
             return string.Format("({0}){1}", _component.ToString(), _name);
         }
 
+        public SignalComponent GetParentComponent() { return _component; }
+
         public void SetPos(int[] pos)
         {
             if (pos.Length == 2)
@@ -72,6 +74,11 @@ namespace ModularPanels.SignalLib
         public void SetScale(float scale)
         {
             _scale = scale;
+        }
+
+        public virtual SignalHead? GetHead(SignalHeadId id)
+        {
+            return GetHead(id.head);
         }
 
         public SignalHead? GetHead(string? id)
@@ -103,23 +110,6 @@ namespace ModularPanels.SignalLib
         public SignalRuleset? GetRuleset(string? headId)
         {
             return Type.GetRuleset(headId);
-        }
-
-        public static bool ParseSignalID(string id, out string name, out string? head)
-        {
-            int delimIndex = id.IndexOf(":");
-            if (delimIndex > 0)
-            {
-                name = id.Substring(0, delimIndex);
-                head = id.Substring(delimIndex + 1);
-
-                return true;
-            }
-
-            name = id;
-            head = null;
-
-            return false;
         }
     }
 }

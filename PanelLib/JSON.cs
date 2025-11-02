@@ -129,4 +129,45 @@ namespace ModularPanels.PanelLib
             throw new NotImplementedException();
         }
     }
+
+    internal struct PanelRectJsonData
+    {
+        public GridPos TopLeft { get; set; }
+        public GridPos BottomRight { get; set; }
+        public ColorJS? FillColor { get; set; }
+        public ColorJS BorderColor { get; set; }
+        public float BorderSize { get; set; }
+    }
+
+    [JsonConverter(typeof(PanelRectJsonConverter))]
+    public class PanelRectLoader
+    {
+        internal PanelRectJsonData? Data { get; set; }
+
+        public PanelRect? Load()
+        {
+            if (Data == null)
+                return null;
+
+            Color? fillColor = null;
+            if (Data.Value.FillColor != null)
+                fillColor = Data.Value.FillColor;
+
+            return new(fillColor, Data.Value.BorderColor, Data.Value.BorderSize, Data.Value.TopLeft, Data.Value.BottomRight);
+        }
+    }
+
+    internal class PanelRectJsonConverter : JsonConverter<PanelRectLoader>
+    {
+        public override PanelRectLoader? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            PanelRectJsonData? data = JsonSerializer.Deserialize<PanelRectJsonData>(ref reader, options);
+            return new() { Data = data };
+        }
+
+        public override void Write(Utf8JsonWriter writer, PanelRectLoader value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

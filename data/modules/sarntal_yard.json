@@ -1,10 +1,50 @@
-{"Name": "Sartnal Yard",
+{"Name": "Sartnal RB",
 "DrawingData": {
 	"Width": 400,
 	"Height": 130,
 	"BackgroundColor": "DominoBG",
 	"Texts": [
-		{"Text": "Sarntal Yard", "Style": "Title", "Pos": [185,10]}
+		{"Text": "Sarntal RB", "Style": "Title", "Pos": [185,10]},
+		{"Text": "Gleis 1", "Style": "TrackNumber", "Pos": [240,35]},
+		{"Text": "Gleis 2", "Style": "TrackNumber", "Pos": [240,55]},
+		{"Text": "G12", "Style": "TrackNumber", "Pos": [150,55]},
+		{"Text": "Gleis 3", "Style": "TrackNumber", "Pos": [220,75]},
+		{"Text": "Gleis 4", "Style": "TrackNumber", "Pos": [220,95]},
+		{"Text": "Gleis 13", "Style": "TrackNumber", "Pos": [50,75]},
+		{"Text": "A", "Style": "Signal", "Pos": [15,20]},
+		{"Text": "B", "Style": "Signal", "Pos": [105,40]},
+		{"Text": "1A", "Style": "Signal", "Pos": [40,20]},
+		{"Text": "1B", "Style": "Signal", "Pos": [79,35]},
+		{"Text": "1C", "Style": "Signal", "Pos": [270,20]},
+		{"Text": "1D", "Style": "Signal", "Pos": [325,40]},
+		{"Text": "12B", "Style": "Signal", "Pos": [128,55]},
+		{"Text": "12A", "Style": "Signal", "Pos": [180,40]},
+		{"Text": "2B", "Style": "Signal", "Pos": [210,60]},
+		{"Text": "2A", "Style": "Signal", "Pos": [270,40]},
+		{"Text": "13A", "Style": "Signal", "Pos": [92,65]},
+		{"Text": "3B", "Style": "Signal", "Pos": [180,80]},
+		{"Text": "4B", "Style": "Signal", "Pos": [180,100]},
+		{"Text": "1A", "Style": "Control1", "Pos": [100,110]},
+		{"Text": "1B", "Style": "Control1", "Pos": [120,110]},
+		{"Text": "1C", "Style": "Control1", "Pos": [140,110]},
+		{"Text": "1D", "Style": "Control1", "Pos": [160,110]},
+		{"Text": "12A", "Style": "Control1", "Pos": [180,110]},
+		{"Text": "12B", "Style": "Control1", "Pos": [200,110]},
+		{"Text": "2A", "Style": "Control1", "Pos": [220,110]},
+		{"Text": "2B", "Style": "Control1", "Pos": [240,110]},
+		{"Text": "13A", "Style": "Control1", "Pos": [260,110]},
+		{"Text": "3B", "Style": "Control1", "Pos": [280,110]},
+		{"Text": "4B", "Style": "Control1", "Pos": [300,110]},
+		{"Text": "Zwergsignalen", "Style": "Control2", "Pos": [125,100]},
+		{"Text": "1 / 2", "Style": "Control2", "Pos": [30,103]},
+		{"Text": "3", "Style": "Control2", "Pos": [50,103]},
+		{"Text": "4", "Style": "Control2", "Pos": [70,103]},
+		{"Text": "W 5", "Style": "Control2", "Pos": [340,103]},
+		{"Text": "Weichen", "Style": "Control2", "Pos": [50,93]}
+	],
+	"Rectangles": [
+		{"TopLeft": [90, 105], "BottomRight": [310, 128], "BorderColor": "Black", "BorderSize": 3.0},
+		{"TopLeft": [15, 98], "BottomRight": [85, 128], "BorderColor": "Black", "BorderSize": 3.0}
 	]
 },
 "TrackData": {
@@ -84,10 +124,10 @@
 	"Points": [
 		{"ID": "1", "PointsNode": "1C", "RouteNormal": "1D", "RouteReversed": "2A", "Style": "Main"},
 		{"ID": "2", "PointsNode": "2A", "RouteNormal": "2B", "RouteReversed": "3XA", "Style": "Main"},
-		{"ID": "3A", "PointsNode": "3XA", "RouteNormal": "3D", "RouteReversed": "3E", "Style": "Main"},
-		{"ID": "3B", "PointsNode": "3XB", "RouteNormal": "3D", "RouteReversed": "3C", "Style": "Main"},
-		{"ID": "3C", "PointsNode": "3C", "RouteNormal": "3D", "RouteReversed": "3XB", "Style": "Main"},
-		{"ID": "3D", "PointsNode": "3E", "RouteNormal": "3D", "RouteReversed": "3XA", "Style": "Main"},
+		{"ID": "3A", "PointsNode": "3XA", "RouteNormal": "3D", "RouteReversed": "3E", "Style": "Slip"},
+		{"ID": "3B", "PointsNode": "3XB", "RouteNormal": "3D", "RouteReversed": "3C", "Style": "Slip"},
+		{"ID": "3C", "PointsNode": "3C", "RouteNormal": "3D", "RouteReversed": "3XB", "Style": "Slip"},
+		{"ID": "3D", "PointsNode": "3E", "RouteNormal": "3D", "RouteReversed": "3XA", "Style": "Slip"},
 		{"ID": "4A", "PointsNode": "3F", "RouteNormal": "3G", "RouteReversed": "2D", "Style": "Main"},
 		{"ID": "4B", "PointsNode": "2D", "RouteNormal": "2C", "RouteReversed": "3F", "Style": "Main"},
 		{"ID": "5", "PointsNode": "1F", "RouteNormal": "1E", "RouteReversed": "2G", "Style": "Main"}
@@ -318,7 +358,7 @@
 			{"Pos": 2, "Circuit": "4B'_off"}
 		]},
 		
-		{"ID": "P1", "Pos": [30,110], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
+		{"ID": "P1", "Pos": [30,118], "Template": "STB_PointsSwitch_3PM", "InterlockCircuit": "P1_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P1_R"},
 			{"Pos": 1, "Circuit": "sw_P1_1"},
@@ -331,7 +371,7 @@
 			{"Pos": 2, "Text": "2"},
 			{"Pos": 3, "Text": "AnG"}
 		]},
-		{"ID": "P2", "Pos": [50,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P2_lock",
+		{"ID": "P2", "Pos": [50,118], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P2_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P2_1"},
 			{"Pos": 1, "Circuit": "sw_P2_2"}
@@ -340,7 +380,7 @@
 			{"Pos": 0, "Text": "G"},
 			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P3", "Pos": [70,110], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
+		{"ID": "P3", "Pos": [70,118], "Template": "STB_PointsSwitch_2P", "InterlockCircuit": "P3_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P3_1"},
 			{"Pos": 1, "Circuit": "sw_P3_2"}
@@ -349,7 +389,7 @@
 			{"Pos": 0, "Text": "G"},
 			{"Pos": 1, "Text": "A"}
 		]},
-		{"ID": "P4", "Pos": [340,110], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
+		{"ID": "P4", "Pos": [340,118], "Template": "STB_PointsSwitch_2PM", "InterlockCircuit": "P4_lock",
 		"SwitchCircuits": [
 			{"Pos": 0, "Circuit": "sw_P4_R"},
 			{"Pos": 1, "Circuit": "sw_P4_1"},
@@ -365,6 +405,10 @@
 		{"ID": "A", "Pos": [20,30], "Template": "STB_MainSigButton", "States": [
 			{"State": 0, "CircuitActivated": "sw_A_stop", "CircuitSwitch": "A_off"},
 			{"State": 1, "CircuitActivated": "sw_A_off", "CircuitSwitch": "A_stop"}
+		]},
+		{"ID": "B", "Pos": [100,30], "Template": "STB_MainSigButton", "States": [
+			{"State": 0, "CircuitActivated": "sw_B_stop", "CircuitSwitch": "B_off"},
+			{"State": 1, "CircuitActivated": "sw_B_off", "CircuitSwitch": "B_stop"}
 		]}
 	]
 },
@@ -410,11 +454,6 @@
 		{"ID": "4B'_stop", "Desc": "Signal 4B' indicates STOP", "Active": true},
 		{"ID": "A_stop", "Desc": "Signal A indicates STOP", "Active": true},
 		{"ID": "B_stop", "Desc": "Signal B indicates STOP", "Active": true},
-		
-		{"ID": "1A'_R_11_1_set", "Desc": "Route 11 to 1 set for 1A'"},
-		{"ID": "1A'_R_11_12_set", "Desc": "Route 11 to 12 set for 1A'"},
-		{"ID": "1C'_R_21_1_set", "Desc": "Route 21 to 1 set for 1C'"},
-		{"ID": "12A'_R_12_2_set", "Desc": "Route 12 to 2 set for 12A'"},
 		
 		{"ID": "1A'_off", "Desc": "Signal 1A' is OFF"},
 		{"ID": "1B'_off", "Desc": "Signal 1B' is OFF"},
@@ -510,22 +549,6 @@
 		{"ID": "B_off", "Condition": [
 			{"Op": "NOT", "Circuit": "B_stop"}
 		], "Desc": "B main signal to OFF"},
-		{"ID": "cond_A_route_clear_1", "Desc": "Sig A clear for track 1", "Condition": [
-			{"Op": "EQ", "Circuit": "1A'_R_11_1_set"},
-			{"Op": "AND", "Circuit": "1C'_R_21_1_set"}
-		]},
-		{"ID": "cond_A_route_clear_2", "Desc": "Sig A clear for track 2", "Condition": [
-			{"Op": "EQ", "Circuit": "1A'_R_11_12_set"},
-			{"Op": "AND", "Circuit": "12A'_R_12_2_set"}
-		]},
-		{"ID": "cond_A_set_off", "Desc": "Condition to set main sig A off", "Condition": [
-			{"Op": "EQ", "Circuit": "cond_A_route_clear_1"},
-			{"Op": "OR", "Circuit": "cond_A_route_clear_2"}
-		]},
-		{"ID": "A_set_off", "Desc": "Set main sig A off", "Condition": [
-			{"Op": "EQ", "Circuit": "sw_A_off"},
-			{"Op": "AND", "Circuit": "cond_A_set_off"}
-		]},
 		
 		
 		{"ID": "1A'_off", "Condition": [
@@ -565,13 +588,11 @@
 		
 		{"ID": "R0_ind_clear", "Desc": "Route from R0 should show indication CLEAR",
 		"Condition": [
-			{"Op": "EQ", "Circuit": "1D'_off"},
-			{"Op": "AND", "Circuit": "points_5_N"}
+			{"Op": "EQ", "Circuit": "points_5_N"}
 		]},
 		{"ID": "R0_ind_40km", "Desc": "Route from R0 should show indication 40KM",
 		"Condition": [
-			{"Op": "EQ", "Circuit": "1D'_off"},
-			{"Op": "AND", "Circuit": "points_5_R"}
+			{"Op": "EQ", "Circuit": "points_5_R"}
 		]},
 		
 		
@@ -812,19 +833,25 @@
 		{"ID": "T2", "Detector": "2"},
 		{"ID": "T13"},
 		{"ID": "T3"},
-		{"ID": "T4"}
+		{"ID": "T4"},
+		{"ID": "m_T1", "Detector": "1"},
+		{"ID": "m_T2", "Detector": "2"},
+		{"ID": "m_T12", "Detector": "12"},
+		{"ID": "m_T21", "Detector": "21"},
+		{"ID": "m_P1"},
+		{"ID": "m_P5"}
 	],
 	"Signals": [
 		{
 			"SigID": "1A'", "Route": "R_11_1", "Blocks": ["P1","T1"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "CircuitLocked": "1A'_R_11_1_set", 
+			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop",
 			"AutoUnset": true
 		},
 		{
 			"SigID": "1A'", "Route": "R_11_12", "Blocks": ["P1","P2","T12"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop", "CircuitLocked": "1A'_R_11_12_set",
+			"CircuitSet": "sw_1A'_off", "CircuitUnset": "sw_1A'_stop",
 			"AutoUnset": true
 		},
 		{
@@ -850,7 +877,7 @@
 		{
 			"SigID": "1C'", "Route": "R_21_1", "Blocks": ["P5","T21"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_1C'_off", "CircuitUnset": "sw_1C'_stop", "CircuitLocked": "1C'_R_21_1_set",
+			"CircuitSet": "sw_1C'_off", "CircuitUnset": "sw_1C'_stop",
 			"AutoUnset": true
 		},
 		{
@@ -867,7 +894,7 @@
 		{
 			"SigID": "12A'", "Route": "R_12_2", "Blocks": ["P4","T2"], 
 			"IndicationClear": "Clear", "IndicationOccupied": "Caution", "IndicationUnset": "Stop",
-			"CircuitSet": "sw_12A'_off", "CircuitUnset": "sw_12A'_stop", "CircuitLocked": "12A'_R_12_2_set",
+			"CircuitSet": "sw_12A'_off", "CircuitUnset": "sw_12A'_stop",
 			"AutoUnset": true
 		},
 		{
@@ -931,15 +958,33 @@
 			"CircuitSet": "sw_4B'_off", "CircuitUnset": "sw_4B'_stop", "AutoUnset": true
 		},
 		{
-			"SigID": "A", "Route": "R_11_1", "Blocks": [], 
+			"SigID": "A", "Route": "R_11_1", "Blocks": ["m_P1","m_T1", "m_T21"], "SetWith": ["1A'", "1C'"],
 			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
-			"CircuitSet": "A_set_off", "CircuitUnset": "sw_A_stop", "CircuitLocked": "A_R_11_1_set",
+			"CircuitSet": "sw_A_off", "CircuitUnset": "sw_A_stop",
 			"AutoUnset": true
 		},
 		{
-			"SigID": "A", "Route": "R_11_12", "Blocks": [], 
+			"SigID": "A", "Route": "R_11_12", "Blocks": ["m_P1","m_T12", "m_T2"], "SetWith": ["1A'", "12A'"],
 			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
-			"CircuitSet": "A_set_off", "CircuitUnset": "sw_A_stop", "CircuitLocked": "A_R_11_12_set",
+			"CircuitSet": "sw_A_off", "CircuitUnset": "sw_A_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "B", "Route": "R_11_1", "Blocks": ["m_P1","m_T11"], "SetWith": ["1B'"],
+			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_B_off", "CircuitUnset": "sw_B_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "R0:Main:In", "Route": "R_21_1", "Blocks": ["m_T21","m_P5","m_T1"], "SetWith": ["1D'"],
+			"IndicationClear": "Clear", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
+			"AutoUnset": true
+		},
+		{
+			"SigID": "R0:Main:In", "Route": "R_21_2", "Blocks": ["m_T21","m_P5","m_T2"], "SetWith": ["1D'"],
+			"IndicationClear": "40km", "IndicationOccupied": "Stop", "IndicationUnset": "Stop",
+			"CircuitSet": "sw_R0_off", "CircuitUnset": "sw_R0_stop",
 			"AutoUnset": true
 		}
 	]

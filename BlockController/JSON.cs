@@ -32,9 +32,10 @@ namespace ModularPanels.BlockController
 
     internal struct SignalSetJsonData
     {
-        public string SigID { get; set; }
+        public SignalHeadId SigID { get; set; }
         public string? Route { get; set; }
         public List<string> Blocks { get; set; }
+        public List<SignalHeadIdOutOnly>? SetWith { get; set; }
         public string IndicationClear { get; set; }
         public string IndicationOccupied { get; set; }
         public string IndicationUnset { get; set; }
@@ -46,8 +47,8 @@ namespace ModularPanels.BlockController
 
     internal struct BlockControllerJsonData
     {
-        public List<RouteJsonData> Routes { get; set; }
-        public List<BlockJsonData> Blocks { get; set; }
+        public List<RouteJsonData>? Routes { get; set; }
+        public List<BlockJsonData>? Blocks { get; set; }
         public List<SignalSetJsonData> Signals { get; set; }
     }
 
@@ -61,33 +62,39 @@ namespace ModularPanels.BlockController
             if (Data == null)
                 return null;
 
-            BlockController controller = new();
+            BlockController controller = new(mod);
 
-            foreach (var rd in Data.Value.Routes)
+            if (Data.Value.Routes != null)
             {
-                TrackRoute route = new();
-                
-                foreach (var pd in rd.Route)
+                foreach (var rd in Data.Value.Routes)
                 {
-                    mod.ObjectBank.RegisterKey(pd.PointsID);
-                    if (!pd.PointsID.TryGet(out TrackPoints? points))
-                        continue;
+                    TrackRoute route = new();
 
-                    route.AddPoints(points, pd.Direction);
+                    foreach (var pd in rd.Route)
+                    {
+                        mod.ObjectBank.RegisterKey(pd.PointsID);
+                        if (!pd.PointsID.TryGet(out TrackPoints? points))
+                            continue;
+
+                        route.AddPoints(points, pd.Direction);
+                    }
+
+                    controller.AddRoute(rd.ID, route);
                 }
-
-                controller.AddRoute(rd.ID, route);
             }
 
-            foreach (var bd in Data.Value.Blocks)
+            if (Data.Value.Blocks != null)
             {
-                TrackDetector? detector = null;
-                if (bd.Detector != null)
+                foreach (var bd in Data.Value.Blocks)
                 {
-                    mod.ObjectBank.RegisterKey(bd.Detector);
-                    detector = bd.Detector.Object;
+                    TrackDetector? detector = null;
+                    if (bd.Detector != null)
+                    {
+                        mod.ObjectBank.RegisterKey(bd.Detector);
+                        detector = bd.Detector.Object;
+                    }
+                    controller.AddBlock(bd.ID, detector);
                 }
-                controller.AddBlock(bd.ID, detector);
             }
 
             foreach (var ss in Data.Value.Signals)
@@ -97,6 +104,17 @@ namespace ModularPanels.BlockController
                 if (sig == null)
                     continue;
 
+                List<SignalHead> setWith = [];
+                if (ss.SetWith != null)
+                {
+                    foreach (var sws in ss.SetWith)
+                    {
+                        SignalHead? setWithSig = mod.GetSignalComponent().GetSignalHead(sws);
+                        if (setWithSig != null)
+                            setWith.Add(setWithSig);
+                    }
+                }
+
                 BlockController.SignalSetParams pars = new()
                 {
                     signal = sig,
@@ -105,7 +123,8 @@ namespace ModularPanels.BlockController
                     indicationClear = ss.IndicationClear,
                     indicationOccupied = ss.IndicationOccupied,
                     indicationUnset = ss.IndicationUnset,
-                    autoUnset = ss.AutoUnset ?? false
+                    autoUnset = ss.AutoUnset ?? false,
+                    setWith = [.. setWith]
                 };
 
                 mod.GetCircuitComponent().RegisterKey(ss.CircuitSet);

@@ -44,6 +44,11 @@ namespace ModularPanels.SignalLib
             set { }
         }
 
+        public SignalHead? Linked
+        {
+            get => _linkedHead;
+        }
+
         public BoundarySignalHeadOut(string id, Signal parent, string defaultIndication)
         : base(id, parent, defaultIndication) { }
 
@@ -80,8 +85,6 @@ namespace ModularPanels.SignalLib
 
     public class BoundarySignalHeadIn : BoundarySignalHead
     {
-        //BoundarySignalHeadOut? _linkedHead;
-
         public override string Aspect
         {
             get

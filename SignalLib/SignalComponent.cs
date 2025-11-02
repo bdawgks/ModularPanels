@@ -53,7 +53,7 @@ namespace ModularPanels.SignalLib
             if (id.head == null)
                 return sig.GetDefaultHead();
 
-            return sig.GetHead(id.head);
+            return sig.GetHead(id);
         }
 
         public SignalHead? GetRouteSignalHead(SignalHeadId id, bool nextSignal = false)
