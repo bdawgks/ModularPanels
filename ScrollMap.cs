@@ -14,6 +14,10 @@ namespace ModularPanels
         int _moduleMaxH = 0;
         float _scale = 1f;
         float _leftEdge = 0;
+        float _width = 1f;
+        float _viewWidth = 1f;
+
+        bool _mouseHold = false;
 
         const int _borderH = 5;
         const int _maxMapH = 50;
@@ -36,6 +40,51 @@ namespace ModularPanels
             _mapPanel.BackColor = _colorOutside;
 
             _panelOffsetY = _window.Height - _mapPanel.Bottom;
+
+            _mapPanel.MouseDown += OnMouseDown;
+            _mapPanel.MouseUp += OnMouseUp;
+            _mapPanel.MouseMove += OnMouseMove;
+        }
+
+        private void OnMouseDown(object? sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            _mouseHold = true;
+            CenterView(e.X);
+        }
+
+        private void OnMouseUp(object? sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            _mouseHold = false;
+            CenterView(e.X);
+        }
+
+        private void OnMouseMove(object? sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            if (_mouseHold)
+                CenterView(e.X);
+        }
+
+        private void CenterView(float posX)
+        {
+            float newEdge = posX - _leftEdge - _viewWidth / 2f;
+            if (newEdge < 0)
+                newEdge = 0;
+
+            if (newEdge > _width - _viewWidth)
+                newEdge = _width - _viewWidth;
+
+            float relPos = newEdge / (_width - _viewWidth);
+
+            _mainPanel.ScrollTo(relPos);
         }
 
         private static PointF GetGridPos(GridPos gp, float scale, float offsetX, float offsetY)
@@ -51,15 +100,15 @@ namespace ModularPanels
             float offsetX = 0;
             float offsetY = 1f;
 
-            float w = _window.Width;
-            _scale = w / _length;
+            _width = _window.Width;
+            _scale = _width / _length;
             float h = _moduleMaxH * _scale;
             if (h > _maxMapH)
             {
                 h = _maxMapH;
                 _scale = h / _moduleMaxH;
-                w = _length * _scale;
-                offsetX = (_mapPanel.Width / 2f) - (w / 2f);
+                _width = _length * _scale;
+                offsetX = (_mapPanel.Width / 2f) - (_width / 2f);
             }
             _leftEdge = offsetX;
 
@@ -75,9 +124,9 @@ namespace ModularPanels
             // Get current view
             float viewOffsetLeft = -_mainPanel.Left;
             float viewLeft = _leftEdge + viewOffsetLeft * _scale;
-            float viewWidth = _window.Width * _scale;
+            _viewWidth = _window.Width * _scale;
 
-            RectangleF viewRect = new(viewLeft, offsetY, viewWidth, h);
+            RectangleF viewRect = new(viewLeft, offsetY, _viewWidth, h);
             Brush viewBrush = new SolidBrush(_colorHighlight);
             g.FillRectangle(viewBrush, viewRect);
 

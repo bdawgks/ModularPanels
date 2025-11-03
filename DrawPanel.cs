@@ -83,6 +83,23 @@ namespace ModularPanels
             }
         }
 
+        public void ScrollTo(float relPos)
+        {
+            if (scrollBar == null || !scrollBar.Visible)
+                return;
+
+            relPos = Math.Clamp(relPos, 0f, 1f);
+
+            float newVal = scrollBar.Minimum + (scrollBar.Maximum - scrollBar.Minimum) * relPos;
+            newVal = Math.Clamp(newVal, scrollBar.Minimum, scrollBar.Maximum);
+
+            if (newVal != scrollBar.Value)
+            {
+                scrollBar.Value = (int)newVal;
+                MoveScrollBar(null, new ScrollEventArgs(ScrollEventType.EndScroll, (int)newVal));
+            }
+        }
+
         private void MoveScrollBar(object? sender, ScrollEventArgs e)
         {
             if (parent == null)
