@@ -28,6 +28,10 @@ namespace ModularPanels
             MouseWheel += OnMouseWheel;
             SizeChanged += OnResizeEnd;
             drawPanel1.InitScrollbar(hScrollBar1, this, 20);
+            drawPanel1.ScrollEvents += (obj, e) =>
+            {
+                mapPanel.Invalidate();
+            };
 
             LoadLibFiles();
             LoadLayout();

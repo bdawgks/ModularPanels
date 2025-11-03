@@ -10,6 +10,8 @@ namespace ModularPanels
         int minWidth;
         int initWidth;
 
+        public event EventHandler<ScrollEventArgs>? ScrollEvents;
+
         public DrawPanel()
         {
             DoubleBuffered = true;
@@ -89,6 +91,8 @@ namespace ModularPanels
             int diff = (ClientRectangle.Width - parent.Width) / 2;
             Left = -e.NewValue - diff - scrollMargin / 2;
             Width = minWidth;
+
+            ScrollEvents?.Invoke(this, e);
         }
     }
 }
