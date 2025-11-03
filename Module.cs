@@ -9,8 +9,6 @@ using ModularPanels.SignalLib;
 using ModularPanels.TrackLib;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using System.Xml.Linq;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace ModularPanels
 {

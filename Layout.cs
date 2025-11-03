@@ -9,6 +9,8 @@ namespace ModularPanels
         public string Name { get; set; }
         public string[] Modules { get; set; }
 
+        public ScrollMap.MapStyle? MapStyle { get; set; }
+
         public readonly Layout Initialize()
         {
             Layout layout = new(Name);

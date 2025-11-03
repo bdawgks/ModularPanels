@@ -1,14 +1,97 @@
 ﻿using ModularPanels.DrawLib;
 using ModularPanels.TrackLib;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ModularPanels
 {
-    public class ScrollMap(Layout layout, DrawPanel mapPanel, DrawPanel mainPanel, Control window)
+    public class ScrollMap(Layout layout, DrawPanel mapPanel, DrawPanel mainPanel, Control window, ScrollMap.MapStyle? style = null)
     {
+        [JsonConverter(typeof(MapStyleJsonConverter))]
+        public struct MapStyle
+        {
+            public Color colorHighlight = Color.FloralWhite;
+            public Color colorBackground = Color.Gainsboro;
+            public Color colorViewBorder = Color.SteelBlue;
+            public Color colorTrack = Color.Black;
+            public Color colorTrackOccupied = Color.Magenta;
+            public Color colorModuleBorder = Color.Black;
+
+            public float borderWidth = 1f;
+            public float viewBorderWidth = 2f;
+            public float trackWidth = 2f;
+            public float trackWidthOccupied = 2.5f;
+
+            public MapStyle() { }
+        }
+
+        private struct MapStyleJsonData
+        {
+            public ColorJS? ColorBackground { get; set; }
+            public ColorJS? ColorViewBackground { get; set; }
+            public ColorJS? ColorViewBorder { get; set; }
+            public ColorJS? ColorModuleBorder { get; set; }
+            public ColorJS? ColorTrack { get; set; }
+            public ColorJS? ColorTrackOccupied { get; set; }
+            public float? BorderWidth { get; set; }
+            public float? ViewBorderWidth { get; set; }
+            public float? TrackWidth { get; set; }
+            public float? TrackWidthOccupied { get; set; }
+        }
+
+        private class MapStyleJsonConverter : JsonConverter<MapStyle>
+        {
+            public override MapStyle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                MapStyleJsonData? data = JsonSerializer.Deserialize<MapStyleJsonData>(ref reader, options);
+                MapStyle style = new();
+                if (data == null)
+                    return style;
+
+                if (data.Value.ColorTrack != null)
+                    style.colorTrack = data.Value.ColorTrack;
+
+                if (data.Value.ColorTrackOccupied != null)
+                    style.colorTrackOccupied = data.Value.ColorTrackOccupied;
+
+                if (data.Value.ColorBackground != null)
+                    style.colorBackground = data.Value.ColorBackground;
+
+                if (data.Value.ColorModuleBorder != null)
+                    style.colorModuleBorder = data.Value.ColorModuleBorder;
+
+                if (data.Value.ColorViewBackground != null)
+                    style.colorHighlight = data.Value.ColorViewBackground;
+
+                if (data.Value.ColorViewBorder != null)
+                    style.colorViewBorder = data.Value.ColorViewBorder;
+
+                if (data.Value.BorderWidth.HasValue)
+                    style.borderWidth = data.Value.BorderWidth.Value;
+
+                if (data.Value.ViewBorderWidth.HasValue)
+                    style.viewBorderWidth = data.Value.ViewBorderWidth.Value;
+
+                if (data.Value.TrackWidth.HasValue)
+                    style.trackWidth = data.Value.TrackWidth.Value;
+
+                if (data.Value.TrackWidthOccupied.HasValue)
+                    style.trackWidthOccupied = data.Value.TrackWidthOccupied.Value;
+
+                return style;
+            }
+
+            public override void Write(Utf8JsonWriter writer, MapStyle value, JsonSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         readonly Layout _layout = layout;
         readonly DrawPanel _mapPanel = mapPanel;
         readonly DrawPanel _mainPanel = mainPanel;
         readonly Control _window = window;
+        readonly MapStyle _style = style ?? new();
 
         int _length = 0;
         int _moduleMaxH = 0;
@@ -16,17 +99,12 @@ namespace ModularPanels
         float _leftEdge = 0;
         float _width = 1f;
         float _viewWidth = 1f;
+        int _panelOffsetY = 0;
 
         bool _mouseHold = false;
 
         const int _borderH = 5;
         const int _maxMapH = 50;
-
-        readonly Color _colorHighlight = Color.FloralWhite;
-        readonly Color _colorOutside = Color.Gainsboro;
-        readonly Color _colorViewBorder = Color.SteelBlue;
-
-        int _panelOffsetY = 0;
 
         public void Init()
         {
@@ -34,10 +112,18 @@ namespace ModularPanels
             {
                 _length += Grid.Instance.Scale(mod.Width);
                 _moduleMaxH = Math.Max(_moduleMaxH, Grid.Instance.Scale(mod.Height));
+
+                foreach (TrackDetector det in mod.TrackDetectors.Values)
+                {
+                    det.StateChangedEvents += (obj, e) =>
+                    {
+                        _mapPanel.Invalidate();
+                    };
+                }
             }
 
             // Set background color
-            _mapPanel.BackColor = _colorOutside;
+            _mapPanel.BackColor = _style.colorBackground;
 
             _panelOffsetY = _window.Height - _mapPanel.Bottom;
 
@@ -118,8 +204,9 @@ namespace ModularPanels
 
             _mainPanel.Size = new() { Width = _mainPanel.Width, Height = _mapPanel.Top - _mainPanel.Top - _borderH };
 
-            Pen borderPen = new(new SolidBrush(Color.Black), 0.5f);
-            Pen trackPen = new(new SolidBrush(Color.Black), 2f);
+            Pen borderPen = new(new SolidBrush(_style.colorModuleBorder), _style.borderWidth);
+            Pen trackPen = new(new SolidBrush(_style.colorTrack), _style.trackWidth);
+            Pen trackOccupiedPen = new(new SolidBrush(_style.colorTrackOccupied), _style.trackWidthOccupied);
 
             // Get current view
             float viewOffsetLeft = -_mainPanel.Left;
@@ -127,7 +214,7 @@ namespace ModularPanels
             _viewWidth = _window.Width * _scale;
 
             RectangleF viewRect = new(viewLeft, offsetY, _viewWidth, h);
-            Brush viewBrush = new SolidBrush(_colorHighlight);
+            Brush viewBrush = new SolidBrush(_style.colorHighlight);
             g.FillRectangle(viewBrush, viewRect);
 
             // Draw track
@@ -145,18 +232,22 @@ namespace ModularPanels
                     PointF p1 = GetGridPos(seg.n0.pos, _scale, offsetX, offsetY);
                     PointF p2 = GetGridPos(seg.n1.pos, _scale, offsetX, offsetY);
 
-                    g.DrawLine(trackPen, p1, p2);
+                    if (seg.IsOccupied())
+                        g.DrawLine(trackOccupiedPen, p1, p2);
+                    else
+                        g.DrawLine(trackPen, p1, p2);
                 }
 
                 offsetX += len;
             }
 
             // Draw view border
-            Pen viewPen = new(new SolidBrush(_colorViewBorder), 2f);
+            Pen viewPen = new(new SolidBrush(_style.colorViewBorder), _style.viewBorderWidth);
             g.DrawRectangle(viewPen, viewRect);
 
             borderPen.Dispose();
             trackPen.Dispose();
+            trackOccupiedPen.Dispose();
             viewPen.Dispose();
             viewBrush.Dispose();
         }

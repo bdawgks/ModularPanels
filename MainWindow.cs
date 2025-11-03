@@ -94,7 +94,7 @@ namespace ModularPanels
 
                             monitorCircuitsToolStripMenuItem.DropDownItems.Add(item);
                         }
-                        _map = new(layout, mapPanel, drawPanel1, this);
+                        _map = new(layout, mapPanel, drawPanel1, this, layoutData.Value.MapStyle);
                         _map.Init();
                     }
                 }

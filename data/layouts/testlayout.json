@@ -4,4 +4,10 @@
 	"sarntal_yard",
 	"wilnau",
 	"sarntal"
-]}
+],
+"MapStyle": {
+	"ColorBackground": "DarkSeaGreen",
+	"ColorViewBackground": "DominoBG",
+	"ColorViewBorder": "DarkGreen",
+	"ColorTrackOccupied": "Tomato"
+}}

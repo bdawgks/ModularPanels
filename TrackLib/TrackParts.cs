@@ -18,6 +18,24 @@ namespace ModularPanels.TrackLib
         public readonly TrackStyle style = style;
         public readonly TrackNode n0 = n0;
         public readonly TrackNode n1 = n1;
+
+        private readonly HashSet<TrackDetector> _detectors = [];
+
+        public bool AddDetector(TrackDetector det)
+        {
+            return _detectors.Add(det);
+        }
+
+        public bool IsOccupied()
+        {
+            foreach (var detector in _detectors)
+            {
+                if (detector.IsOccupied)
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     public class TrackPoints(string id, TrackNode baseNode, TrackNode routeNormal, TrackNode routeReversed, bool useBaseColor = false)
@@ -137,6 +155,7 @@ namespace ModularPanels.TrackLib
                 return false;
 
             _segments.Add(seg);
+            seg.AddDetector(this);
             return true;
         }
 
